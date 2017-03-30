@@ -1,0 +1,56 @@
+// Consolidate the receipt
+
+
+// Remove duplicate item entries
+// Add their units to the first entry of the item
+
+
+import com.openbravo.format.Formats;
+import com.openbravo.pos.ticket.TicketLineInfo;
+import com.openbravo.pos.ticket.TicketInfo;
+import com.openbravo.pos.ticket.TicketProductInfo;
+import java.util.Properties;
+
+int numlines = ticket.getLinesCount();
+for (int i = 0 ; i < numlines ; i++) {
+ 	current_ticketline = ticket.getLine(i);
+	current_unit  = current_ticketline.getMultiply();
+
+	if ( current_unit != 0){
+		for (int j = i + 1 ; j < numlines ; j++) {
+			loop_ticketline = ticket.getLine(j);
+			loop_unit  = loop_ticketline.getMultiply();
+                      //  loopProductype =  loop_ticketline.getProductType();
+                       // loopProductName = loop_ticketline.getProductName();
+ 			String current_productid = current_ticketline.getProductID();
+                      //  String current_ProductName = current_ticketline.getProductName();
+			String loop_productid    = loop_ticketline.getProductID();
+				if ( loop_productid.equals(current_productid)){
+
+					//current_unit = current_unit + loop_unit;
+					//loop_ticketline.setMultiply(0);
+                                     }
+
+
+		}
+
+	// current_ticketline.setVariousQuantities(current_unit);
+	current_ticketline.setMultiply(current_unit);
+
+
+   }
+ }
+
+
+// now remove the ticket lines where the unit = 0
+// start deleteing in reverse order
+
+for (int i = numlines - 1 ; i > 0 ; i--) {
+	loop_ticketline = ticket.getLine(i);
+	loop_unit  = loop_ticketline.getMultiply();
+	if (loop_unit == 0){
+		ticket.removeLine(i);
+
+	}
+}
+

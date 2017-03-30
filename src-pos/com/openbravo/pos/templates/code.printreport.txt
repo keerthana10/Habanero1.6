@@ -1,0 +1,1 @@
+sales.printReport("/com/openbravo/reports/ticketsample");

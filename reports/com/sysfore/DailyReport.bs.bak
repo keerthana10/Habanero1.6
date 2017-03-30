@@ -1,0 +1,51 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.DailyReport");
+report.setReport("/com/sysfore/DailyReport");
+report.setResourceBundle("com/sysfore/DailyReport_messages");
+
+report.setSentence("select * from (" +
+                "select products.id as aid, products.name as item, products.itemcode, categories.name, stockcurrent.units as closingstock, " +
+                "case ticketlines.units when 0 then 0 else ticketlines.units end as sales, " +
+                "case (ticketlines.units*ticketlines.price) when 0 then 0 else (ticketlines.units*ticketlines.price) end as saleValue " +
+                "from products left join categories on products.category=categories.id left join stockcurrent on products.id=stockcurrent.product " +
+                "left join stockdiary on products.id=stockdiary.product left join ticketlines on products.id=ticketlines.product where stockdiary.datenew >=(select curdate() from dual) " +
+                "AND ticketlines.units>0 group by products.id) A   left join " +
+                "(select products.id as bid, sum(stockdiary.units) as openingstock  from stockdiary left join products on products.id=stockdiary.product " +
+                "left join categories on products.category=categories.id " +
+                "where stockdiary.datenew < (select curdate() from dual) group by products.id) B on A.aid=B.bid ");
+                
+                
+report.addParameter("categories.id");
+report.addQBFFilter(new com.openbravo.pos.ticket.CategoryFilter());
+
+report.addField("aid", com.openbravo.data.loader.Datas.STRING);
+report.addField("item", com.openbravo.data.loader.Datas.STRING);
+report.addField("itemcode", com.openbravo.data.loader.Datas.STRING);
+report.addField("name", com.openbravo.data.loader.Datas.STRING);
+report.addField("closingstock", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("sales", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("saleValue", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("bid", com.openbravo.data.loader.Datas.STRING);
+report.addField("openingstock", com.openbravo.data.loader.Datas.DOUBLE);
+
+report;

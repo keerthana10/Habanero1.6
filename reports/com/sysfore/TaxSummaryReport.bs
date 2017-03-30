@@ -1,0 +1,114 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.TaxSummaryReport");
+report.setReport("/com/sysfore/TaxSummaryReport");
+report.setResourceBundle("com/sysfore/TaxSummaryReport_messages");
+
+report.setSentence(" SELECT DATENEW ,ROWGROUP, TAXNAME, TAXLINE, AMOUNT, ID , ORDERNO FROM "+
+                          "  (SELECT R.DATENEW, "+
+                          "  '' AS ROWGROUP , '' AS TAXNAME, 'NET AMOUNT' AS TAXLINE, "+
+                         "   SUM(TL.UNITS*TL.PRICE)-(SUM(TL.DISCOUNTPRICE)+SUM(TL.PROMODISCOUNTPRICE)) AS AMOUNT, T.ID AS ID, 1 AS ORDERNO "+
+                         "   FROM RECEIPTS R "+
+                         "   LEFT JOIN TICKETS T ON T.ID=R.ID "+
+                          "  RIGHT JOIN TICKETLINES TL ON T.ID=TL.TICKET "+
+                           " WHERE T.ISCANCELTICKET='N' AND T.ISNONCHARGABLE='N' "+
+                           " GROUP BY DATENEW "+
+
+                           " UNION "+
+
+                          "  SELECT  R.DATENEW, "+
+                          "  '' AS ROWGROUP ,'' AS TAXNAME, 'BILL AMOUNT' AS TAXLINE, "+
+                          "  SUM(T.BILLAMOUNT) AS AMOUNT, TICKETS.ID AS ID, 2 AS ORDERNO "+
+                          "  FROM RECEIPTS R "+
+                           " LEFT JOIN TICKETS T ON T.ID=R.ID "+
+                           " LEFT JOIN TICKETS ON TICKETS.ID=R.ID "+
+                           " WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N' "+
+                            "GROUP BY DATENEW "+
+
+                          "  UNION "+
+
+                          "  SELECT R.DATENEW, "+
+                          "  '' AS ROWGROUP ,SC.NAME AS TAXNAME, 'GROSS' AS TAXLINE, SUM(SCL.BASE) AS AMOUNT, TICKETS.ID AS ID, "+
+                          "    3 AS ORDERNO "+
+                          "  FROM RECEIPTS R  "+
+                          "  RIGHT JOIN SERVICECHARGELINES SCL ON SCL.RECEIPT=R.ID "+
+                          "   LEFT JOIN SERVICECHARGE SC ON SC.ID=SCL.SERVICECHARGEID "+
+                          "  LEFT JOIN TICKETS ON TICKETS.ID=R.ID "+
+                           " WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N' "+
+                          "  GROUP BY DATENEW,SC.NAME,TAXLINE ,TICKETS.ID"+
+
+                           " UNION "+
+
+                          " SELECT R.DATENEW, "+
+                          " '' AS ROWGROUP ,SC.NAME AS TAXNAME, 'TAX' AS TAXLINE, SUM(SCL.AMOUNT) AS AMOUNT , TICKETS.ID AS ID, "+
+                          "  3 AS ORDERNO "+
+                          "  FROM RECEIPTS R "+
+                          "  LEFT JOIN SERVICECHARGELINES SCL ON SCL.RECEIPT=R.ID "+
+                          "  LEFT JOIN SERVICECHARGE SC ON SC.ID=SCL.SERVICECHARGEID "+
+                          " LEFT JOIN TICKETS ON TICKETS.ID=R.ID "+
+                          "  WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N' "+
+                          "  GROUP BY DATENEW,SC.NAME,TAXLINE,TICKETS.ID "+
+
+                         "   UNION "+
+
+                          "  SELECT R.DATENEW, "+
+                          "  '' AS ROWGROUP ,TX.NAME AS TAXNAME, 'GROSS' AS TAXLINE, CASE WHEN TX.BASEAMOUNT='LNATAX' THEN (TXL.BASE)+(SCL.AMOUNT)  "+
+                          "   ELSE  SUM(TXL.BASE) END  AS AMOUNT , TICKETS.ID AS ID, "+
+                          "  4 AS ORDERNO " +
+                          "  FROM RECEIPTS R " +
+                          "  LEFT JOIN TAXLINES TXL ON TXL.RECEIPT=R.ID " +
+                          "  LEFT JOIN TAXES TX ON TX.ID=TXL.TAXID "+
+                          "  LEFT JOIN SERVICECHARGELINES SCL ON SCL.RECEIPT = R.ID  "+
+                          "  AND SCL.SERVICECHARGEID=TX.TAXBASEID  "+
+                          "  LEFT JOIN TICKETS ON TICKETS.ID=R.ID "+
+                          "  WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N' "+
+                          "  GROUP BY DATENEW,TX.NAME,TAXLINE,TICKETS.ID "+
+
+                          "  UNION "+
+
+                           "  SELECT R.DATENEW, "+
+                           " '' AS ROWGROUP ,TX.NAME AS TAXNAME, 'TAX' AS TAXLINE, SUM(TXL.AMOUNT) AS AMOUNT , TICKETS.ID AS ID, "+
+                           " 4 AS ORDERNO "+
+                           " FROM RECEIPTS R "+
+                           " LEFT JOIN TAXLINES TXL ON TXL.RECEIPT=R.ID "+
+                           " LEFT JOIN TAXES TX ON TX.ID=TXL.TAXID "+
+                           " LEFT JOIN TICKETS ON TICKETS.ID=R.ID "+
+                            "WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N' "+
+                            "GROUP BY DATENEW,TX.NAME,TAXLINE ,TICKETS.ID)  A  "+
+                             " WHERE TAXNAME IS NOT NULL  AND  ?(QBF_FILTER)   "+
+                            "ORDER BY DATENEW, ORDERNO ASC");  
+
+
+report.addParameter("DATENEW");
+report.addParameter("DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+
+
+report.addField("DATENEW", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("ROWGROUP", com.openbravo.data.loader.Datas.STRING);
+report.addField("TAXNAME", com.openbravo.data.loader.Datas.STRING);
+report.addField("TAXLINE", com.openbravo.data.loader.Datas.STRING);
+report.addField("AMOUNT", com.openbravo.data.loader.Datas.DOUBLE); 
+report.addField("ID", com.openbravo.data.loader.Datas.STRING);
+report.addField("ORDERNO", com.openbravo.data.loader.Datas.INT); 
+
+report;

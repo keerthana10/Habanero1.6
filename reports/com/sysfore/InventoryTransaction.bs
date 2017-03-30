@@ -1,0 +1,62 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.InventoryTransaction");
+report.setReport("/com/sysfore/InventoryTransaction");
+report.setResourceBundle("com/sysfore/InventoryTransaction_messages");
+
+report.setSentence("select " +
+                "locations.name as warehouse, " +
+                "stockdiary.product, " +
+                "sum(stockdiary.units) as CInventory,products.itemcode, " +
+                "products.name,categories.name as Itcategory, " +
+                "stockdiary.datenew, " +
+                "case when stockdiary.reason=4 then 'Movement In' "+ 
+                "when stockdiary.reason=-4 then 'Movement Out' "+
+                "when stockdiary.reason=-1 then 'Sales' "+ 
+                "when stockdiary.reason=1 then 'Goods Receipts' "+
+                "when stockdiary.reason=2 then 'Return' "+ 
+                "end as typeval "+    
+                "from stockdiary left join locations on locations.id=stockdiary.location " +
+                "left join products on stockdiary.product=products.id " +
+                "left join categories on products.category = categories.id " +
+                "WHERE ?(QBF_FILTER) "+
+                "group by DATE_FORMAT(datenew, '%Y-%m-%d'),product,locations.name,typeval,categories.name");
+
+
+report.addParameter("STOCKDIARY.DATENEW");
+report.addParameter("STOCKDIARY.DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDates());
+report.addParameter("CATEGORIES.ID");
+report.addQBFFilter(new com.openbravo.pos.ticket.CategoryFilter());
+report.addParameter("STOCKDIARY.REASON");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsType());
+
+
+report.addField("warehouse", com.openbravo.data.loader.Datas.STRING);
+report.addField("product", com.openbravo.data.loader.Datas.STRING);
+report.addField("CInventory", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("itemcode", com.openbravo.data.loader.Datas.STRING);
+report.addField("name", com.openbravo.data.loader.Datas.STRING);
+report.addField("Itcategory", com.openbravo.data.loader.Datas.STRING);
+report.addField("datenew", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("typeval", com.openbravo.data.loader.Datas.STRING);
+report;

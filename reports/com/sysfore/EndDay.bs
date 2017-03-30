@@ -1,0 +1,84 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.EndOfDayReport");
+report.setReport("/com/sysfore/EndDay");
+report.setResourceBundle("com/sysfore/DailyReport_messages");
+
+report.setSentence("select distinct (select now() from dual) as date, "+
+"(select sum(floatcash) from floatcashsetup where created>=(select curdate() from dual)) as openingcash, "+
+                    "(select SUM(total) "+  
+                    "from payments left join receipts  on receipts.id=payments.receipt "+ 
+                    "left join tickets on receipts.id=tickets.id "+ 
+                     "where  payment='Cheque' and receipts.datenew >=(select curdate() from dual) "+
+                    "and tickets.creditamount=0) as cheque, "+
+                    "(select SUM(total) "+  
+                    "from payments left join receipts  on receipts.id=payments.receipt "+ 
+                    "left join tickets on receipts.id=tickets.id "+ 
+                    "where  payment='Card' and receipts.datenew >=(select curdate() from dual) "+
+                    " and tickets.creditamount=0) as card, "+
+                    "(select SUM(total) "+
+                    "from payments left join receipts  on receipts.id=payments.receipt "+
+                    "left join tickets on receipts.id=tickets.id "+
+                    "where  payment='cash' and receipts.datenew >=(select curdate() from dual) "+
+                    "and tickets.creditamount=0) as Cash, "+
+                     "(select SUM(total) "+
+                    "from payments left join receipts  on receipts.id=payments.receipt "+
+                    "left join tickets on receipts.id=tickets.id "+
+                    "where  payment='cash' and receipts.datenew >=(select curdate() from dual) "+
+                    "and receipts.iscreditsale='Y') as receiptcredit, "+
+                     "(select SUM(total) "+
+                    "from payments left join receipts  on receipts.id=payments.receipt "+
+                    "left join tickets on receipts.id=tickets.id "+
+                    "where  payment!='cash' and receipts.datenew >=(select curdate() from dual) "+
+                    "and receipts.iscreditsale='Y') as receipt, "+
+                     "(select count(*) from payments left join receipts "+
+                    "on receipts.id=payments.receipt where payment='Cash' and receipts.iscreditsale='N' "+
+                    "and receipts.datenew >=(select curdate() from dual)) as cashcount, "+
+                    "(select count(*) from payments left join receipts "+
+                    "on receipts.id=payments.receipt where payment='Card' and receipts.iscreditsale='N' "+ 
+                    "and receipts.datenew >=(select curdate() from dual)) as cardcount, "+
+                    "(select count(*) from payments left join receipts "+
+                    "on receipts.id=payments.receipt where payment='Cheque' and receipts.iscreditsale='N' "+ 
+                    "and receipts.datenew >=(select curdate() from dual)) as chequecount, "+
+                    "(select count(*) from receipts left join tickets "+
+                    "on receipts.id=tickets.id where creditamount>0 "+
+                    "and receipts.datenew >=(select curdate() from dual)) as creditcount, "+
+                    "(select sum(denominationvalue) from currencyreconciliation where date>=(select curdate() from dual)) as draw "+
+                    "from receipts  left join tickets  on receipts.id=tickets.id "+
+		   "left join payments on receipts.id=payments.receipt where receipts.datenew >=(select curdate() from dual)");
+
+
+
+
+report.addField("date", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("openingcash", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("cheque", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("card", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Cash", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("receiptcredit", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("receipt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("cashcount", com.openbravo.data.loader.Datas.INT);
+report.addField("cardcount", com.openbravo.data.loader.Datas.INT);
+report.addField("chequecount", com.openbravo.data.loader.Datas.INT);
+report.addField("creditcount", com.openbravo.data.loader.Datas.INT);
+report.addField("draw",com.openbravo.data.loader.Datas.DOUBLE);
+report;

@@ -1,0 +1,52 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.SalesByPeriod");
+report.setReport("/com/openbravo/reports/SalesByPeriod");
+report.setResourceBundle("com/openbravo/reports/SalesByPeriod_messages");
+
+report.setSentence("SELECT " +
+                "PRODUCTS.NAME AS item, " +
+                "PRODUCTS.itemcode, " +
+                "CATEGORIES.name, " +
+                "coalesce(TICKETLINES.UNITS,0) AS sales, " +
+                "coalesce((PRODUCTS.PRICESELL*TICKETLINES.UNITS),0) AS salevalue " +
+                "FROM PRODUCTS " +
+                "LEFT JOIN CATEGORIES ON PRODUCTS.CATEGORY = CATEGORIES.ID " +
+                "LEFT JOIN STOCKCURRENT ON PRODUCTS.ID = STOCKCURRENT.PRODUCT " +
+                "LEFT JOIN STOCKDIARY ON PRODUCTS.ID = STOCKDIARY.PRODUCT " +
+                "LEFT JOIN TICKETLINES ON PRODUCTS.ID = TICKETLINES.PRODUCT " + 
+                "WHERE ?(QBF_FILTER) " +
+                "GROUP BY PRODUCTS.ID ");
+
+report.addParameter("STOCKDIARY.DATENEW");
+report.addParameter("STOCKDIARY.DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+report.addParameter("CATEGORIES.ID");
+report.addQBFFilter(new com.openbravo.pos.ticket.CategoryFilter());
+
+
+report.addField("item", com.openbravo.data.loader.Datas.STRING);
+report.addField("itemcode", com.openbravo.data.loader.Datas.STRING);
+report.addField("name", com.openbravo.data.loader.Datas.STRING);
+report.addField("sales", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("salevalue", com.openbravo.data.loader.Datas.DOUBLE);
+report;

@@ -1,0 +1,70 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.LineTaxSummaryReport");
+report.setReport("/com/sysfore/LineTaxSummaryReport");
+report.setResourceBundle("com/sysfore/TaxSummaryReport_messages");
+
+report.setSentence("select A.ticket, (select now() from dual) as todaydate, A.datenew, A.billamount, sum(A.linetotal),A.servicetaxamt, A.servicechargeamt, A.Vat1amt, A.Vat2amt, A.Vat3amt,A.line1amt, A.line2amt, A.line3amt,A.roundoffvalue,A.swachbharattaxamt from " +
+               "(select t.ticket, r.datenew, tk.billamount, ((t.units*t.price)-t.discountprice) as linetotal, tk.servicetaxamt,tk.servicechargeamt,   " +
+                " COALESCE(tx1.Vat1,0) as Vat1amt,COALESCE(tx2.Vat2,0) as Vat2amt, COALESCE(tx3.Vat3,0) as Vat3amt,  "+
+                "COALESCE(tx1.lineamt1,0) as line1amt, COALESCE(tx2.lineamt2,0) as line2amt, COALESCE(tx3.lineamt3,0) as line3amt,tk.ROUNDOFFVALUE as roundoffvalue,tk.swachbharattaxamt  "+ 
+                "from receipts r " +
+                " inner join tickets tk on (tk.id=r.id) " + 
+                "inner join ticketlines t on (tk.id=t.ticket) " +
+                "left join (SELECT COALESCE(SUM( ((tkline.units*tkline.price)-tkline.discountprice))+(SUM( ((tkline.units*tkline.price)-tkline.discountprice))*COALESCE(sc.rate,0)), 0) AS lineamt1, amount as Vat1,taxlines.receipt,taxlines.taxid from tickets ts inner join ticketlines tkline on ts.id=tkline.ticket right join taxlines on taxlines.receipt=tkline.ticket left join taxes tx on tx.id=taxlines.TAXID    "+
+                "LEFT JOIN servicecharge sc ON tkline.servicechargeid=sc.id "+
+                "where tx.name like 'VAT @20%' and taxlines.taxid=tkline.taxid and ts.completed='Y' and ts.iscancelticket='N' AND taxlines.isservicetax='N' and taxlines.isswachbharattax='N' group by amount, taxlines.receipt, taxlines.taxid) tx1 on t.ticket=tx1.receipt "+  
+                "left join (SELECT COALESCE(SUM( ((tkline.units*tkline.price)-tkline.discountprice))+(SUM( ((tkline.units*tkline.price)-tkline.discountprice))*COALESCE(sc.rate,0)), 0) AS lineamt2, amount AS Vat2,taxlines.receipt,taxlines.taxid from tickets ts inner join ticketlines tkline on ts.id=tkline.ticket right join taxlines on taxlines.receipt=tkline.ticket left join taxes tx on tx.id=taxlines.TAXID " +  
+                "LEFT JOIN servicecharge sc ON tkline.servicechargeid=sc.id "+
+                "where tx.name like 'VAT @14.5%' and taxlines.taxid=tkline.taxid and ts.completed='Y' and ts.iscancelticket='N' AND taxlines.isservicetax='N' and taxlines.isswachbharattax='N' group by amount, taxlines.receipt, taxlines.taxid) tx2 on t.ticket=tx2.receipt  " +
+                "left join (SELECT COALESCE(SUM( ((tkline.units*tkline.price)-tkline.discountprice))+(SUM( ((tkline.units*tkline.price)-tkline.discountprice))*COALESCE(sc.rate,0)), 0) AS lineamt3, amount as Vat3,taxlines.receipt,taxlines.taxid from tickets ts inner join ticketlines tkline on ts.id=tkline.ticket right join taxlines on taxlines.receipt=tkline.ticket left join taxes tx on tx.id=taxlines.TAXID "+
+                "LEFT JOIN servicecharge sc ON tkline.servicechargeid=sc.id "+
+                "where tx.name like 'VAT @5.5%' and taxlines.taxid=tkline.taxid and ts.completed='Y' and ts.iscancelticket='N' AND taxlines.isservicetax='N' and taxlines.isswachbharattax='N' group by amount, taxlines.receipt, taxlines.taxid) tx3 on t.ticket=tx3.receipt " +
+                "WHERE " +
+                " tk.completed='Y' and  tk.ISCANCELTICKET='N'   " +
+                ")A where ?(QBF_FILTER)  "+
+                "group by A.ticket, A.datenew, A.billamount, A.servicetaxamt, A.servicechargeamt,A.Vat1amt, A.Vat2amt, A.Vat3amt,A.roundoffvalue,A.swachbharattaxamt");
+
+
+report.addParameter("datenew");
+report.addParameter("datenew");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+
+report.addField("ticket", com.openbravo.data.loader.Datas.STRING);
+report.addField("todaydate", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("datenew", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("billamount", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("sum(A.linetotal)", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("servicetaxamt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("servicechargeamt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Vat1amt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Vat2amt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Vat3amt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("line1amt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("line2amt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("line3amt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("roundoffvalue", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("swachbharattaxamt", com.openbravo.data.loader.Datas.DOUBLE);
+
+
+
+report;

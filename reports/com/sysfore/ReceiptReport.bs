@@ -1,0 +1,42 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.CreditReceiptReport");
+report.setReport("/com/sysfore/ReceiptReport");
+report.setResourceBundle("com/sysfore/CreditSalesByPeriod_messages");
+
+report.setSentence("SELECT (SELECT NOW() FROM DUAL) AS DATE, " +
+               "SUM(CS.BILLAMOUNT) AS billamt,SUM(CS.CREDITAMOUNT) AS credit,C.NAME " +
+                "FROM RECEIPTS R LEFT JOIN CREDITSALE CS ON (R.ID=CS.TICKETID) " +
+                "JOIN CUSTOMERS C ON (CS.CUSTOMER=C.ID) " +
+                "WHERE ?(QBF_FILTER)  " +
+                "AND CS.ISACTIVE='Y' " +
+                "GROUP BY C.ID ");
+
+report.addParameter("R.DATENEW");
+report.addParameter("R.DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDefaultDates());
+
+report.addField("DATE", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("billamt", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("credit", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("name", com.openbravo.data.loader.Datas.STRING);
+report;

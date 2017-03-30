@@ -1,0 +1,53 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.ItemsReport");
+report.setReport("/com/sysfore/ItemsReport");
+report.setResourceBundle("com/sysfore/ItemsReport_messages");
+
+report.setSentence("SELECT " +
+                "P.itemcode, " +
+                "P.name, " +
+                "P.CODE AS barcode, " +
+                "P.PRICEBUY AS cost, " +
+                "C.NAME AS category, " +
+                "P.PRICESELL AS sellingPrice, " + 
+                "P.mrp, " + 
+                "P.isactive " +            
+                "FROM PRODUCTS P " +
+                "LEFT JOIN CATEGORIES C ON P.CATEGORY = C.ID " + "WHERE ?(QBF_FILTER) ");
+report.addParameter("C.ID");
+report.addQBFFilter(new com.openbravo.pos.ticket.CategoryFilter());
+report.addParameter("P.isactive");
+report.addQBFFilter(new com.openbravo.pos.ticket.StatusFilter());
+
+
+
+report.addField("itemcode", com.openbravo.data.loader.Datas.STRING);
+report.addField("name", com.openbravo.data.loader.Datas.STRING);
+report.addField("barcode", com.openbravo.data.loader.Datas.STRING);
+report.addField("cost", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("category", com.openbravo.data.loader.Datas.STRING);
+report.addField("sellingPrice", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("mrp", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("isactive", com.openbravo.data.loader.Datas.STRING);
+
+report;

@@ -1,0 +1,136 @@
+<output>
+   <ticket printer="2">
+    <line></line>
+
+ <image>Printer.Ticket.Logo</image>
+
+
+<line></line>
+
+        <line>
+       <text align="center" length="42" bold="true">END DAY REPORT</text>
+       </line>
+       <line>
+            <text>---------------------------------------------</text>
+       </line>
+
+
+        <line>
+            <text length="18">Start date:</text>
+            <text length="24" align="right">${payments.getDateStart()}</text>
+        </line>
+        <line>
+            <text length="18">End date:</text>
+            <text length="24" align="right">${payments.getDateEnd()}</text>
+        </line>
+        <line></line>
+          <line>
+            <text align="left" length="18">POS Machine:</text>
+            <text align="right" length="24">${payments.printPosNo()}</text>
+        </line>
+        <line>
+            <text>---------------------------------------------</text>
+       </line>
+       <line></line>
+        <line>
+            <text align ="left" length="22"  bold="true">Float Amount</text>
+            <text align ="right" length="20" bold="true">${payments.printFloatAmt()}</text>
+        </line>
+        <line>
+            <text align ="left" length="22" >Sales</text>
+            <text align ="right" length="20">${payments.printSalesTotal()}</text>
+        </line>
+
+
+
+        <line>
+            <text align ="left" length="22" >TAX</text>
+            <text align ="right" length="20">${payments.printSalesTaxes()}</text>
+        </line>
+
+ 	<line>
+            <text align ="left" length="22" >Credit Collection</text>
+            <text align ="right" length="20">${payments.printCreditAmt()}</text>
+        </line>
+
+
+
+         <line>
+            <text align ="left" length="22" bold="true">Tot Sales Collection</text>
+            <text align ="right" length="20" bold="true">${payments.printAmt()}</text>
+        </line>
+
+          <line></line>
+        <line>
+            <text align ="left" length="22">Sales Receipts:</text>
+            <text align ="right" length="20">${payments.printSales()}</text>
+        </line>
+
+
+
+        <line></line>
+         <line>
+            <text align ="left" length="32" bold="true">No.of Items Sold</text>
+            <text align ="right" length="10" bold="true">${payments.getTotalItemsSold()}</text>
+        </line>
+
+
+       <line>
+            <text>---------------------------------------------</text>
+       </line>
+        <line>
+            <text align="left" length="42" bold="true">Payments</text>
+       </line>
+        <line></line>
+        #foreach ($line in $payments.getPaymentLines())
+
+
+
+        <line>
+            <text align ="left" length="15">${line.printType()}</text>
+            <text align ="left" length="12">${line.getPaymentCount()}</text>
+            <text align ="right" length="15">${line.printValue()}</text>
+       </line>
+        #end
+        <line>
+            <text>---------------------------------------------</text>
+        </line>
+        <line >
+            <text align ="left" length="22" bold="true">TOTAL</text>
+            <text align ="right" length="20" bold="true">${payments.getTotalPaymentLine()}</text>
+        </line>
+        <line>
+            <text>---------------------------------------------</text>
+        </line>
+
+      <line></line>
+        <line>
+            <text align ="left" length="15" bold="true">Tax Code</text>
+            <text align ="left" length="15" bold="true">Percentage</text>
+            <text align ="right" length="12" bold="true">Amount</text>
+        </line>
+
+        <line>
+            <text>---------------------------------------------</text>
+        </line>
+        #foreach ($line in $payments.getSaleLines())
+        <line>
+            <text align ="left" length="12">${line.printTaxName()}</text>
+            <text align ="left" length="12">${line.getSalesTaxesRate()}</text>
+            <text align ="right" length="18">${line.printTaxes()}</text>
+        </line>
+        #end
+        <line>
+            <text>---------------------------------------------</text>
+        </line>
+         <line>
+            <text align ="left" length="20" bold="true">TOTAL</text>
+             <text align ="right" length="22">${payments.getTotalSaleLines()}</text>
+        </line>
+       <line>
+            <text>---------------------------------------------</text>
+        </line>
+  </ticket>
+</output>
+
+

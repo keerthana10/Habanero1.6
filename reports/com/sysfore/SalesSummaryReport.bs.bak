@@ -1,0 +1,121 @@
+ //    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+report.setTitleKey("Menu.SalesSummaryReport");
+report.setReport("/com/sysfore/SalesSummaryReport");
+report.setResourceBundle("com/sysfore/SettlementReport_messages");
+
+
+report.setSentence( " select datenew,  "+
+                              "  COALESCE(SERVICECHARGEAMT,0), "+
+                             "   COALESCE(SERVICETAXAMT,0),  "+
+                             "   COALESCE(ROUNDOFFVALUE,0),  "+
+                               " BILLAMOUNT,  "+
+                               " sum(price) AS NET,  "+
+                              "  SUM(IF(name = 'Food', PRICE, 0)) Food,  "+
+                             "   SUM(IF(name = 'Beverage', PRICE, 0)) Beverage,  "+
+                              "  SUM(IF(name = 'Liquor', PRICE, 0)) Liquor,  "+
+                              "  SUM(IF(name = 'Tobacco', PRICE, 0)) Tobacco,  "+
+                              "  sum(price) AS BASIC,sum(discountprice) AS DISCOUNTPRICE, SUM(PROMODISCOUNTPRICE) AS PROMODISCOUNTPRICE, TAX,  "+
+                               " CASH,COMPLEMENTARY,CHEQUE,STAFF,VOUCHER,MOBILE,VCLOUD,AMEX,FOODPANDA,  "+
+                             "   SWIGGY,DELIVERY,VISA,OTHERCARDS,ZOMATO, COALESCE(SWACHBHARATHTAXAMT,0),NOW(), ACCOUNTDATE  "+
+                              "  from(select R.DATENEW,   "+
+                              "  TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,  "+
+                              "  C1.NAME,COALESCE(SUM(TICKETLINES.UNITS*TICKETLINES.PRICE)-(sum(discountprice)+sum(PROMODISCOUNTPRICE)),0) AS PRICE,  "+
+                              "  COALESCE(SUM(((TICKETLINES.UNITS*TICKETLINES.PRICE)*TICKETLINES.DISCOUNT)/100),0)   "+
+                              "  AS DISCOUNTPRICE,  "+
+                              "  COALESCE(SUM(TICKETLINES.PROMODISCOUNTPRICE),0)   "+
+                              "  AS PROMODISCOUNTPRICE,  "+
+                              "  SC.SERVICECHARGEAMT AS SERVICECHARGEAMT,  "+
+                              "  ST.SERVICETAXAMT AS SERVICETAXAMT,  "+
+                              "  BILLPARAM.ROUNDOFFVALUE AS ROUNDOFFVALUE,  "+
+                              "  BILLPARAM.BILLAMOUNT AS BILLAMOUNT,  "+
+                              "  VT.TAXAMT AS TAX,  "+
+                              "  PM.CASH AS CASH,PM.COMPLEMENTARY AS COMPLEMENTARY,  "+
+                              "  PM.CHEQUE AS CHEQUE,PM.STAFF AS STAFF,PM.VOUCHER AS VOUCHER,  "+
+                              "  PM.MOBILE AS MOBILE,PM.VCLOUD AS VCLOUD,PM.AMEX AS AMEX,  "+
+                              "  PM.FOODPANDA AS FOODPANDA,  "+
+                              "  PM.SWIGGY AS SWIGGY,  "+
+                              "  PM.DELIVERY AS DELIVERY,  "+
+                               " PM.VISA AS VISA,  "+
+                              "  PM.OTHERCARDS AS OTHERCARDS, PM.ZOMATO AS ZOMATO, "+
+                               " SW.SWACHBHARATHTAXAMT AS SWACHBHARATHTAXAMT, R.ACCOUNTDATE AS ACCOUNTDATE  "+
+                               " FROM RECEIPTS R "+
+                               " JOIN TICKETS ON R.ID=TICKETS.ID  "+
+                              "  LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET  "+
+                              "  LEFT JOIN accdatesalessummarybilltotal_view BILLPARAM ON R.ACCOUNTDATE=BILLPARAM.ACCOUNTDATE   "+
+                               " LEFT JOIN PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT  "+
+                               " LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY  "+
+                                " LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID  "+
+                               " LEFT JOIN accdatesalessummarypayment_view PM ON R.ACCOUNTDATE=PM.ACCOUNTDATE  "+
+                               " LEFT JOIN accdatesalessummarytakeaway_view TA ON R.ACCOUNTDATE=TA.ACCOUNTDATE  "+
+                               " LEFT JOIN accdatesalessummaryswachbharattax_view SW ON R.ACCOUNTDATE=SW.ACCOUNTDATE   "+
+                              "  LEFT JOIN accdatesalessummaryservicetax_view ST ON R.ACCOUNTDATE=ST.ACCOUNTDATE   "+
+                               " LEFT JOIN accdatesalessummaryvattax_view VT ON R.ACCOUNTDATE=VT.ACCOUNTDATE   "+
+                               " LEFT JOIN accdatesalessummaryservicecharge_view SC ON R.ACCOUNTDATE=SC.ACCOUNTDATE   "+
+                               " WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE ='N'  "+
+                               " AND ?(QBF_FILTER)  "+
+                                "GROUP BY C1.NAME,DATE_FORMAT(R.ACCOUNTDATE, '%Y-%M-%D')  "+
+                               " ORDER BY R.ACCOUNTDATE)a "+
+                               " group by DATE_FORMAT(ACCOUNTDATE, '%Y-%M-%D')  "+
+                               "  order by accountdate " );
+
+
+
+report.addParameter("R.ACCOUNTDATE");
+report.addParameter("R.ACCOUNTDATE");
+
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsCloseDate());
+
+
+
+report.addField("datenew", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("COALESCE(SERVICECHARGEAMT,0)", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("COALESCE(SERVICETAXAMT,0)", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("COALESCE(ROUNDOFFVALUE,0)", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("BILLAMOUNT", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("NET", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Food", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Beverage", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Liquor", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("Tobacco", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("BASIC", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DISCOUNTPRICE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("PROMODISCOUNTPRICE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("TAX", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("CASH", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("COMPLEMENTARY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("CHEQUE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("STAFF", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VOUCHER", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("MOBILE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VCLOUD", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("AMEX", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("FOODPANDA", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("SWIGGY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DELIVERY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VISA", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("OTHERCARDS", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("ZOMATO", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("COALESCE(SWACHBHARATHTAXAMT,0)", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("NOW()", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("ACCOUNTDATE", com.openbravo.data.loader.Datas.TIMESTAMP);
+
+report;

@@ -1,0 +1,61 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.CancelledBill");
+report.setReport("/com/sysfore/CancelledBill");
+report.setResourceBundle("com/sysfore/CancelledBill_messages");
+
+report.setSentence(" 	SELECT  BILLDATE AS BILLDATE,RESULT.BILLNUM,"  +
+                    " 	CASE WHEN KR.REASON IS NULL THEN DESCRIPTION ELSE CONCAT(KR.REASON,' / ',DESCRIPTION) END AS 'REASON/DESCRIPTION',OLDBILLNUM,RESULT.USER"  +
+                    " 	FROM (SELECT CASE WHEN R.DATENEW IS NULL THEN I.PRINTDATE ELSE R.DATENEW END AS BILLDATE,"  +
+                    " 	I.TICKETID AS BILLNUM,"  +
+                    " 	CASE WHEN I.CANCELCOMMENTS IS NOT NULL THEN I.CANCELCOMMENTS ELSE T.CANCELCOMMENTS END AS DESCRIPTION,"  +
+                    " 	CASE WHEN I.BILLPARENT=0 THEN T.PARENTBILLNO ELSE I.BILLPARENT END AS OLDBILLNUM,"  +
+                    " 	CASE WHEN t.person IS NULL THEN i.person ELSE t.person END AS USERID,"  +
+                    " 	(SELECT P.NAME"  +
+                    " 	FROM PEOPLE P "  +
+                    " 	WHERE P.ID = USERID) AS USER,"  +
+                    " 	T.CANCELREASONID "  +
+                    " "  +
+                    " 	FROM (SELECT T1.ID,T1.ORDERNUM,T1.DOCUMENTNO,T1.TICKETID,T1.PERSON,T1.ISCANCELTICKET,T1.CANCELREASONID,T1.CANCELCOMMENTS"  +
+                    " 	,T2.TICKETID AS PARENTBILLNO"  +
+                    " 	FROM TICKETS AS T1"  +
+                    " 	 LEFT OUTER JOIN TICKETS AS T2 ON T1.PARENTBILLNO=T2.ID"  +
+                    " 	 ) AS T"  +
+                    " 	 RIGHT OUTER JOIN INVOICE I USING(TICKETID)"  +
+                    " 	 LEFT OUTER JOIN RECEIPTS AS R ON R.ID = T.ID"  +
+                    " 	 "  +
+                    " 	WHERE (T.ISCANCELTICKET='Y' OR I.ISCANCELTICKET='Y') "  +
+                    " 	"  +
+                    " 	ORDER BY ABS(i.ticketid)"  +
+                    " 	) RESULT"  +
+                    " 	LEFT OUTER JOIN KOTREASON KR ON RESULT.CANCELREASONID = KR.ID WHERE ?(QBF_FILTER) ");
+
+report.addParameter("RESULT.BILLDATE");
+report.addParameter("RESULT.BILLDATE");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsMandtoryDates());
+
+report.addField("BILLDATE", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("BILLNUM", com.openbravo.data.loader.Datas.INT);
+report.addField("REASON/DESCRIPTION", com.openbravo.data.loader.Datas.STRING);
+report.addField("OLDBILLNUM", com.openbravo.data.loader.Datas.INT);
+report.addField("USER", com.openbravo.data.loader.Datas.STRING);
+report;

@@ -1,0 +1,933 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="DiscountReport"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="2834"
+		 pageHeight="595"
+		 columnWidth="2774"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="ARG" isForPrompting="false" class="java.lang.Object"/>
+	<queryString><![CDATA[SELECT ROWGROUP, DATENEW, TABLENO, PAX, BILLNO,CATEGORY,CATEGORYCOLUMN,AMOUNT,
+USER,NOW(),DISPLAYORDER,
+SUBORDER,DISCOUNTREASON, REASON FROM 
+(SELECT '' AS ROWGROUP, R.DATENEW, PLACES.NAME AS TABLENO,
+TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,C1.NAME AS CATEGORY,
+C1.NAME AS CATEGORYCOLUMN,COALESCE(SUM((TICKETLINES.UNITS*TICKETLINES.PRICE)),0) AS AMOUNT,
+PEOPLE.NAME AS USER,NOW(),
+1 AS DISPLAYORDER, 0 AS SUBORDER,TICKETS.DISCOUNTREASON, DISCOUNTREASON.REASON
+FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID
+LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID
+LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR
+LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET
+LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT 
+LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY
+LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID
+LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID	
+LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0
+GROUP BY BILLNO,CATEGORY,CATEGORYCOLUMN,TABLENO,PAX
+
+UNION
+
+SELECT '' AS ROWGROUP, R.DATENEW, PLACES.NAME AS TABLENO,
+TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,C1.NAME AS CATEGORY,
+'DISCOUNT%' AS CATEGORYCOLUMN,COALESCE(TICKETLINES.DISCOUNT,0) AS AMOUNT,PEOPLE.NAME AS USER,NOW(),
+2 AS DISPLAYORDER, 1 AS SUBORDER,TICKETS.DISCOUNTREASON, DISCOUNTREASON.REASON
+FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID
+LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID
+LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR
+LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET
+LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT 
+LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY
+LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID
+LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID	
+LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0
+GROUP BY BILLNO,CATEGORY,CATEGORYCOLUMN,TABLENO,PAX
+
+UNION
+
+SELECT '' AS ROWGROUP,R.DATENEW, PLACES.NAME AS TABLENO,
+TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,C1.NAME AS CATEGORY,
+'DISCOUNT PRICE' AS CATEGORYCOLUMN,
+COALESCE(SUM(((TICKETLINES.UNITS*TICKETLINES.PRICE)*TICKETLINES.DISCOUNT)/100),0) AS AMOUNT,
+PEOPLE.NAME AS USER,NOW(),
+2 AS DISPLAYORDER, 2 AS SUBORDER,TICKETS.DISCOUNTREASON, DISCOUNTREASON.REASON
+FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID
+LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID
+LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR
+LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET
+LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT 
+LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY
+LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID
+LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID
+LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0
+GROUP BY BILLNO,CATEGORY,CATEGORYCOLUMN,TABLENO,PAX
+
+UNION
+
+SELECT '' AS ROWGROUP, R.DATENEW, PLACES.NAME AS TABLENO,
+TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,'Z' AS CATEGORY,
+'TOTAL DISCOUNT' AS CATEGORYCOLUMN,COALESCE(SUM(DISCOUNTPRICE),0 )AS AMOUNT,
+PEOPLE.NAME AS USER,NOW(),
+3 AS DISPLAYORDER, 0 AS SUBORDER,TICKETS.DISCOUNTREASON, DISCOUNTREASON.REASON
+FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID
+LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID
+LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR
+LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET
+LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT 
+LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY
+LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID
+LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID
+LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0
+GROUP BY BILLNO) A
+
+ORDER BY BILLNO, DISPLAYORDER ASC ,CATEGORY, SUBORDER]]></queryString>
+
+	<field name="ROWGROUP" class="java.lang.String"/>
+	<field name="DATENEW" class="java.util.Date"/>
+	<field name="TABLENO" class="java.lang.String"/>
+	<field name="PAX" class="java.lang.Integer"/>
+	<field name="BILLNO" class="java.lang.Integer"/>
+	<field name="CATEGORY" class="java.lang.String"/>
+	<field name="CATEGORYCOLUMN" class="java.lang.String"/>
+	<field name="AMOUNT" class="java.lang.Double"/>
+	<field name="USER" class="java.lang.String"/>
+	<field name="NOW()" class="java.util.Date"/>
+	<field name="DISPLAYORDER" class="java.lang.Integer"/>
+	<field name="SUBORDER" class="java.lang.Integer"/>
+	<field name="DISCOUNTREASON" class="java.lang.String"/>
+	<field name="REASON" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="50"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="797"
+						height="28"
+						key="staticText-1"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Discount Report]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="2"
+						y="28"
+						width="48"
+						height="22"
+						key="staticText-2"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[From :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="180"
+						y="28"
+						width="37"
+						height="22"
+						key="staticText-3"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[To :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="50"
+						y="28"
+						width="130"
+						height="22"
+						key="textField-1"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[com.openbravo.format.Formats.DATE.formatValue((java.util.Date)((Object[])((Object[])$P{ARG})[0])[1])]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="217"
+						y="28"
+						width="2105"
+						height="22"
+						key="textField-2"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[com.openbravo.format.Formats.DATE.formatValue((java.util.Date)((Object[])((Object[])$P{ARG})[0])[3])]]></textFieldExpression>
+				</textField>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="34"  isSplitAllowed="true" >
+				<crosstab >
+					<reportElement
+						x="2"
+						y="0"
+						width="2772"
+						height="34"
+						key="crosstab-1"/>
+					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="25"
+						key="staticText-2"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Date
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="76"
+						y="0"
+						width="77"
+						height="25"
+						key="staticText-2"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Table.No
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="153"
+						y="0"
+						width="78"
+						height="25"
+						key="staticText-2"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Pax
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="231"
+						y="0"
+						width="84"
+						height="25"
+						key="staticText-2"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Bill No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="315"
+						y="0"
+						width="77"
+						height="25"
+						key="staticText-2"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[User
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="492"
+						y="0"
+						width="96"
+						height="25"
+						key="staticText-4"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Discount Comments]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="392"
+						y="0"
+						width="100"
+						height="25"
+						key="staticText-4"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Discount Reason
+]]></text>
+				</staticText>
+						</cellContents>
+					</crosstabHeaderCell>					<rowGroup name="ROWGROUP" width="0" totalPosition="End">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{ROWGROUP}]]></bucketExpression>
+						</bucket>
+						<crosstabTotalRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+</box>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="30"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Grand Total"]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="Date" width="76">
+						<bucket>
+							<bucketExpression class="java.util.Date"><![CDATA[$F{DATENEW}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="30"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$V{Date}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="TableNo" width="77">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{TABLENO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="77"
+						height="30"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{TableNo}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="Pax" width="78">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{PAX}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="78"
+						height="30"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{Pax}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="BillNo" width="84">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{BILLNO}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="84"
+						height="30"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{BillNo}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="User" width="77">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{USER}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="77"
+						height="30"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{User}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="DiscountReason" width="100">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{REASON}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box></box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="100"
+						height="30"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{DiscountReason}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<rowGroup name="DiscountComments" width="96">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{DISCOUNTREASON}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box></box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="96"
+						height="30"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{DiscountComments}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<columnGroup name="category" height="0">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{CATEGORY}]]></bucketExpression>
+						</bucket>
+					</columnGroup>
+					<columnGroup name="ORDER" height="0">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{DISPLAYORDER}]]></bucketExpression>
+						</bucket>
+					</columnGroup>
+					<columnGroup name="SUBORDER" height="0">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{SUBORDER}]]></bucketExpression>
+						</bucket>
+					</columnGroup>
+					<columnGroup name="CATEGORYCOLUMN" height="25" totalPosition="End" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{CATEGORYCOLUMN}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="77"
+						height="25"
+						key="textField"/>
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{CATEGORYCOLUMN}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabColumnHeader>
+					</columnGroup>
+
+					<measure name="AMOUNT_Nothing" class="java.lang.Double">
+						<measureExpression><![CDATA[$F{AMOUNT}]]></measureExpression>
+					</measure>
+					<measure name="TotalPax" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{PAX}]]></measureExpression>
+					</measure>
+					<measure name="TotalDiscount" class="java.lang.Double" calculation="Sum">
+						<measureExpression><![CDATA[$F{AMOUNT}]]></measureExpression>
+					</measure>
+					<measure name="TotPax" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{PAX}]]></measureExpression>
+					</measure>
+					<crosstabCell width="77" height="30">
+						<cellContents mode="Transparent">
+					<box rightPadding="3">					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="74"
+						height="30"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[($V{AMOUNT_Nothing} != null) ? $V{AMOUNT_Nothing} : new Double("0.0")]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="30" rowTotalGroup="ROWGROUP">
+						<cellContents mode="Transparent">
+					<box></box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="77"
+						height="30"
+						key="textField">
+							<printWhenExpression><![CDATA[($V{CATEGORYCOLUMN}.equals("TOTAL DISCOUNT" ) ? Boolean.TRUE : Boolean.FALSE)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{TotalDiscount_ROWGROUP_ALL}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" rowTotalGroup="ROWGROUP" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="Date">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Date" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="TableNo">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="TableNo" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="Pax">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Pax" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="BillNo">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="BillNo" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="User">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="User" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="User" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="BillNo" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Pax" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="TableNo" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Date" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" rowTotalGroup="ROWGROUP" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="User" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="BillNo" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Pax" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="TableNo" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Date" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" rowTotalGroup="ROWGROUP" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="User" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="BillNo" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Pax" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="TableNo" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="Date" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" rowTotalGroup="ROWGROUP" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="DiscountComments">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountComments" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountComments" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountComments" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountComments" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="77" height="0" rowTotalGroup="DiscountReason">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountReason" columnTotalGroup="CATEGORYCOLUMN">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountReason" columnTotalGroup="SUBORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountReason" columnTotalGroup="ORDER">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="DiscountReason" columnTotalGroup="category">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<whenNoDataCell>						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</whenNoDataCell>					</crosstab>
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,168 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://sourceforge.net/projects/openbravopos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+group = menu.addGroup("Menu.Transactions");
+       group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Billing", "com.openbravo.pos.sales.JRetailPanelTicketSales");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Reprint", "com.openbravo.pos.sales.JRetailRePrintTicket");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.TakeAway", "com.openbravo.pos.sales.JRetailPanelTakeAwaySales");
+
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Unlock","com.openbravo.pos.sales.restaurant.JRetailTicketUnlock");
+  group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.HomeTakeAway", "com.openbravo.pos.sales.JRetailPanelHomeDeliverySales");
+ group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.EditSales", "com.openbravo.pos.sales.JRetailPanelTicketEdits");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.PO", "com.sysfore.pos.purchaseorder.JPurchaseOrder");
+  group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Preview", "com.openbravo.pos.sales.JRetailTicketPrintEdit");
+ group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.PosActions", "com.sysfore.pos.panels.JPosActionsPanel");
+
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.PI", "com.sysfore.pos.purchaseorder.JPurchaseInvoice");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.GRN", "com.sysfore.pos.purchaseorder.JGoodsReceipts");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.GM", "com.sysfore.pos.purchaseorder.JGoodsMovement");
+ group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.GRR", "com.sysfore.pos.purchaseorder.JGoodsReturn");
+
+    // group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.GRN", "com.sysfore.pos.goodsreceipt.MainGrnPanel");
+     //group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.StockReconciliation", "com.sysfore.pos.stockreconciliation.JStockReconciliation");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.HomeDelivery", "com.sysfore.pos.homedelivery.HomeDeliveryTracking");
+    // group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.creditSales", "com.sysfore.pos.creditsale.JCreditSales");
+
+  //  group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Salesdump", "com.sysfore.pos.salesdump.JSalesDump");
+
+ group = menu.addGroup("Menu.Masters");
+ group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Home", "com.openbravo.pos.forms.JHomePanel");
+    submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.ItemManagement", "com.openbravo.pos.forms.MenuItemManagement");
+        submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.ItemCategories", "com.openbravo.pos.inventory.CategoriesPanel");
+        submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.Item", "com.openbravo.pos.inventory.ProductsPanel");
+submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.ItemLabels", "/com/openbravo/reports/productlabels.bs");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.productionareatype", "com.openbravo.pos.inventory.JProductionAreaType");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.productionarea", "com.openbravo.pos.inventory.JProductionArea");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.sectionmapping", "com.openbravo.pos.inventory.JSectionMapping");
+    submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.CustomersManagement", "com.openbravo.pos.forms.MenuCustomerManagement");
+        submenu.addPanel("/com/openbravo/images/kdmconfig.png", "Menu.CustomersManagement", "com.openbravo.pos.customers.CustomersPanel");
+    submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.Taxation", "com.openbravo.pos.forms.MenuTaxation");
+        submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.TaxCategories", "com.openbravo.pos.inventory.TaxCategoriesPanel");
+        submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.CustCategories", "com.openbravo.pos.inventory.TaxCustCategoriesPanel");
+ 	submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.TaxRate", "com.openbravo.pos.inventory.TaxPanel");
+     submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.Discount", "com.openbravo.pos.forms.MenuDiscount");
+        submenu.addPanel("/com/openbravo/images/kdmconfig.png", "Menu.DiscountPanel", "com.sysfore.pos.cashmanagement.JDiscountPanel");
+     submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.WarehouseMasters", "com.openbravo.pos.forms.MenuWarehouseMasters");
+        submenu.addPanel("/com/openbravo/images/gohome.png", "Menu.Locations", "com.openbravo.pos.inventory.LocationsPanel");
+  submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.StockMovement", "com.openbravo.pos.inventory.StockManagement");
+
+     submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.CashManagement", "com.openbravo.pos.forms.MenuCashManagement");
+        submenu.addPanel("/com/openbravo/images/kdmconfig.png", "Menu.FloatCash", "com.sysfore.pos.cashmanagement.JFloatCashPanel");
+	submenu.addPanel("/com/openbravo/images/kdmconfig.png", "Menu.PettyCash", "com.sysfore.pos.cashmanagement.JPettyCashPanel");
+ submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.Chargesmaster", "com.openbravo.pos.forms.MenuChargesmaster");
+        submenu.addPanel("/com/openbravo/images/kdmconfig.png", "Menu.ChargesPanel", "com.sysfore.pos.purchaseorder.JExtraChargePanel");
+
+     submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.UsersRoles", "com.openbravo.pos.forms.MenuUsersRoles");
+        submenu.addPanel("/com/openbravo/images/kdmconfig.png", "Menu.Users", "com.openbravo.pos.admin.PeoplePanel");
+        submenu.addPanel("/com/openbravo/images/yast_group_add.png", "Menu.Roles", "com.openbravo.pos.admin.RolesPanel");
+        submenu.addPanel("/com/openbravo/images/clipart.png", "Menu.Resources", "com.openbravo.pos.admin.ResourcesPanel");
+        submenu.addPanel("/com/openbravo/images/gohome.png", "Menu.Locations", "com.openbravo.pos.inventory.LocationsPanel");
+        submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.Floors", "com.openbravo.pos.mant.JPanelFloors");
+        submenu.addPanel("/com/openbravo/images/bookmark.png", "Menu.Tables", "com.openbravo.pos.mant.JPanelPlaces");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.BusinessTypePanel", "com.sysfore.pos.hotelmanagement.JBusinessTypePanel");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.ServiceCharge", "com.sysfore.pos.hotelmanagement.JServiceChargePanel");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.TaxMappingPanel", "com.sysfore.pos.hotelmanagement.JTaxMappingPanel");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Uom", "com.sysfore.pos.hotelmanagement.JUom");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.PrinterConfig", "com.sysfore.pos.hotelmanagement.JPrinterConfigEditor");
+group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Printer", "com.openbravo.pos.inventory.JPrinterConfiguration");
+group.addPanel("/com/openbravo/images/bookmark.png", "Menu.KODPanel", "com.openbravo.pos.inventory.JPanelKodMaster");
+
+
+group = menu.addGroup("Menu.StoreClosing");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.CloseDay", "com.sysfore.pos.cashmanagement.JPanelCashReconciliation");
+
+group = menu.addGroup("Menu.PettyCashExpense");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.PettyCashExpenses", "com.sysfore.pos.cashmanagement.JPettyCashEditorPanel");
+
+group = menu.addGroup("Menu.Reports");
+	//submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.ItemReports", "com.openbravo.pos.forms.MenuItemReports");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.ItemsReport", "/com/sysfore/ItemsReport.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.ProductsMarkup", "/com/sysfore/ProductMarkup.bs");
+
+
+	//submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.CustomerbasedReports", "com.openbravo.pos.forms.MenuCustomerbasedReports");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.CustomerContact", "/com/sysfore/CustomerContactList.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.VendorContact", "/com/sysfore/VendorContactList.bs");
+
+	submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.SalesReports", "com.openbravo.pos.forms.MenuSalesReports");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.DailySalesReport", "/com/sysfore/DailySalesReport.bs");
+  		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.Sales-Billwise", "/com/sysfore/SalesByPeriodBillwise.bs");
+                submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.Sales-Itemwise", "/com/sysfore/SalesByPeriodItemwise.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesByPeriod", "/com/sysfore/SalesByPeriod.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.PdtSalesChart", "/com/openbravo/reports/productsales.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesChartbyUser", "/com/openbravo/reports/chartsales.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.CreditReceiptReport", "/com/sysfore/ReceiptReport.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.CreditSalesReport", "/com/sysfore/CreditSalesByPeriod.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.DailyCreditSalesReport", "/com/sysfore/DailyCreditSales.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.Tipsettlement", "/com/sysfore/TipsSettlement.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.DiscountRegister", "/com/sysfore/DiscountRegister.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.NonChargable", "/com/sysfore/NonChargable.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.KotAnalysis", "/com/sysfore/KotAnalysis.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.KotAnalysis", "/com/sysfore/KotReport.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.KotCancelReport", "/com/sysfore/KotCancelReport.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesComparison", "com.sysfore.pos.salescomparison.JSalesComparison");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesDetails", "/com/sysfore/SalesDetails.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesReport", "/com/sysfore/SalesDetailsReport.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesReport", "/com/sysfore/SalesDetails.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.CancelBill", "/com/sysfore/CancelBillReport.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.CancelledBill", "/com/sysfore/CancelledBill.bs");
+                   //submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SettlementReport", "/com/sysfore/SettlementReport.bs");
+                   submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesDetailsReport", "/com/sysfore/SalesDetailsReport.bs");
+                   submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SettlementReport", "/com/sysfore/SettlementWithSectionReport.bs");
+submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.NCReport", "/com/sysfore/NCReport.bs");
+submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.DiscountReport", "/com/sysfore/DiscountReport.bs");
+submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SalesSummaryReport", "/com/sysfore/SalesSummaryReport.bs");
+
+    submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.SettlementSectionReport", "/com/sysfore/SettlementSectionReport.bs");
+submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.TaxSummaryReport", "/com/sysfore/TaxSummaryReport.bs");
+submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.LineTaxSummaryReport", "/com/sysfore/LineTaxSummaryReport.bs");
+
+
+//submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.PurchaseReports", "com.openbravo.pos.forms.MenuPurchaseReports");
+        //submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.GRNNotInvoiced", "/com/sysfore/GrnNotInvoiced.bs");
+        //submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.Purchase", "/com/sysfore/Purchase.bs");
+
+	//submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.StockReports", "com.openbravo.pos.forms.MenuStockReports");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.Inventory2", "/com/sysfore/CurrentInventory.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.StockValueReport", "/com/sysfore/StockValueReport.bs");
+ 		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.InventoryTransaction", "/com/sysfore/InventoryTransaction.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.InventorywithDate", "/com/sysfore/CurrentInventorywithDateFilter.bs");
+
+
+
+	submenu = group.addSubmenu("/com/openbravo/images/contents.png", "Menu.CashReports", "com.openbravo.pos.forms.MenuCashReports");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.PettyCashReport", "/com/openbravo/reports/pettyExpense.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.DailyCollection", "/com/sysfore/DCollection.bs");
+		submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.DailyCollectionReport", "/com/sysfore/DailyReport.bs");
+		//submenu.addPanel("/com/openbravo/images/appointment.png", "Menu.EndOfDayReport", "/com/sysfore/EndDay.bs");
+		group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.EndOfDayWithFilerReport", "com.sysfore.pos.endday.JEndDay");
+
+    group = menu.addGroup("Menu.System");
+     group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.accountConfig", "com.sysfore.pos.accountingconfig.AccountingConfig");
+     //group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Export", "com.sysfore.pos.accountingconfig.ExportDetails");
+
+    //group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.Checkinout", "com.sysfore.pos.employeemanagement.CheckInOutPanel");
+
+   // group.addPanel("/com/openbravo/images/mycomputer.png", "AA.Menu", "com.sysfore.pos.employeemanagement.AttendanceApproval");
+    //group.addPanel("/com/openbravo/images/mycomputer.png", "Menu.LicenseActivation", "com.sysfore.pos.licensemanagement.LicensePanel");
+    group.addChangePasswordAction();
+    group.addPanel("/com/openbravo/images/package_settings.png", "Menu.Configuration", "com.openbravo.pos.config.JPanelConfiguration");
+    group.addPanel("/com/openbravo/images/fileprint.png", "Menu.Printer", "com.openbravo.pos.panels.JPanelPrinter");
+
+    group.addExitAction();

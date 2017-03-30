@@ -1,0 +1,164 @@
+ public ArrayList getSearchFromDate(String fromDate) throws BasicException
+        {
+            System.out.println("query is executed");
+     String query ="select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where ISDELIVERYBOY='Y'AND DATENEW >='"+ fromDate +"'\n" +
+            "group by DOCUMENTNO";
+            System.out.println("query is returned");
+     return (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+     
+        }
+
+
+
+public ArrayList<DeliveryBoyId>  getDeliveryBoyID(String deliveryBoyName) throws BasicException {
+
+       String query = "select ID from PEOPLE where NAME='"+ deliveryBoyName +"' and ISDELIVERYBOY='Y'" ;
+       return (ArrayList<DeliveryBoyId>) new StaticSentence(s, query, null, new SerializerReadClass(DeliveryBoyId.class)).list();
+
+    }
+
+
+ public int updateHomeTrackingInfo(final HomeDeliveryInfo  info) throws BasicException {
+             
+            return new PreparedSentence(s, "UPDATE TICKETS T LEFT JOIN RECEIPTS R ON(T.id=R.id)  SET T.ADVANCEISSUED = ?, T.DELIVERYTO = ?, T.COLLECTEDAMOUNT = ?, T.ADVANCERETURNED  = ?, T.PERSON =?, R.DATENEW =? WHERE T.DOCUMENTNO=? ", SerializerWriteParams.INSTANCE).exec(new DataParams() {
+
+            public void writeValues() throws BasicException {
+                setString(1, info.getAdvanceIssued());
+                setString(2, info.getDeliveryTo());
+                setString(3, info.getCollectedAmount());
+                setString(4, info.getAdvanceReturned());
+                setString(5, info.getDeliveryBoy());
+                setTimestamp(6, info.getDeliveryDate());
+                setString(7, info.getHomeDeliveryNO());
+                System.out.println(info.getHomeDeliveryNO());
+
+            }
+        });
+
+
+
+
+ public ArrayList getSearchFromDate(String fromDate) throws BasicException
+        {
+            System.out.println("query is executed");
+     String query ="select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where ISDELIVERYBOY='Y'AND DATENEW >='"+ fromDate +"'\n" +
+            "group by DOCUMENTNO";
+            System.out.println("query is returned");
+     return (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+     
+        }
+
+
+ 
+           public ArrayList<HomeDeliveryInfo> getSearchDate1(String fromDate, String toDate, String deliveryBoyName) {
+        ArrayList<HomeDeliveryInfo> lines = new ArrayList<HomeDeliveryInfo>();
+        String query = "select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where  DATENEW >='"+ fromDate +"' AND DATENEW<'"+ toDate +"'"+
+            "AND ISDELIVERYBOY='Y'"+
+            "AND NAME='"+ deliveryBoyName +"'"+
+            "group by DOCUMENTNO";
+            
+        try {
+            lines = (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+        } catch (BasicException ex) {
+            Logger.getLogger(DataLogicCustomers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lines;
+    }
+
+
+
+         
+          
+           public ArrayList<HomeDeliveryInfo> getSearchDate(String fromDate, String toDate) {
+        ArrayList<HomeDeliveryInfo> lines = new ArrayList<HomeDeliveryInfo>();
+        String query = "select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where  DATENEW >='"+ fromDate +"' AND DATENEW<'"+ toDate +"'"+
+            "AND ISDELIVERYBOY='Y'"+
+            "group by DOCUMENTNO";
+            
+        try {
+            lines = (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+        } catch (BasicException ex) {
+            Logger.getLogger(DataLogicCustomers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lines;
+    }
+
+
+ public ArrayList<HomeDeliveryInfo> getBasedOnDeliveryBoyName(String deliveryBoyName) {
+        ArrayList<HomeDeliveryInfo> lines = new ArrayList<HomeDeliveryInfo>();
+        String query = "select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where  NAME='"+ deliveryBoyName +"' "+
+            "AND ISDELIVERYBOY='Y'"+
+            "group by DOCUMENTNO";
+            
+        try {
+            lines = (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+        } catch (BasicException ex) {
+            Logger.getLogger(DataLogicCustomers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lines;
+    } 
+
+
+
+ public ArrayList getSearchFromAndName(String fromDate,String deliveryBoyName) throws BasicException
+        {
+            System.out.println("query is executed");
+     String query ="select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where ISDELIVERYBOY='Y'AND DATENEW >='"+ fromDate +"'\n" +
+             "AND NAME='"+ deliveryBoyName +"'\n" +
+            "group by DOCUMENTNO";
+            System.out.println("query is returned");
+     return (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+     
+        }
+         
+
+public ArrayList<DeliveryBoyName> getDeliveryBoyList1() throws BasicException {
+
+       String query = "SELECT ID,NAME FROM PEOPLE WHERE ISDELIVERYBOY='Y' ORDER BY NAME" ;
+       return (ArrayList<DeliveryBoyName>) new StaticSentence(s, query, null, new SerializerReadClass(DeliveryBoyName.class)).list();
+
+    }
+
+
+public int updateDeliveredStatus(String DoucmentNo, String Status) throws BasicException
+         {
+             Object[] values = new Object[]{DoucmentNo,Status};
+             Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING};
+             return new PreparedSentence(s, "UPDATE TICKETS SET STATUS = ? WHERE DOCUMENTNO= ?", new SerializerWriteBasicExt(datas, new int[]{1,0})).exec(values);
+         }
+
+
+public ArrayList<HomeDeliveryInfo> getBasedOnDeliveryBoyName(String deliveryBoyName) {
+        ArrayList<HomeDeliveryInfo> lines = new ArrayList<HomeDeliveryInfo>();
+        String query = "select DOCUMENTNO,DATENEW,NAME as DeliveryBoy ,SUM(TOTAL) as BillAmount, SUM(TOTAL) as AmountCollected,COLLECTEDAMOUNT,ADVANCEISSUED,ADVANCERETURNED,STATUS,DELIVERYTO,DATENEW from TICKETS T left join RECEIPTS R ON(T.id=R.id)\n" +
+            "left join PAYMENTS P ON(R.id=P.RECEIPT)\n" +
+            "left join PEOPLE PE ON(PE.ID=T.DELIVERYBOY)\n" +
+            "where  NAME='"+ deliveryBoyName +"' "+
+            "AND ISDELIVERYBOY='Y'"+
+            "group by DOCUMENTNO";
+            
+        try {
+            lines = (ArrayList<HomeDeliveryInfo>) new StaticSentence(s, query, null, new SerializerReadClass(HomeDeliveryInfo.class)).list();
+        } catch (BasicException ex) {
+            Logger.getLogger(DataLogicCustomers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lines;
+    }

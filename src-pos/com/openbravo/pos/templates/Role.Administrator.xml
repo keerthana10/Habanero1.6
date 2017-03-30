@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><permission><class name="com.openbravo.pos.sales.JRetailPanelTicketSales" value="Billing"/>
+<class name="com.openbravo.pos.sales.JRetailRePrintTicket" value="Reprint"/>
+<class name="com.openbravo.pos.forms.MenuItemManagement" value="Itemmaster"/>
+<class name="com.openbravo.pos.forms.MenuCustomerManagement" value="CustomerMenu"/>
+<class name="com.openbravo.pos.forms.MenuTaxation" value="Taxation"/>
+<class name="com.openbravo.pos.forms.MenuDiscount" value="DiscountMenu"/>
+<class name="com.openbravo.pos.forms.MenuWarehouseMasters" value="WarehouseMasters"/>
+<class name="com.openbravo.pos.forms.MenuCashManagement" value="MenuCashManagement"/>
+<class name="com.openbravo.pos.forms.MenuUsersRoles" value="UsersRoles"/>
+<class name="com.openbravo.pos.admin.PeoplePanel" value="Users"/>
+<class name="com.openbravo.pos.admin.RolesPanel" value="Roles"/>
+<class name="com.openbravo.pos.admin.ResourcesPanel" value="Resources"/>
+<class name="com.openbravo.pos.mant.JPanelFloors" value="Floors"/>
+<class name="com.openbravo.pos.mant.JPanelPlaces" value="Places"/>
+<class name="com.sysfore.pos.panels.JPosActionsPanel" value="PosActions"/>
+<class name="com.sysfore.pos.hotelmanagement.JServiceChargePanel" value="ServiceCharge"/>
+<class name="com.sysfore.pos.hotelmanagement.JBusinessTypePanel" value="BusinessType"/>
+<class name="com.openbravo.pos.forms.MenuChargesmaster" value="ChargesMaster"/>
+<class name="com.sysfore.pos.hotelmanagement.JTaxMappingPanel" value="TaxMapping"/>
+<class name="com.sysfore.pos.hotelmanagement.JPrinterConfigEditor" value="PrinterConfig"/>
+<class name="com.sysfore.pos.cashmanagement.JPanelCashReconciliation" value="CloseDay"/>
+<class name="com.sysfore.pos.cashmanagement.JPettyCashEditorPanel" value="PettyExpenses"/>
+<class name="com.openbravo.pos.forms.MenuSalesReports" value="SalesReports"/>
+<class name="com.openbravo.pos.forms.MenuCashReports" value="CashReports"/>
+<class name="com.openbravo.pos.config.JPanelConfiguration" value="Configuration"/>
+<class name="com.openbravo.pos.sales.JRetailTicketPrintEdit" value="BillPreview"/>
+</permission>

@@ -1,0 +1,36 @@
+<output>
+   <ticket printer="2">
+    <line></line>
+
+
+        <line>
+       <text align="center" length="42" bold="true">Bank Deposit</text>
+       </line>
+    <line>
+             <text>------------------------------------------</text>
+        </line>   
+
+        <line>
+            <text length="18" bold="true">Date:</text>
+            <text length="24" align="right" bold="true">${payments.printDateNow()}</text>
+        </line>
+
+       <line></line>
+       
+        <line>
+            <text align ="left" length="22" bold="true">Total Cash</text>
+            <text align ="right" length="20" bold="true">${payments.printCashAmt()}</text>
+        </line>
+   <line></line>
+ <line></line>
+        <line>
+            <text align ="left" length="22" bold="true">Signature</text>
+            <text align ="right" length="20" bold="true">Signature</text>
+        </line>
+
+
+    
+  </ticket>
+</output>
+
+

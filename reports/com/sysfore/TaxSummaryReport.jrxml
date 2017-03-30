@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="TaxSummaryReport"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="2380"
+		 pageHeight="1684"
+		 columnWidth="2320"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="ARG" isForPrompting="false" class="java.lang.Object"/>
+	<queryString><![CDATA[SELECT DATENEW ,ROWGROUP, TAXNAME, TAXLINE, AMOUNT, ID , ORDERNO FROM
+(SELECT R.DATENEW,
+'' AS ROWGROUP , '' AS TAXNAME, 'NET AMOUNT' AS TAXLINE,
+SUM(TL.UNITS*TL.PRICE)-(SUM(TL.DISCOUNTPRICE)+SUM(TL.PROMODISCOUNTPRICE)) AS AMOUNT, T.ID AS ID, 1 AS ORDERNO
+FROM RECEIPTS R
+LEFT JOIN TICKETS T ON T.ID=R.ID
+RIGHT JOIN TICKETLINES TL ON T.ID=TL.TICKET
+WHERE T.ISCANCELTICKET='N' AND T.ISNONCHARGABLE='N'
+GROUP BY DATENEW
+
+UNION
+
+SELECT  R.DATENEW,
+'' AS ROWGROUP ,'' AS TAXNAME, 'BILL AMOUNT' AS TAXLINE,
+SUM(T.BILLAMOUNT) AS AMOUNT, TICKETS.ID AS ID, 2 AS ORDERNO
+FROM RECEIPTS R
+LEFT JOIN TICKETS T ON T.ID=R.ID
+LEFT JOIN TICKETS ON TICKETS.ID=R.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N'
+GROUP BY DATENEW
+
+UNION
+
+SELECT R.DATENEW,
+'' AS ROWGROUP ,SC.NAME AS TAXNAME, 'GROSS' AS TAXLINE, SUM(SCL.BASE) AS AMOUNT, TICKETS.ID AS ID,
+3 AS ORDERNO
+FROM RECEIPTS R
+RIGHT JOIN SERVICECHARGELINES SCL ON SCL.RECEIPT=R.ID
+LEFT JOIN SERVICECHARGE SC ON SC.ID=SCL.SERVICECHARGEID
+LEFT JOIN TICKETS ON TICKETS.ID=R.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N'
+GROUP BY DATENEW,SC.NAME,TAXLINE,TICKETS.ID
+
+UNION
+
+SELECT R.DATENEW,
+'' AS ROWGROUP ,SC.NAME AS TAXNAME, 'TAX' AS TAXLINE, SUM(SCL.AMOUNT) AS AMOUNT , TICKETS.ID AS ID,
+3 AS ORDERNO
+FROM RECEIPTS R
+LEFT JOIN SERVICECHARGELINES SCL ON SCL.RECEIPT=R.ID
+LEFT JOIN SERVICECHARGE SC ON SC.ID=SCL.SERVICECHARGEID
+LEFT JOIN TICKETS ON TICKETS.ID=R.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N'
+GROUP BY DATENEW,SC.NAME,TAXLINE,TICKETS.ID
+
+UNION
+
+SELECT R.DATENEW,
+'' AS ROWGROUP ,TX.NAME AS TAXNAME, 'GROSS' AS TAXLINE, CASE WHEN TX.BASEAMOUNT='LNATAX' THEN (TXL.BASE)+(SCL.AMOUNT)
+ELSE  SUM(TXL.BASE)  END  AS AMOUNT , TICKETS.ID AS ID,
+4 AS ORDERNO
+FROM RECEIPTS R
+LEFT JOIN TAXLINES TXL ON TXL.RECEIPT=R.ID
+LEFT JOIN TAXES TX ON TX.ID=TXL.TAXID
+LEFT JOIN TICKETS ON TICKETS.ID=R.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N'
+GROUP BY DATENEW,TX.NAME,TAXLINE,TICKETS.ID
+
+UNION
+
+SELECT R.DATENEW,
+'' AS ROWGROUP ,TX.NAME AS TAXNAME, 'TAX' AS TAXLINE, SUM(TXL.AMOUNT) AS AMOUNT , TICKETS.ID AS ID,
+4 AS ORDERNO
+FROM RECEIPTS R
+LEFT JOIN TAXLINES TXL ON TXL.RECEIPT=R.ID
+LEFT JOIN TAXES TX ON TX.ID=TXL.TAXID
+LEFT JOIN TICKETS ON TICKETS.ID=R.ID
+WHERE TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N'
+GROUP BY DATENEW,TX.NAME,TAXLINE,TICKETS.ID
+) A WHERE TAXNAME IS NOT NULL
+ORDER BY DATENEW, ORDERNO ASC]]></queryString>
+
+	<field name="DATENEW" class="java.util.Date"/>
+	<field name="ROWGROUP" class="java.lang.String"/>
+	<field name="TAXNAME" class="java.lang.String"/>
+	<field name="TAXLINE" class="java.lang.String"/>
+	<field name="AMOUNT" class="java.lang.Double"/>
+	<field name="ID" class="java.lang.String"/>
+	<field name="ORDERNO" class="java.lang.Long"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="46"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="2320"
+						height="24"
+						key="staticText-1"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Tax Summary Report]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="24"
+						width="48"
+						height="22"
+						key="staticText-2"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[From :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="178"
+						y="24"
+						width="37"
+						height="22"
+						key="staticText-3"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[To :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="48"
+						y="24"
+						width="130"
+						height="22"
+						key="textField-1"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[com.openbravo.format.Formats.DATE.formatValue((java.util.Date)((Object[])((Object[])$P{ARG})[0])[1])]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="215"
+						y="24"
+						width="2105"
+						height="22"
+						key="textField-2"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[com.openbravo.format.Formats.DATE.formatValue((java.util.Date)((Object[])((Object[])$P{ARG})[0])[3])]]></textFieldExpression>
+				</textField>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="20"  isSplitAllowed="true" >
+				<crosstab >
+					<reportElement
+						x="0"
+						y="0"
+						width="2320"
+						height="20"
+						key="crosstab-1"/>
+					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box>					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+						</cellContents>
+					</crosstabHeaderCell>					<rowGroup name="ROWGROUP" width="100" totalPosition="End">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{ROWGROUP}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+</box>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="100"
+						height="30"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{ROWGROUP}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+				<staticText>
+					<reportElement
+						x="1"
+						y="0"
+						width="98"
+						height="29"
+						key="staticText-4"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Grand Total
+]]></text>
+				</staticText>
+						</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="TAXNAME" height="25" totalPosition="End" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{TAXNAME}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+					<box>					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="25"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{TAXNAME}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabColumnHeader>
+					</columnGroup>
+					<columnGroup name="TAXLINE" height="25" totalPosition="End" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{TAXLINE}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+					<box></box>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="25"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{TAXLINE}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabColumnHeader>
+					</columnGroup>
+
+					<measure name="AMOUNT_Nothing" class="java.lang.Double" calculation="Sum">
+						<measureExpression><![CDATA[$F{AMOUNT}]]></measureExpression>
+					</measure>
+					<crosstabCell width="76" height="30">
+						<cellContents mode="Transparent">
+					<box></box>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="30"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{AMOUNT_Nothing}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" columnTotalGroup="TAXLINE">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" columnTotalGroup="TAXNAME">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="76" height="30" rowTotalGroup="ROWGROUP">
+						<cellContents mode="Transparent">
+					<box></box>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="76"
+						height="30"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{AMOUNT_Nothing}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" rowTotalGroup="ROWGROUP" columnTotalGroup="TAXLINE">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="30" rowTotalGroup="ROWGROUP" columnTotalGroup="TAXNAME">
+						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</crosstabCell>
+					<whenNoDataCell>						<cellContents mode="Transparent">
+					<box></box>
+						</cellContents>
+					</whenNoDataCell>					</crosstab>
+			</band>
+		</summary>
+</jasperReport>

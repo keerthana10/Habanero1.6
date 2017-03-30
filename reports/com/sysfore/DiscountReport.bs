@@ -1,0 +1,125 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.DiscountReport");
+report.setReport("/com/sysfore/DiscountReport");
+report.setResourceBundle("com/sysfore/NonChargable_messages");
+
+
+report.setSentence("SELECT ROWGROUP, DATENEW, TABLENO, PAX, BILLNO,CATEGORY,CATEGORYCOLUMN,AMOUNT, "+
+                            "USER,NOW(),DISPLAYORDER, "+
+                            "SUBORDER, DISCOUNTREASON, REASON FROM "+
+                            "(SELECT '' AS ROWGROUP, R.DATENEW, PLACES.NAME AS TABLENO, "+
+                            "TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,C1.NAME AS CATEGORY, "+
+                            "C1.NAME AS CATEGORYCOLUMN,COALESCE(SUM((TICKETLINES.UNITS*TICKETLINES.PRICE)),0) AS AMOUNT, "+
+                            "PEOPLE.NAME AS USER,NOW(), "+
+                            "1 AS DISPLAYORDER, 0 AS SUBORDER, TICKETS.DISCOUNTREASON, DISCOUNTREASON.REASON  "+
+                            "FROM RECEIPTS R  JOIN TICKETS ON R.ID=TICKETS.ID  "+
+                            "LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID "+
+                            "LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR "+
+                            "LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET "+
+                            "LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT  "+ 
+                            "LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY "+
+                            "LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID "+
+                            "LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID "+
+                            "LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID "+
+	           "WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0 "+
+                            "GROUP BY BILLNO,CATEGORY,CATEGORYCOLUMN,TABLENO,PAX "+
+
+                            "UNION "+
+
+                            "SELECT '' AS ROWGROUP, R.DATENEW, PLACES.NAME AS TABLENO, "+
+                            "TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,C1.NAME AS CATEGORY, "+
+                            "'DISCOUNT%' AS CATEGORYCOLUMN,TICKETLINES.DISCOUNT AS AMOUNT,PEOPLE.NAME AS USER,NOW(), "+
+                            "2 AS DISPLAYORDER, 1 AS SUBORDER, TICKETS.DISCOUNTREASON, DISCOUNTREASON.REASON  "+
+                            "FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID "+
+                            "LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID "+
+                            "LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR "+
+                            "LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET "+
+                            "LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT "+ 
+                            "LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY "+
+                            "LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID "+
+                            "LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID "+	
+                            "LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID  "+
+                            "WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0 "+
+                            "GROUP BY BILLNO,CATEGORY,CATEGORYCOLUMN,TABLENO,PAX "+
+
+                            "UNION "+
+
+                            "SELECT '' AS ROWGROUP,R.DATENEW, PLACES.NAME AS TABLENO, "+
+                            "TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,C1.NAME AS CATEGORY, "+
+                            "'DISCOUNT PRICE' AS CATEGORYCOLUMN, "+
+                            "COALESCE(SUM(((TICKETLINES.UNITS*TICKETLINES.PRICE)*TICKETLINES.DISCOUNT)/100),0) AS AMOUNT, "+
+                            "PEOPLE.NAME AS USER,NOW(), "+
+                            "2 AS DISPLAYORDER, 2 AS SUBORDER , TICKETS.DISCOUNTREASON , DISCOUNTREASON.REASON "+
+                            "FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID "+
+                            "LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID "+
+                            "LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR "+
+                            "LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET "+
+                            "LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT "+
+                            "LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY "+
+                            "LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID "+
+                            "LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID "+	
+                            "LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID  "+
+                            "WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0 "+
+                            "GROUP BY BILLNO,CATEGORY,CATEGORYCOLUMN,TABLENO,PAX "+
+
+                            "UNION "+
+
+                            "SELECT '' AS ROWGROUP, R.DATENEW, PLACES.NAME AS TABLENO, "+
+                            "TICKETS.NOOFCOVERS AS PAX ,TICKETS.TICKETID AS BILLNO,'Z' AS CATEGORY, "+
+                            "'TOTAL DISCOUNT' AS CATEGORYCOLUMN,COALESCE(SUM(DISCOUNTPRICE),0 )AS AMOUNT, "+
+                            "PEOPLE.NAME AS USER,NOW(), "+
+                            "3 AS DISPLAYORDER, 0 AS SUBORDER, TICKETS.DISCOUNTREASON , DISCOUNTREASON.REASON  "+
+                            "FROM RECEIPTS R JOIN TICKETS ON R.ID=TICKETS.ID "+
+                            "LEFT JOIN PLACES ON TICKETS.TABLEID=PLACES.ID "+
+                            "LEFT JOIN FLOORS F ON F.ID=PLACES.FLOOR "+
+                            "LEFT JOIN TICKETLINES ON TICKETS.ID=TICKETLINES.TICKET "+
+                            "LEFT JOIN  PRODUCTS AS PR1 ON PR1.ID = TICKETLINES.PRODUCT "+
+                            "LEFT JOIN CATEGORIES C ON C.ID=PR1.CATEGORY "+
+                            "LEFT JOIN CATEGORIES C1 ON C1.ID=C.PARENTID "+
+                            "LEFT JOIN PEOPLE ON TICKETS.PERSON=PEOPLE.ID "+	
+                            "LEFT JOIN DISCOUNTREASON ON TICKETS.DISCOUNTREASONID=DISCOUNTREASON.ID "+
+                            "WHERE TICKETS.ISCANCELTICKET='N' AND DISCOUNTPRICE>0 "+
+                            "GROUP BY BILLNO) A "+
+                            " WHERE  ?(QBF_FILTER)   "+
+                            "ORDER BY BILLNO, DISPLAYORDER ASC ,CATEGORY, SUBORDER "); 
+
+report.addParameter("DATENEW");
+report.addParameter("DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+
+report.addField("ROWGROUP", com.openbravo.data.loader.Datas.STRING);
+report.addField("DATENEW", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("TABLENO", com.openbravo.data.loader.Datas.STRING);
+report.addField("PAX", com.openbravo.data.loader.Datas.INT);
+report.addField("BILLNO", com.openbravo.data.loader.Datas.INT);
+report.addField("CATEGORY", com.openbravo.data.loader.Datas.STRING);
+report.addField("CATEGORYCOLUMN", com.openbravo.data.loader.Datas.STRING);
+report.addField("AMOUNT", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("USER", com.openbravo.data.loader.Datas.STRING);
+report.addField("NOW()", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("DISPLAYORDER", com.openbravo.data.loader.Datas.INT);
+report.addField("SUBORDER", com.openbravo.data.loader.Datas.INT);
+report.addField("DISCOUNTREASON", com.openbravo.data.loader.Datas.STRING);
+report.addField("REASON", com.openbravo.data.loader.Datas.STRING);
+
+report;

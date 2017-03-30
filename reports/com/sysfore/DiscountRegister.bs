@@ -1,0 +1,49 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.DiscountRegister");
+report.setReport("/com/sysfore/DiscountRegister");
+report.setResourceBundle("com/sysfore/DiscountRegister_messages");
+
+report.setSentence(" SELECT FLOORS.NAME AS 'FLOOR',T.DOCUMENTNO, T.BILLAMOUNT ," +
+                    " 	(T.DISCOUNTRATE * 100) AS DISCOUNTRATE,T.CUSTOMERDISCOUNT AS DISCOUNT," +
+                    " 	DR.REASON,P.NAME AS USER" +
+                    " FROM RECEIPTS 	" +
+                    " 	INNER JOIN TICKETS T USING(ID) 		" +
+                    " 	INNER JOIN PEOPLE  P ON P.ID = T.PERSON" +
+                    " 	LEFT OUTER JOIN DISCOUNTREASON DR ON DR.ID = T.DISCOUNTREASONID" +
+                    " 	INNER JOIN PLACES ON PLACES.ID = T.TABLEID" +
+                    " 	INNER JOIN FLOORS ON FLOORS.ID = PLACES.FLOOR" +
+                    " WHERE  T.ISCANCELTICKET='N' AND T.DISCOUNTRATE !='0' AND ?(QBF_FILTER)" +
+                    " ORDER BY FLOORS.NAME,ABS(SUBSTRING(T.DOCUMENTNO,7)) ASC");
+
+report.addParameter("RECEIPTS.DATENEW");
+report.addParameter("RECEIPTS.DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsMandtoryDates());
+
+report.addField("FLOOR", com.openbravo.data.loader.Datas.STRING);
+report.addField("DOCUMENTNO", com.openbravo.data.loader.Datas.STRING);
+report.addField("BILLAMOUNT", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DISCOUNTRATE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DISCOUNT", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("REASON", com.openbravo.data.loader.Datas.STRING);
+report.addField("USER", com.openbravo.data.loader.Datas.STRING);
+report;

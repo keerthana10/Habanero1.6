@@ -1,0 +1,82 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.SettlementSectionReport");
+report.setReport("/com/sysfore/SettlementSectionReport");
+report.setResourceBundle("com/sysfore/SettlementReport_messages");
+
+report.setSentence("select tk.billamount,r.datenew,pl.floor, " +
+               " COALESCE(P1.TOTAL,0) AS CASH, COALESCE(P2.TOTAL,0) AS CARD, COALESCE(P3.TOTAL,0) AS CHEQUE,   "+
+               " COALESCE(P4.TOTAL,0) AS STAFF, COALESCE(P5.TOTAL,0) AS COMP, COALESCE(P6.TOTAL,0) AS VOUCHER, " +
+               " COALESCE(P7.TOTAL,0) AS MOBILE , COALESCE(P8.TOTAL,0) AS VCLOUD, COALESCE(P9.TOTAL,0) AS FOODPANDA, " +
+               " COALESCE(P10.TOTAL,0) AS SWIGGY, COALESCE(P11.TOTAL,0) AS DELIVERY, COALESCE(P12.TOTAL,0) AS VISA, COALESCE(P13.TOTAL,0) AS OTHERS, COALESCE(P14.TOTAL,0) AS ZOMATO, tk.tips "+
+                "from receipts r " +
+                "LEFT JOIN PAYMENTS P1 ON P1.RECEIPT=R.ID AND P1.PAYMENT='Cash' " +
+                "LEFT JOIN PAYMENTS P2 ON P2.RECEIPT=R.ID AND P2.PAYMENTTYPE='AMEX' " +  
+                "LEFT JOIN PAYMENTS P3 ON P3.RECEIPT=R.ID AND P3.PAYMENT='Cheque'  " +
+                "LEFT JOIN PAYMENTS P4 ON P4.RECEIPT=R.ID AND P4.PAYMENT='Staff' "+
+                "LEFT JOIN PAYMENTS P5 ON P5.RECEIPT=R.ID AND P5.PAYMENT='Complementary' "+
+                "LEFT JOIN PAYMENTS P6 ON P6.RECEIPT=R.ID AND P6.PAYMENT='Voucher'  "+
+                "LEFT JOIN PAYMENTS P7 ON P7.RECEIPT=R.ID AND P7.PAYMENT='Mobile'  "+
+                "LEFT JOIN PAYMENTS P8 ON P8.RECEIPT=R.ID AND P8.PAYMENT='Vcloud'  "+
+	"LEFT JOIN PAYMENTS P9 ON P9.RECEIPT=R.ID AND P9.PAYMENTTYPE='Food Panda'  "+
+	"LEFT JOIN PAYMENTS P10 ON P10.RECEIPT=R.ID AND P10.PAYMENTTYPE='Swiggy'  "+
+	"LEFT JOIN PAYMENTS P11 ON P11.RECEIPT=R.ID AND P11.PAYMENTTYPE='Delivery'  "+
+                "LEFT JOIN PAYMENTS P12 ON P12.RECEIPT=R.ID AND P12.PAYMENTTYPE='Visa'  "+
+                "LEFT JOIN PAYMENTS P13 ON P13.RECEIPT=R.ID AND P13.PAYMENTTYPE='Others'  "+
+                 "LEFT JOIN PAYMENTS P14 ON P14.RECEIPT=R.ID AND P14.PAYMENTTYPE='Zomato' "+
+
+                "left join tickets tk on (tk.id=r.id) " +
+                "left join places pl on pl.id=tk.tableid "+
+                "left join floors f on f.id=pl.floor "+  
+                "WHERE  ?(QBF_FILTER)  AND " +
+                " tk.completed='Y'  AND TK.ISCANCELTICKET='N' " +
+                "group by tk.id,DATE_FORMAT(datenew, '%Y-%m-%d')  ");
+                
+
+report.addParameter("datenew");
+report.addParameter("datenew");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+report.addParameter("floor");
+report.addQBFFilter(new com.openbravo.pos.ticket.SectionFilter());
+
+
+report.addField("billamount", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("datenew", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("floor", com.openbravo.data.loader.Datas.STRING);
+report.addField("CASH", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("CARD", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("CHEQUE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("STAFF", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("COMP", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VOUCHER", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("MOBILE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VCLOUD", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("FOODPANDA", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("SWIGGY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DELIVERY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VISA", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("OTHERS", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("ZOMATO", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("tips", com.openbravo.data.loader.Datas.DOUBLE);
+
+
+report;

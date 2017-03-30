@@ -1,0 +1,43 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.CancelBill");
+report.setReport("/com/sysfore/CancelBillReport");
+report.setResourceBundle("com/sysfore/CancelBillReport_messages");
+
+report.setSentence(" SELECT DOCUMENTNO, T.BILLAMOUNT, DATE_FORMAT(DATENEW,'%Y-%m-%d') AS DATE, P.NAME,  "+
+                    " CASE WHEN T.ISHOMEDELIVERY='Y' THEN 'HOME DELIVERY' ELSE 'RESTAURANT' END AS ISHOMEDELIVERY "+
+                    " FROM tickets T, receipts R , people AS P    "+
+                    " WHERE ISCANCELTICKET='Y' AND T.ID = R.ID AND T.PERSON = P.ID "+
+                    " AND ?(QBF_FILTER) "+
+                    " ORDER BY ISHOMEDELIVERY DESC, DOCUMENTNO ");
+
+report.addParameter("DATENEW");
+report.addParameter("DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+
+report.addField("DOCUMENTNO", com.openbravo.data.loader.Datas.STRING);
+report.addField("BILLAMOUNT", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DATE", com.openbravo.data.loader.Datas.TIMESTAMP);
+report.addField("NAME", com.openbravo.data.loader.Datas.STRING);
+report.addField("ISHOMEDELIVERY", com.openbravo.data.loader.Datas.STRING);
+
+report;

@@ -1,0 +1,54 @@
+//    Openbravo POS is a point of sales application designed for touch screens.
+//    Copyright (C) 2007-2009 Openbravo, S.L.
+//    http://www.openbravo.com/product/pos
+//
+//    This file is part of Openbravo POS.
+//
+//    Openbravo POS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Openbravo POS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
+report = new com.openbravo.pos.reports.PanelReportBean();
+
+report.setTitleKey("Menu.Sales-Itemwise");
+report.setReport("/com/sysfore/SalesByPeriodItemwise");
+report.setResourceBundle("com/sysfore/SalesByPeriodItemwise_messages");
+
+report.setSentence(" SELECT  C1.NAME, CTG.NAME AS SUBCATEGORY,  P.CODE, P.NAME AS PRODUCT, " +
+                    " SUM(TL.UNITS) AS QTY, TL.PRICE AS MRP ,SUM(TL.UNITS*TL.PRICE)- (SUM(TL.DISCOUNTPRICE)+SUM(TL.PROMODISCOUNTPRICE)) AS VALUE, SUM(TL.DISCOUNTPRICE) AS DISCOUNT  " +
+                    " FROM RECEIPTS 	" +
+                    " INNER JOIN TICKETS USING(ID) " +
+                    " LEFT JOIN TICKETLINES  AS TL ON RECEIPTS.ID=TL.TICKET" +
+                    " LEFT JOIN  PRODUCTS AS P ON P.ID = TL.PRODUCT" +
+                    " INNER JOIN CATEGORIES AS CTG ON P.CATEGORY = CTG.ID" +
+                    "  LEFT JOIN CATEGORIES C1 ON C1.ID=CTG.PARENTID   " + 
+                    " WHERE  TICKETS.ISCANCELTICKET='N' AND ?(QBF_FILTER) " +
+                    " GROUP BY C1.NAME,P.CODE, P.NAME" +
+                    " ORDER BY C1.NAME,P.CODE,P.NAME");
+
+
+report.addParameter("RECEIPTS.DATENEW");
+report.addParameter("RECEIPTS.DATENEW");
+report.addQBFFilter(new com.openbravo.pos.reports.JParamsDatesInterval());
+report.addParameter("P.PRODUCTTYPE");
+report.addQBFFilter(new com.openbravo.pos.ticket.ProductTypeFilter());
+
+
+report.addField("NAME", com.openbravo.data.loader.Datas.STRING);
+report.addField("SUBCATEGORY", com.openbravo.data.loader.Datas.STRING);
+report.addField("CODE", com.openbravo.data.loader.Datas.STRING);
+report.addField("PRODUCT", com.openbravo.data.loader.Datas.STRING);
+report.addField("QTY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("MRP", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("VALUE", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("DISCOUNT", com.openbravo.data.loader.Datas.DOUBLE);
+report;
