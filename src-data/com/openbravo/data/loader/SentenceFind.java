@@ -16,14 +16,15 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 public interface SentenceFind {
-    
+
     public Object find() throws BasicException;
+
     public Object find(Object params) throws BasicException;
+
     public Object find(Object... params) throws BasicException;
 }

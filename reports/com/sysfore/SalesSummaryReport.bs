@@ -31,7 +31,7 @@ report.setSentence( " select datenew,  "+
                                " sum(price) AS NET,  "+
                               "  SUM(IF(name = 'Food', PRICE, 0)) Food,  "+
                              "   SUM(IF(name = 'Beverage', PRICE, 0)) Beverage,  "+
-                              "  SUM(IF(name = 'Liquor', PRICE, 0)) Liquor,  "+
+                              "  SUM(IF(name in ('Liquor','One Plus One Offer','MRP Offer Bottle'), PRICE, 0)) Liquor, "+
                               "  SUM(IF(name = 'Tobacco', PRICE, 0)) Tobacco,  "+
                               "  sum(price) AS BASIC,sum(discountprice) AS DISCOUNTPRICE, SUM(PROMODISCOUNTPRICE) AS PROMODISCOUNTPRICE, TAX,  "+
                                " CASH,COMPLEMENTARY,CHEQUE,STAFF,VOUCHER,MOBILE,VCLOUD,AMEX,FOODPANDA,  "+

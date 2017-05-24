@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
@@ -27,9 +26,9 @@ import java.util.Date;
  * @author adrianromero
  */
 public abstract class DataParams implements DataWrite {
-    
+
     protected DataWrite dw;
-    
+
     public abstract void writeValues() throws BasicException;
 
     public void setInt(int paramIndex, Integer iValue) throws BasicException {

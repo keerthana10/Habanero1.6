@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.gui;
 
 import com.openbravo.data.loader.IKeyed;
@@ -28,7 +27,7 @@ import java.util.List;
  * @author adrianromero
  */
 public class ListKeyed<K extends IKeyed> extends ArrayList<K> {
-    
+
     public ListKeyed(List<K> list) {
         this.addAll(list);
     }

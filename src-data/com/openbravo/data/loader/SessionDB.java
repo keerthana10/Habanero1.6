@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 /**
@@ -26,9 +25,11 @@ package com.openbravo.data.loader;
 public interface SessionDB {
 
     public String TRUE();
+
     public String FALSE();
 
     public String INTEGER_NULL();
+
     public String CHAR_NULL();
 
     public String getName();

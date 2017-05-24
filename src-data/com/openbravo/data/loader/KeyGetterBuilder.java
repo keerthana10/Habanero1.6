@@ -16,27 +16,27 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 /**
  *
- * @author adrianromero
- * Created on 27 de febrero de 2007, 22:09
+ * @author adrianromero Created on 27 de febrero de 2007, 22:09
  *
  */
 public class KeyGetterBuilder implements IKeyGetter {
-  
+
     public final static IKeyGetter INSTANCE = new KeyGetterBuilder();
-    
-    /** Creates a new instance of KeyGetterBuilder */
+
+    /**
+     * Creates a new instance of KeyGetterBuilder
+     */
     public KeyGetterBuilder() {
     }
-    
+
     public Object getKey(Object value) {
-        
-        return (value == null) 
-            ? null
-            : ((IKeyed) value).getKey();
-    }   
+
+        return (value == null)
+                ? null
+                : ((IKeyed) value).getKey();
+    }
 }

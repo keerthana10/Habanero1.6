@@ -42,28 +42,31 @@ import com.openbravo.pos.scripting.ScriptFactory;
 import com.openbravo.pos.ticket.RetailTicketInfo;
 import com.openbravo.pos.ticket.RetailTicketLineInfo;
 import com.openbravo.pos.ticket.TicketInfo;
+import com.openbravo.util.date.DateFormats;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
 class JCancelReasonEditor extends JDialog {
 
 //    public javax.swing.JDialog dEdior = null;
-  //  private Properties dbp = new Properties();
- //   private DataLogicReceipts dlReceipts = null;
-  //  private DataLogicCustomers dlCustomers = null;
+    //  private Properties dbp = new Properties();
+    //   private DataLogicReceipts dlReceipts = null;
+    //  private DataLogicCustomers dlCustomers = null;
 //    private AppView m_app;
- //   public String[] strings = {""};
- //   public DefaultListModel model = null;
+    //   public String[] strings = {""};
+    //   public DefaultListModel model = null;
     public java.util.List<Reasoninfo> list = null;
 //    public boolean updateMode = false;
     static Component parentLocal = null;
     static RetailTicketInfo tinfoLocal = null;
-     static int index = 0;
- //   public static String userRole = null;
+    static int index = 0;
+    //   public static String userRole = null;
     private static DataLogicReceipts localDlReceipts = null;
     private static DataLogicSales localDlSales = null;
     private static DataLogicSystem localDlSystem = null;
@@ -71,34 +74,40 @@ class JCancelReasonEditor extends JDialog {
     private static String localTableName;
     private java.util.List<kotInfo> kotTicketlist;
     private static TicketParser m_TTP;
-    public static boolean setFlag =false;
-  //  private boolean enablity;
+    public static boolean setFlag = false;
+    //  private boolean enablity;
     int x = 500;
     int y = 300;
     int width = 350;
     int height = 250;
     static String localhomeDelivery;
-     static String orderTaking;
-     private static Place m_PlaceCurrent;
+    static String orderTaking;
+    private static Place m_PlaceCurrent;
+    private static DateFormat m_dateformat = new SimpleDateFormat("yyyy-MM-dd");
+    private static DateFormat m_dateformattime = new SimpleDateFormat("HH:mm:ss.SSS");
+    public static boolean billUpdated = false;
+    public static Date dbUpdatedDate = null;
 
-    public static void showMessage(Component parent, DataLogicReceipts dlReceipts, RetailTicketInfo tinfo, String OrderTaking,  String homeDelivery,DataLogicSales dlSales,DataLogicSystem dlSystem, AppView app, String placeName, Place m_PlaceCurrent) {
+    public static boolean showMessage(Component parent, DataLogicReceipts dlReceipts, RetailTicketInfo tinfo, String OrderTaking, String homeDelivery, DataLogicSales dlSales, DataLogicSystem dlSystem, AppView app, String placeName, Place m_PlaceCurrent) {
         localDlReceipts = dlReceipts;
         localDlSales = dlSales;
         parentLocal = parent;
         tinfoLocal = tinfo;
         localDlSystem = dlSystem;
-         orderTaking = OrderTaking;
-        localhomeDelivery=homeDelivery;
+        orderTaking = OrderTaking;
+        localhomeDelivery = homeDelivery;
         localTableName = placeName;
         JCancelReasonEditor.m_PlaceCurrent = m_PlaceCurrent;
         m_App = app;
-        setFlag =false;
-      //  index=tindex;
-      m_TTP = new TicketParser(m_App.getDeviceTicket(), dlSystem);
-        showMessage(parent, dlReceipts, 1);
+        setFlag = false;
+        //  index=tindex;
+        dbUpdatedDate = null;
+
+        m_TTP = new TicketParser(m_App.getDeviceTicket(), dlSystem);
+        return showMessage(parent, dlReceipts, 1);
     }
 
-    private static void showMessage(Component parent, DataLogicReceipts dlReceipts, int x) {
+    private static boolean showMessage(Component parent, DataLogicReceipts dlReceipts, int x) {
 
         Window window = getWindow(parent);
         JCancelReasonEditor myMsg;
@@ -107,9 +116,10 @@ class JCancelReasonEditor extends JDialog {
         } else {
             myMsg = new JCancelReasonEditor((Dialog) window, true);
         }
-        myMsg.init(dlReceipts);
+        return myMsg.init(dlReceipts);
     }
- private static Window getWindow(Component parent) {
+
+    private static Window getWindow(Component parent) {
         if (parent == null) {
             return new JFrame();
         } else if (parent instanceof Frame || parent instanceof Dialog) {
@@ -118,6 +128,7 @@ class JCancelReasonEditor extends JDialog {
             return getWindow(parent.getParent());
         }
     }
+
     private JCancelReasonEditor(Frame frame, boolean b) {
         super(frame, true);
         setBounds(x, y, width, height);
@@ -130,13 +141,11 @@ class JCancelReasonEditor extends JDialog {
 
     }
 
-
-
-    public void init(DataLogicReceipts dlReceipts) {
+    public boolean init(DataLogicReceipts dlReceipts) {
 
         initComponents();
-     try {
-          //  m_jReason.addItem("");
+        try {
+            //  m_jReason.addItem("");
             java.util.List<Reasoninfo> reasonList = dlReceipts.getReasonList();
             for (Reasoninfo dis : reasonList) {
                 m_jReason.addItem(dis.getReason());
@@ -147,22 +156,23 @@ class JCancelReasonEditor extends JDialog {
             Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-   
-      
+
+
 
         setTitle("Reason Editor");
         setVisible(true);
         File file = new File(System.getProperty("user.home") + "/openbravopos.properties");
         AppConfig ap = new AppConfig(file);
         ap.load();
-        
+        return billUpdated;
+
 
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -252,72 +262,103 @@ class JCancelReasonEditor extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_jbtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jbtnOkActionPerformed
-   String reason = m_jTxtReason.getText();
-     int reasonIndex = m_jReason.getSelectedIndex();
-       tinfoLocal.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
-           tinfoLocal.setActiveCash(m_App.getActiveCashIndex());
-           tinfoLocal.setActiveDay(m_App.getActiveDayIndex());
-           tinfoLocal.setDate(new Date()); //
-            String ticketDocument;
-            ticketDocument = m_App.getProperties().getStoreName()+"-"+m_App.getProperties().getPosNo()+"-"+tinfoLocal.getTicketId();
-         if (reasonIndex == -1) {
+//   String reason = m_jTxtReason.getText();
+        int reasonIndex = m_jReason.getSelectedIndex();
+//       tinfoLocal.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
+//           tinfoLocal.setActiveCash(m_App.getActiveCashIndex());
+//           tinfoLocal.setActiveDay(m_App.getActiveDayIndex());
+//           tinfoLocal.setDate(new Date()); //
+//            String ticketDocument;
+//            ticketDocument = m_App.getProperties().getStoreName()+"-"+m_App.getProperties().getPosNo()+"-"+tinfoLocal.getTicketId();
+        if (reasonIndex == -1) {
 
-                JOptionPane.showMessageDialog(null, "Please select the reason");
-            }
-        else{
-         Reasoninfo reasonInfo = new Reasoninfo();
-
-         String reasonItem = m_jReason.getSelectedItem().toString();
-            System.out.println("enrtrr "+reasonItem+"---"+reasonInfo.getStatus());
-         String reasonId = null;
+            JOptionPane.showMessageDialog(null, "Please select the reason");
+            dbUpdatedDate = null;
+            billUpdated = false;
+        } else {
             try {
-                System.out.println("enrtrr1 "+reasonItem);
-                reasonId = localDlReceipts.getReasonId(reasonItem);
-                System.out.println("get reasonid--"+reasonId);
-            } catch (BasicException ex) {
-                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-             java.util.List<RetailTicketLineInfo> panelLines = tinfoLocal.getLines();
-            System.out.println("enter---"+tinfoLocal.getLinesCount());
-            try {
-                  localDlSales.saveRetailCancelTicket(tinfoLocal, m_App.getProperties().getStoreName(),ticketDocument,orderTaking, m_App.getInventoryLocation(),reason, reasonId, m_App.getProperties().getPosNo(),localhomeDelivery);
-            } catch (BasicException ex) {
-                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-             String kotTicketId = null;
-                Integer kotCount=0;
-                int kotTicket=0;
+                String currentUpdated = m_dateformat.format(tinfoLocal.getObjectUpdateDate()) + " " + m_dateformattime.format(tinfoLocal.getObjectUpdateDate());
+                String dbUpdated = "";
+                dbUpdated = localDlReceipts.getUpdatedTime(tinfoLocal.getPlaceId(), tinfoLocal.getSplitSharedId());
+                Date currentUpdatedDate = DateFormats.StringToDateTime(currentUpdated);
+                dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
+                if (dbUpdated.equals(null) || dbUpdated.equals("")) {
+                    //  JOptionPane.showMessageDialog(null, "This Bill is no longer exist ");
+                    billUpdated = true;
+                    this.dispose();
+                } else if (dbUpdatedDate.compareTo(currentUpdatedDate) > 0) {
+                    billUpdated = true;
+                    this.dispose();
+                } else {
+                    billUpdated = false;
+                    dbUpdatedDate = null;
+                    String reason = m_jTxtReason.getText();
+                    tinfoLocal.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
+                    tinfoLocal.setActiveCash(m_App.getActiveCashIndex());
+                    tinfoLocal.setActiveDay(m_App.getActiveDayIndex());
+                    tinfoLocal.setDate(new Date()); //
+                    String ticketDocument;
+                    ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + tinfoLocal.getTicketId();
 
-            try {
-                kotTicketId = (localDlReceipts.getkotTicketId("Y"));
 
-            } catch (BasicException ex) {
-                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-              if(kotTicketId==null){
-                kotTicket=1;
-            }else{
-                   kotTicket=Integer.parseInt(kotTicketId);
-                   kotTicket = kotTicket+1;
-            }
+                    Reasoninfo reasonInfo = new Reasoninfo();
+
+                    String reasonItem = m_jReason.getSelectedItem().toString();
+                    System.out.println("enrtrr " + reasonItem + "---" + reasonInfo.getStatus());
+                    String reasonId = null;
+                    try {
+                        System.out.println("enrtrr1 " + reasonItem);
+                        reasonId = localDlReceipts.getReasonId(reasonItem);
+                        System.out.println("get reasonid--" + reasonId);
+                    } catch (BasicException ex) {
+                        Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    java.util.List<RetailTicketLineInfo> panelLines = tinfoLocal.getLines();
+                    System.out.println("enter---" + tinfoLocal.getLinesCount());
+                    try {
+                        localDlSales.saveRetailCancelTicket(tinfoLocal, m_App.getProperties().getStoreName(), ticketDocument, orderTaking, m_App.getInventoryLocation(), reason, reasonId, m_App.getProperties().getPosNo(), localhomeDelivery);
+                    } catch (BasicException ex) {
+                        Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    String kotTicketId = null;
+                    Integer kotCount = 0;
+                    int kotTicket = 0;
+
+                    try {
+                        kotTicketId = (localDlReceipts.getkotTicketId("Y"));
+
+                    } catch (BasicException ex) {
+                        Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (kotTicketId == null) {
+                        kotTicket = 1;
+                    } else {
+                        kotTicket = Integer.parseInt(kotTicketId);
+                        kotTicket = kotTicket + 1;
+                    }
 //            try {
 //                localDlReceipts.deleteKot(tinfoLocal.getId());
 //            } catch (BasicException ex) {
 //                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
 //            }
-            for(int i=0;i<tinfoLocal.getLinesCount();i++){
-                   localDlReceipts.insertCancelledKot(tinfoLocal.getId(),tinfoLocal.getDate(),tinfoLocal.getTicketId(),panelLines.get(i).getProductID(), "Y",(1*panelLines.get(i).getMultiply()) ,kotTicket,"Y",reason,reasonId,tinfoLocal.getPlaceId(),tinfoLocal.getUser().getId(),tinfoLocal.getAccountDate());
-            }
-             try {
-                kotTicketlist = localDlReceipts.getKot(tinfoLocal.getId());
-             } catch (BasicException ex) {
-                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
-             }
-             kotInfo kInfolist =  new kotInfo();
-             kInfolist.setKotId(kotTicket);
 
-             tinfoLocal.setKotLines(kotTicketlist);
-            
+                    //New KDS MARCH 16 ,2017
+                    System.out.println("OrderNum" + tinfoLocal.getPlaceId() + tinfoLocal.getOrderId());
+                    localDlReceipts.updateServedTransactionCancelKotBill(tinfoLocal, tinfoLocal.getPlaceId(), tinfoLocal.getOrderId());
+                    for (int i = 0; i < tinfoLocal.getLinesCount(); i++) {
+                        localDlReceipts.insertCancelledKot(tinfoLocal.getId(), tinfoLocal.getDate(), tinfoLocal.getTicketId(), panelLines.get(i).getProductID(), "Y", (1 * panelLines.get(i).getMultiply()), kotTicket, "Y", reason, reasonId, tinfoLocal.getPlaceId(), tinfoLocal.getUser().getId(), tinfoLocal.getAccountDate());
+                    }
+                    try {
+                        kotTicketlist = localDlReceipts.getKot(tinfoLocal.getId());
+                    } catch (BasicException ex) {
+                        Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    kotInfo kInfolist = new kotInfo();
+                    kInfolist.setKotId(kotTicket);
+
+                    tinfoLocal.setKotLines(kotTicketlist);
+
 //             try {
 //                localDlReceipts.updateKotIsprinted(tinfoLocal.getId());
 //              } catch (BasicException ex) {
@@ -325,12 +366,15 @@ class JCancelReasonEditor extends JDialog {
 //
 //        }
 
-            setFlag =true;
-            this.dispose();
+                    setFlag = true;
+                    this.dispose();
+                }
+            } catch (BasicException ex) {
+                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-
 }//GEN-LAST:event_m_jbtnOkActionPerformed
-private void printKotTicket(String sresourcename, RetailTicketInfo ticket, kotInfo kot) {
+    private void printKotTicket(String sresourcename, RetailTicketInfo ticket, kotInfo kot) {
 
 
         String sresource = localDlSystem.getResourceAsXML(sresourcename);
@@ -343,8 +387,8 @@ private void printKotTicket(String sresourcename, RetailTicketInfo ticket, kotIn
             try {
                 ScriptEngine script = ScriptFactory.getScriptEngine(ScriptFactory.VELOCITY);
                 script.put("ticket", ticket);
-                 script.put("kot", kot);
-                  script.put("place", localTableName);
+                script.put("kot", kot);
+                script.put("place", localTableName);
                 m_TTP.printTicket(script.eval(sresource).toString());
             } catch (ScriptException e) {
                 MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotprintticket"), e);
@@ -361,7 +405,7 @@ private void printKotTicket(String sresourcename, RetailTicketInfo ticket, kotIn
     }//GEN-LAST:event_m_jReasonActionPerformed
 
     private void m_jCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jCancelActionPerformed
-        setFlag =false;
+        setFlag = false;
         dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_m_jCancelActionPerformed
 
@@ -372,7 +416,6 @@ private void printKotTicket(String sresourcename, RetailTicketInfo ticket, kotIn
     public void setFlag(boolean setFlag) {
         this.setFlag = setFlag;
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -382,16 +425,10 @@ private void printKotTicket(String sresourcename, RetailTicketInfo ticket, kotIn
     private javax.swing.JTextArea m_jTxtReason;
     private javax.swing.JButton m_jbtnOk;
     // End of variables declaration//GEN-END:variables
-
 }
-
-   
-
-    /**
-     * @return the enablity
-     */
-  
-    /**
-     * @param enablity the enablity to set
-     */
-   
+/**
+ * @return the enablity
+ */
+/**
+ * @param enablity the enablity to set
+ */

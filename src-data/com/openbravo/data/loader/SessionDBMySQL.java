@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 /**
@@ -28,12 +27,15 @@ public class SessionDBMySQL implements SessionDB {
     public String TRUE() {
         return "TRUE";
     }
+
     public String FALSE() {
         return "FALSE";
     }
+
     public String INTEGER_NULL() {
         return "CAST(NULL AS UNSIGNED INTEGER)";
     }
+
     public String CHAR_NULL() {
         return "CAST(NULL AS CHAR)";
     }

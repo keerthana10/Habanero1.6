@@ -1,0 +1,136 @@
+<project>
+    <shortName>SysforePOS</shortName>
+    <fullName>POS</fullName>
+    <version>2.30</version>
+    <readmeFile>D:\johnson\Project\POS\README</readmeFile>
+    <licenseFile>D:\johnson\Project\POS\licensing\gpl-3.0.txt</licenseFile>
+    <leftImage>D:\johnson\Project\POS\installer\images\left.png</leftImage>
+    <logoImage>D:\johnson\Project\POS\installer\images\openbravopos.png</logoImage>
+    <splashImage>D:\johnson\Project\POS\installer\images\splash.png</splashImage>
+    <allowLanguageSelection>1</allowLanguageSelection>
+    <description>POS is a point of sale designed for touch screens</description>
+    <enableRollback>1</enableRollback>
+    <enableTimestamp>1</enableTimestamp>
+    <outputDirectory>D:/POS/build/installerpos</outputDirectory>
+    <release>3</release>
+    <requireInstallationByRootUser>1</requireInstallationByRootUser>
+    <summary>POS</summary>
+    <vendor>Sysfore Technologies Pvt. Ltd</vendor>
+    <componentList>
+        <component>
+            <name>default</name>
+            <description>Default Component</description>
+            <canBeEdited>1</canBeEdited>
+            <selected>1</selected>
+            <show>1</show>
+            <desktopShortcutList>
+                <shortcut>
+                    <comment> POS is a point of sale designed for touch screens</comment>
+                    <exec>sh ${installdir}/start.sh</exec>
+                    <icon>${installdir}/openbravo-logo-128.png</icon>
+                    <name>Sysfore POS</name>
+                    <path>${installdir}</path>
+                    <platforms>windows</platforms>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/start.bat</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>${installdir}/openbravo-logo.ico</windowsIcon>
+                    <windowsPath>${installdir}</windowsPath>
+                </shortcut>
+            </desktopShortcutList>
+            <folderList>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfiles</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>D:/johnson/Project/POS/reports</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>D:/johnson/Project/POS/licensing</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>D:/johnson/Project/POS/locales</origin>
+                        </distributionDirectory>
+                        <distributionFile>
+                            <origin>D:/johnson/Project/POS/build/jar/openbravopos.jar</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>D:/johnson/Project/POS/README</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>D:/johnson/Project/POS/openbravo-logo-128.png</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>D:/johnson/Project/POS/openbravo-logo.ico</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>D:/johnson/Project/POS/start.bat</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>D:/johnson/Project/POS/configure.bat</origin>
+                        </distributionFile>
+                        <distributionDirectory>
+                            <origin>D:/johnson/Project/POS/lib/Windows</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+            </folderList>
+            <startMenuShortcutList>
+                <startMenuShortcut>
+                    <comment>POS is a point of sale designed for touch screens</comment>
+                    <name>Sysfore POS</name>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/start.bat</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>${installdir}/openbravo-logo.ico</windowsIcon>
+                    <windowsPath>${installdir}</windowsPath>
+                </startMenuShortcut>
+                <startMenuShortcut>
+                    <comment>Configure Sysfore POS</comment>
+                    <name>Sysfore POS configuration</name>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/configure.bat</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>${installdir}/openbravo-logo.ico</windowsIcon>
+                    <windowsPath>${installdir}</windowsPath>
+                </startMenuShortcut>
+                <startMenuShortcut>
+                    <comment>Uninstall ${product_fullname}</comment>
+                    <name>Uninstall ${product_fullname}</name>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon></windowsIcon>
+                    <windowsPath>${installdir}/</windowsPath>
+                </startMenuShortcut>
+            </startMenuShortcutList>
+        </component>
+    </componentList>
+    <parameterList>
+        <directoryParameter>
+            <name>installdir</name>
+            <description>Installer.Parameter.installdir.description</description>
+            <explanation>Installer.Parameter.installdir.explanation</explanation>
+            <value>${platform_install_prefix}/${product_shortname}-${product_version}</value>
+            <default>${platform_install_prefix}/${product_shortname}-${product_version}</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <cliOptionName>prefix</cliOptionName>
+            <mustBeWritable>1</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>30</width>
+        </directoryParameter>
+    </parameterList>
+    <platformOptionsList>
+        <platformOptions>
+            <description>Openbravo POS is a point of sale designed for touch screens</description>
+            <platform>debian</platform>
+            <release>1</release>
+            <summary>POS</summary>
+            <vendor>Openbravo</vendor>
+        </platformOptions>
+    </platformOptionsList>
+</project>
+

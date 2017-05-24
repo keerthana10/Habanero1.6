@@ -42,6 +42,9 @@ import com.openbravo.pos.inventory.MovementReason;
 import com.openbravo.pos.inventory.PrAreaMapInfo;
 
 import com.openbravo.pos.inventory.ProductionAreaTypeInfo;
+import com.openbravo.pos.inventory.RoleUserInfo;
+import com.openbravo.pos.inventory.StationInfo;
+import com.openbravo.pos.inventory.StationMapInfo;
 import com.openbravo.pos.inventory.TaxCategoryInfo;
 import com.openbravo.pos.inventory.UomListInfo;
 import com.openbravo.pos.mant.FloorsInfo;
@@ -93,8 +96,9 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     Logger printlogger = Logger.getLogger("PrintLog");
     Logger settlelogger = Logger.getLogger("SettleLog");
     Logger logger = Logger.getLogger("MyLog");
-Object[] record = null;
+    Object[] record = null;
     Date transactionDate = null;
+
     /**
      * Creates a new instance of SentenceContainerGeneric
      */
@@ -146,46 +150,46 @@ Object[] record = null;
     // Utilidades de productos
     public final ProductInfoExt getProductInfo(String id) throws BasicException {
         System.out.println("products selection 1");
-        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND P.ID = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
     }
 
     public final ProductInfoExt getMenuProductInfo(String id) throws BasicException {
         System.out.println("products selection 1");
-        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY,M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY,M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C,MENUPRICELIST M  WHERE U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.ID = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
     }
 
     public final ProductInfoExt getProductInfoByCode(String sCode) throws BasicException {
         System.out.println("products selection 2");
-        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT "
+        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND  P.CODE = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(sCode);
     }
 
     public final List<ProductInfoExt> getProductInfoByItemCode(String id) throws BasicException {
         System.out.println("products selection 3");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT  "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT,P.STATION  "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND  P.ITEMCODE = '" + id + "' AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ", null, ProductInfoExt.getSerializerRead()).list();
     }
 
     //method called while loading tables  
     public final List<ProductInfoExt> getProductDetails() throws BasicException {
         System.out.println("products selection 4");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION  "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND  P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ORDER BY P.NAME", null, ProductInfoExt.getSerializerRead()).list();
     }
 
     //Item search filter
     public final List<ProductInfoExt> getProductName(String name) throws BasicException {
         System.out.println("products selection 5");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION  "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND  P.NAME LIKE '" + name + "%' AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ORDER BY P.NAME", null, ProductInfoExt.getSerializerRead()).list();
     }
     //Item search filter
 
     public final List<ProductInfoExt> getProductInfoById(String id) throws BasicException {
         System.out.println("products selection 6");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION  "
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND  P.ID = '" + id + "' AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ", null, ProductInfoExt.getSerializerRead()).list();
     }
 
@@ -287,7 +291,7 @@ Object[] record = null;
 
     public List<ProductInfoExt> getProductCatalog(String category) throws BasicException {
         System.out.println("products selection 8");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, PRODUCTS_CAT O, UOM U,CATEGORIES C WHERE P.ID = O.PRODUCT AND U.ID=P.UOM AND P.CATEGORY=C.ID AND P.CATEGORY = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' "
                 + "ORDER BY O.CATORDER, P.NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(category);
     }
@@ -295,7 +299,7 @@ Object[] record = null;
 
     public List<ProductInfoExt> getProductComments(String id) throws BasicException {
         System.out.println("products selection 9");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, PRODUCTS_CAT O, PRODUCTS_COM M, UOM U,CATEGORIES C  WHERE P.ID = O.PRODUCT AND P.ID = M.PRODUCT2  AND U.ID=P.UOM AND P.CATEGORY=C.ID AND M.PRODUCT = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' "
                 + "AND P.ISCOM = " + s.DB.TRUE() + " "
                 + "ORDER BY O.CATORDER, P.NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(id);
@@ -305,14 +309,14 @@ Object[] record = null;
     public final SentenceList getProductList() {
         System.out.println("products selection 10");
         return new StaticSentence(s, new QBFBuilder(
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION  "
                 + "FROM PRODUCTS P, UOM U,CATEGORIES C  WHERE  U.ID=P.UOM AND P.CATEGORY=C.ID  AND ?(QBF_FILTER) AND P.ISACTIVE='Y' ORDER BY P.REFERENCE", new String[]{"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE"}), new SerializerWriteBasic(new Datas[]{Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING}), ProductInfoExt.getSerializerRead());
     }
 
     public final SentenceList getPurchaseProductList() {
         System.out.println("products selection 11");
         return new StaticSentence(s, new QBFBuilder(
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
                 + "FROM PRODUCTS P, UOM U,CATEGORIES C  WHERE  U.ID=P.UOM AND P.CATEGORY=C.ID AND ?(QBF_FILTER) AND P.ISACTIVE='Y' AND P.ISPURCHASEITEM = 'Y' ORDER BY P.REFERENCE", new String[]{"P.NAME", "P.PRICEBUY", "P.PRICESELL", "P.CATEGORY", "P.CODE"}), new SerializerWriteBasic(new Datas[]{Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING}), ProductInfoExt.getSerializerRead());
     }
     // Products list
@@ -320,14 +324,14 @@ Object[] record = null;
     public SentenceList getProductListNormal() {
         System.out.println("products selection 12");
         return new StaticSentence(s, new QBFBuilder(
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION"
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C WHERE P.ISCOM = " + s.DB.FALSE() + " AND U.ID=P.UOM AND P.CATEGORY=C.ID AND ?(QBF_FILTER) AND P.ISACTIVE='Y' ORDER BY P.REFERENCE", new String[]{"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE"}), new SerializerWriteBasic(new Datas[]{Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING}), ProductInfoExt.getSerializerRead());
     }
 
     public SentenceList getPurchaseProductListNormal() {
         System.out.println("products selection 13");
         return new StaticSentence(s, new QBFBuilder(
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, UOM U,CATEGORIES C WHERE P.ISCOM = " + s.DB.FALSE() + " AND U.ID=P.UOM AND P.CATEGORY=C.ID AND ?(QBF_FILTER) AND P.ISACTIVE='Y' AND P.ISPURCHASEITEM='Y' ORDER BY P.REFERENCE", new String[]{"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE"}), new SerializerWriteBasic(new Datas[]{Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING}), ProductInfoExt.getSerializerRead());
     }
 
@@ -335,14 +339,14 @@ Object[] record = null;
     public SentenceList getProductListAuxiliar() {
         System.out.println("products selection 14");
         return new StaticSentence(s, new QBFBuilder(
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT,P.STATION"
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C WHERE P.ISCOM = " + s.DB.TRUE() + " AND U.ID=P.UOM AND  P.CATEGORY=C.ID AND ?(QBF_FILTER) AND P.ISACTIVE='Y' ORDER BY P.REFERENCE", new String[]{"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE"}), new SerializerWriteBasic(new Datas[]{Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING}), ProductInfoExt.getSerializerRead());
     }
 
     public SentenceList getPurchaseProductListAuxiliar() {
         System.out.println("products selection 15");
         return new StaticSentence(s, new QBFBuilder(
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX ,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P ,UOM U,CATEGORIES C  WHERE P.ISCOM = " + s.DB.TRUE() + " AND U.ID=P.UOM AND  P.CATEGORY=C.ID AND ?(QBF_FILTER) AND P.ISACTIVE='Y' AND P.ISPURCHASEITEM='Y' ORDER BY P.REFERENCE", new String[]{"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE"}), new SerializerWriteBasic(new Datas[]{Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.DOUBLE, Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING}), ProductInfoExt.getSerializerRead());
     }
     // Tickets and Receipt list 
@@ -1455,30 +1459,30 @@ Object[] record = null;
                             // }
 
                             setString(10, l.getProductAttSetId());
-                            if(l.getPromoType().equals("BOGO")){
-                                 //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
-                            if(ticket.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            }
-                        }else if(l.getPromoType().equals("SIBG")){
-                           if(l.getPromoRule()!=null){
-                             //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
-                                   if(l.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            } 
+                            if (l.getPromoType().equals("BOGO")) {
+                                //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
+                                if (ticket.isPromoAction()) {
+                                    setString(11, l.getCampaignId());
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else if (l.getPromoType().equals("SIBG")) {
+                                if (l.getPromoRule() != null) {
+                                    //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
+                                    if (l.isPromoAction()) {
+                                        setString(11, l.getCampaignId());
+                                    } else {
+                                        setString(11, null);
+                                    }
 //                               }else{
 //                                 setString(11, l.getCampaignId());
 //                               }
-                           }else{
-                               setString(11,null );
-                           } 
-                        }else{
-                        setString(11, l.getCampaignId());
-                      }
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else {
+                                setString(11, l.getCampaignId());
+                            }
                             setInt(12, l.getKotid());
                             setString(13, l.getKottable());
                             setString(14, l.getInstruction());
@@ -1681,7 +1685,7 @@ Object[] record = null;
 //                        }});}
 //                    }
 //                }
-                  if (!ticket.getSplitValue().equals("Split")) {
+                if (!ticket.getSplitValue().equals("Split")) {
                     logger.info("Order No." + ticket.getOrderId() + " deleting shared ticket after settle bill of table " + ticket.getTableName() + " id is " + ticket.getPlaceId());
                     deleteSharedTicket(ticket.getPlaceId());
 
@@ -1765,7 +1769,7 @@ Object[] record = null;
 //                }
 
                 // new receipt
-                 record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+                record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
                 if (record != null) {
                     transactionDate = DateFormats.StringToDateTime((String) record[0]);
                     //  System.out.println("transactionDate"+transactionDate);
@@ -1912,30 +1916,30 @@ Object[] record = null;
                             // }
 
                             setString(10, l.getProductAttSetId());
-                           if(l.getPromoType().equals("BOGO")){
+                            if (l.getPromoType().equals("BOGO")) {
                                 //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
-                            if(ticket.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            }
-                        }else if(l.getPromoType().equals("SIBG")){
-                           if(l.getPromoRule()!=null){
-                             //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
-                                   if(l.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            } 
+                                if (ticket.isPromoAction()) {
+                                    setString(11, l.getCampaignId());
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else if (l.getPromoType().equals("SIBG")) {
+                                if (l.getPromoRule() != null) {
+                                    //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
+                                    if (l.isPromoAction()) {
+                                        setString(11, l.getCampaignId());
+                                    } else {
+                                        setString(11, null);
+                                    }
 //                               }else{
 //                                 setString(11, l.getCampaignId());
 //                               }
-                           }else{
-                               setString(11,null );
-                           } 
-                        }else{
-                        setString(11, l.getCampaignId());
-                      }
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else {
+                                setString(11, l.getCampaignId());
+                            }
                             setInt(12, l.getKotid());
                             setString(13, l.getKottable());
                             setString(14, l.getInstruction());
@@ -2288,7 +2292,7 @@ Object[] record = null;
 //            final String ticketId = (UUID.randomUUID().toString()).replaceAll("-", "");
 
                 // new receipt
-                 record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+                record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
                 if (record != null) {
                     transactionDate = DateFormats.StringToDateTime((String) record[0]);
                     //  System.out.println("transactionDate"+transactionDate);
@@ -2398,30 +2402,30 @@ Object[] record = null;
                             // }
 
                             setString(10, l.getProductAttSetId());
-                             if(l.getPromoType().equals("BOGO")){
-                                  //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
-                            if(ticket.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            }
-                        }else if(l.getPromoType().equals("SIBG")){
-                           if(l.getPromoRule()!=null){
-                             //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
-                                   if(l.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            } 
+                            if (l.getPromoType().equals("BOGO")) {
+                                //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
+                                if (ticket.isPromoAction()) {
+                                    setString(11, l.getCampaignId());
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else if (l.getPromoType().equals("SIBG")) {
+                                if (l.getPromoRule() != null) {
+                                    //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
+                                    if (l.isPromoAction()) {
+                                        setString(11, l.getCampaignId());
+                                    } else {
+                                        setString(11, null);
+                                    }
 //                               }else{
 //                                 setString(11, l.getCampaignId());
 //                               }
-                           }else{
-                               setString(11,null );
-                           } 
-                        }else{
-                        setString(11, l.getCampaignId());
-                      }
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else {
+                                setString(11, l.getCampaignId());
+                            }
                             setInt(12, l.getKotid());
                             setString(13, l.getKottable());
                             setString(14, l.getInstruction());
@@ -3584,7 +3588,7 @@ Object[] record = null;
 
     public List<ProductInfoExt> getPopularProduct(String popular) throws BasicException {
         System.out.println("products selection 18");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, PRODUCTS_CAT O, UOM U,CATEGORIES C WHERE P.ID = O.PRODUCT AND U.ID=P.UOM AND P.CATEGORY=C.ID AND P.POPULAR =? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' "
                 + "ORDER BY O.CATORDER, P.NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(popular);
     }
@@ -3802,26 +3806,26 @@ Object[] record = null;
     public final void saveRetailTempTicketlines(final RetailTicketInfo ticket) {
         for (final RetailTicketLineInfo l : ticket.getLines()) {
             for (int i = 0; i < l.getMultiply(); i++) {
-              if( l.getPromoType().equals("SIBG")&& l.getIsPromoSku().equals("N")){
-                  l.setPromoAction(true);
-                try {
-                    new PreparedSentence(s, "INSERT INTO TEMPTICKETLINES (PRODUCTID, CAMPAIGNID, PROMOTIONID,  QUANTITY,ISCROSSPROMOPRODUCT,PROMOTYPE, PRICE, TAXRATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
-                        public void writeValues() throws BasicException {
+                if (l.getPromoType().equals("SIBG") && l.getIsPromoSku().equals("N")) {
+                    l.setPromoAction(true);
+                    try {
+                        new PreparedSentence(s, "INSERT INTO TEMPTICKETLINES (PRODUCTID, CAMPAIGNID, PROMOTIONID,  QUANTITY,ISCROSSPROMOPRODUCT,PROMOTYPE, PRICE, TAXRATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
+                            public void writeValues() throws BasicException {
 
-                            setString(1, l.getProductID());
-                            setString(2, l.getCampaignId());
-                            setString(3, l.getpromoId());
-                            setDouble(4, 1.0);
-                            setString(5, l.getIsCrossProduct());
-                            setString(6, l.getPromoType());
-                            setDouble(7, l.getPrice());
-                            setDouble(8, (l.getTax() / l.getMultiply()));
-                        }
-                    });
-                } catch (BasicException ex) {
-                    Logger.getLogger(DataLogicSales.class.getName()).log(Level.SEVERE, null, ex);
+                                setString(1, l.getProductID());
+                                setString(2, l.getCampaignId());
+                                setString(3, l.getpromoId());
+                                setDouble(4, 1.0);
+                                setString(5, l.getIsCrossProduct());
+                                setString(6, l.getPromoType());
+                                setDouble(7, l.getPrice());
+                                setDouble(8, (l.getTax() / l.getMultiply()));
+                            }
+                        });
+                    } catch (BasicException ex) {
+                        Logger.getLogger(DataLogicSales.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            }
             }
         }
     }
@@ -3992,14 +3996,14 @@ Object[] record = null;
 
     public final ProductInfoExt getProductInfoAddon(String id) throws BasicException {
         System.out.println("products selection 19");
-        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE ,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE ,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION"
                 + "FROM PRODUCTS P,UOM U,CATEGORIES C  WHERE U.ID=P.UOM AND P.CATEGORY=C.ID AND P.id = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
     }
 
     public ProductInfoExt CountAddonProduct(String product) throws BasicException {
         System.out.println("products selection 20");
         return (ProductInfoExt) new PreparedSentence(s,
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
                 + "FROM PRODUCTS P LEFT JOIN PRODUCTLINKEDADDON L ON L.ADDON=P.ID LEFT JOIN CATEGORIES C ON P.CATEGORY=C.ID WHERE L.LINKEDTO = ?   AND P.ISACTIVE='Y' ORDER BY P.REFERENCE",
                 SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(product);
     }
@@ -4048,7 +4052,7 @@ Object[] record = null;
             public Object transact() throws BasicException {
 
                 // new ticket     
-                 record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+                record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
                 if (record != null) {
                     transactionDate = DateFormats.StringToDateTime((String) record[0]);
                     //  System.out.println("transactionDate"+transactionDate);
@@ -4168,30 +4172,30 @@ Object[] record = null;
                             // }
 
                             setString(10, l.getProductAttSetId());
-                            if(l.getPromoType().equals("BOGO")){
+                            if (l.getPromoType().equals("BOGO")) {
                                 //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
-                            if(ticket.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            }
-                        }else if(l.getPromoType().equals("SIBG")){
-                           if(l.getPromoRule()!=null){
-                             //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
-                                   if(l.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            } 
+                                if (ticket.isPromoAction()) {
+                                    setString(11, l.getCampaignId());
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else if (l.getPromoType().equals("SIBG")) {
+                                if (l.getPromoRule() != null) {
+                                    //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
+                                    if (l.isPromoAction()) {
+                                        setString(11, l.getCampaignId());
+                                    } else {
+                                        setString(11, null);
+                                    }
 //                               }else{
 //                                 setString(11, l.getCampaignId());
 //                               }
-                           }else{
-                               setString(11,null );
-                           } 
-                        }else{
-                        setString(11, l.getCampaignId());
-                      }
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else {
+                                setString(11, l.getCampaignId());
+                            }
                             setInt(12, l.getKotid());
                             setString(13, l.getKottable());
                             setString(14, l.getInstruction());
@@ -4253,6 +4257,7 @@ Object[] record = null;
 
     //this method to reprint the settled bill
     public final RetailTicketInfo getRetailPrintedTicket(int Id) throws BasicException {
+        System.out.println("ISSUEEEEEEE");
         System.out.println("retriving content from  db" + Id);
         if (Id == 0) {
             return null;
@@ -4417,7 +4422,7 @@ Object[] record = null;
     //method called on clicking product 
     public List<ProductInfoExt> getMenuProductCatalog(String category, String menuId) throws BasicException {
         System.out.println("products selection 21");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, PRODUCTS_CAT O, UOM U,MENUPRICELIST M,CATEGORIES C  WHERE P.ID = O.PRODUCT AND U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.CATEGORY = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND MENUID='" + menuId + "' "
                 + "ORDER BY O.CATORDER, P.NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(category);
     }
@@ -4425,7 +4430,7 @@ Object[] record = null;
 
     public List<ProductInfoExt> getMenuProductComments(String id, String menuId) throws BasicException {
         System.out.println("products selection 22");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, MN.PRICEBUY, MN.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, MN.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, MN.PRICEBUY, MN.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, MN.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, PRODUCTS_CAT O, PRODUCTS_COM M, UOM U,MENUPRICELIST MN,CATEGORIES C WHERE P.ID = O.PRODUCT AND P.ID = M.PRODUCT2  AND U.ID=P.UOM AND MN.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND M.PRODUCT = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND MENUID='" + menuId + "' "
                 + "AND P.ISCOM = " + s.DB.TRUE() + " "
                 + "ORDER BY O.CATORDER, P.NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(id);
@@ -4434,28 +4439,28 @@ Object[] record = null;
     //method called while loading tables (as of now this method not been called anywhere)
     public final List<ProductInfoExt> getMenuProductDetails(String menuId) throws BasicException {
         System.out.println("products selection 23");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
                 + "FROM PRODUCTS P,UOM U,MENUPRICELIST M,CATEGORIES C  WHERE U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND M.MENUID='" + menuId + "' ORDER BY P.NAME", null, ProductInfoExt.getSerializerRead()).list();
     }
 
     //method called while loading tables  
     public List<ProductInfoExt> getMenuPopularProduct(String popular, String menuId) throws BasicException {
         System.out.println("products selection 24");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP, U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P, PRODUCTS_CAT O, UOM U,MENUPRICELIST M,CATEGORIES C WHERE P.ID = O.PRODUCT AND U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.POPULAR =? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND M.MENUID='" + menuId + "' "
                 + "ORDER BY O.CATORDER, P.NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(popular);
     }
 
     public final ProductInfoExt getMenuProductInfoAddon(String id, String menuId) throws BasicException {
         System.out.println("products selection 25");
-        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE ,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
-                + "FROM PRODUCTS P,UOM U,MENUPRICELIST M,CATEGORIES C  WHERE U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.id = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND M.MENUID='" + menuId + "' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
+        return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE ,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
+                 + "FROM PRODUCTS P,UOM U,MENUPRICELIST M,CATEGORIES C  WHERE U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.id = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND M.MENUID='" + menuId + "' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
     }
 
     public ProductInfoExt CountMenuAddonProduct(String product, String menuId) throws BasicException {
         System.out.println("products selection 26");
         return (ProductInfoExt) new PreparedSentence(s,
-                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+                "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
                 + "FROM PRODUCTS P LEFT JOIN PRODUCTLINKEDADDON L ON L.ADDON=P.ID LEFT JOIN CATEGORIES C ON P.CATEGORY=C.ID RIGHT JOIN MENUPRICELIST M ON M.PRODUCTID=P.ID WHERE L.LINKEDTO = ?   AND P.ISACTIVE='Y' AND M.MENUID='" + menuId + "' GROUP BY P.ID ORDER BY P.REFERENCE",
                 SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(product);
     }
@@ -4620,7 +4625,7 @@ Object[] record = null;
 
 
                 // new receipt
-                 record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+                record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
                 if (record != null) {
                     transactionDate = DateFormats.StringToDateTime((String) record[0]);
                     //  System.out.println("transactionDate"+transactionDate);
@@ -4726,30 +4731,30 @@ Object[] record = null;
                             // }
 
                             setString(10, l.getProductAttSetId());
-                           if(l.getPromoType().equals("BOGO")){
-                               //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
-                            if(ticket.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            }
-                        }else if(l.getPromoType().equals("SIBG")){
-                           if(l.getPromoRule()!=null){
-                             //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
-                                   if(l.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            } 
+                            if (l.getPromoType().equals("BOGO")) {
+                                //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
+                                if (ticket.isPromoAction()) {
+                                    setString(11, l.getCampaignId());
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else if (l.getPromoType().equals("SIBG")) {
+                                if (l.getPromoRule() != null) {
+                                    //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
+                                    if (l.isPromoAction()) {
+                                        setString(11, l.getCampaignId());
+                                    } else {
+                                        setString(11, null);
+                                    }
 //                               }else{
 //                                 setString(11, l.getCampaignId());
 //                               }
-                           }else{
-                               setString(11,null );
-                           } 
-                        }else{
-                        setString(11, l.getCampaignId());
-                      }
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else {
+                                setString(11, l.getCampaignId());
+                            }
                             setInt(12, l.getKotid());
                             setString(13, l.getKottable());
                             setString(14, l.getInstruction());
@@ -4956,14 +4961,14 @@ Object[] record = null;
     //method called on clicking combo product 
     public List<ProductInfoExt> getMenuMandatoryAddonProducts(String product, String menuId) throws BasicException {
         System.out.println("products selection getMenuMandatoryAddonProducts");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT  "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
                 + "FROM PRODUCTS P LEFT JOIN PRODUCTLINKEDADDON L ON L.ADDON=P.ID LEFT JOIN CATEGORIES C  ON P.CATEGORY=C.ID RIGHT JOIN MENUPRICELIST M ON M.PRODUCTID=P.ID WHERE L.LINKEDTO =? AND M.MENUID='" + menuId + "'  AND P.ISACTIVE='Y' AND P.MANDATORYADDON='Y' "
                 + "GROUP BY P.ID ORDER BY P.REFERENCE", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(product);
     }
 
     public List<ProductInfoExt> getMandatoryAddonProducts(String product) throws BasicException {
         System.out.println("products selection getMandatoryAddonProducts");
-        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME ,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT "
+        return new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, P.PRICEBUY, P.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, P.MRP,'',P.PRODUCTTYPE,P.PRODUCTIONAREATYPE,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME ,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT,P.STATION "
                 + "FROM PRODUCTS P LEFT JOIN PRODUCTLINKEDADDON L ON L.ADDON=P.ID LEFT JOIN CATEGORIES C ON P.CATEGORY=C.ID WHERE L.LINKEDTO ='" + product + "'   AND P.ISACTIVE='Y' AND P.MANDATORYADDON='Y' "
                 + "GROUP BY P.ID ORDER BY P.REFERENCE", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list(product);
     }
@@ -4981,8 +4986,8 @@ Object[] record = null;
 
         new StaticSentence(s, "DELETE FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE).exec(id);
     }
-    
-        public final synchronized void saveRetailCancelSplitTicket(final RetailTicketInfo ticket, final String StoreName, final String ticketDocument, final String orderTaking, final String location, final String reason, final String reasonId, final String posNo, final String homeDelivery) throws BasicException {
+
+    public final synchronized void saveRetailCancelSplitTicket(final RetailTicketInfo ticket, final String StoreName, final String ticketDocument, final String orderTaking, final String location, final String reason, final String reasonId, final String posNo, final String homeDelivery) throws BasicException {
         System.out.println(ticket.getTotal() + "total testing 4 ");
         // java.util.ArrayList<BuyGetPriceInfo> pdtLeastPriceList;
         System.out.println("saving bill data into database---- +");
@@ -5034,7 +5039,7 @@ Object[] record = null;
 //            final String ticketId = (UUID.randomUUID().toString()).replaceAll("-", "");
 
                 // new receipt
-                 record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+                record = (Object[]) new StaticSentence(s, "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
                 if (record != null) {
                     transactionDate = DateFormats.StringToDateTime((String) record[0]);
                     //  System.out.println("transactionDate"+transactionDate);
@@ -5144,30 +5149,30 @@ Object[] record = null;
                             // }
 
                             setString(10, l.getProductAttSetId());
-                          if(l.getPromoType().equals("BOGO")){
-                               //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
-                            if(ticket.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            }
-                        }else if(l.getPromoType().equals("SIBG")){
-                           if(l.getPromoRule()!=null){
-                             //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
-                                   if(l.isPromoAction()){
-                                setString(11, l.getCampaignId());
-                            }else{
-                               setString(11,null );  
-                            } 
+                            if (l.getPromoType().equals("BOGO")) {
+                                //condtion need to b changed to l.isPromoAction once integrating bogo to Habanero
+                                if (ticket.isPromoAction()) {
+                                    setString(11, l.getCampaignId());
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else if (l.getPromoType().equals("SIBG")) {
+                                if (l.getPromoRule() != null) {
+                                    //  if(l.getPromoRule().get(0).getIsCrossProduct().equals("N")&& l.getPromoRule().get(0).getIsSku().equals("N")){
+                                    if (l.isPromoAction()) {
+                                        setString(11, l.getCampaignId());
+                                    } else {
+                                        setString(11, null);
+                                    }
 //                               }else{
 //                                 setString(11, l.getCampaignId());
 //                               }
-                           }else{
-                               setString(11,null );
-                           } 
-                        }else{
-                        setString(11, l.getCampaignId());
-                      }
+                                } else {
+                                    setString(11, null);
+                                }
+                            } else {
+                                setString(11, l.getCampaignId());
+                            }
                             setInt(12, l.getKotid());
                             setString(13, l.getKottable());
                             setString(14, l.getInstruction());
@@ -5207,7 +5212,7 @@ Object[] record = null;
                     });
                 }
 
-              
+
 
                 if (ticket.getPlaceId() != null && !(ticket.getSplitValue().equals("Split"))) {
                     deleteTableCovers(ticket.getPlaceId());
@@ -5219,24 +5224,66 @@ Object[] record = null;
 
         t.execute();
     }
-        public int getLeastPromo(String campaignId) throws BasicException {
-         Object[] record = null;
-        record = (Object[]) new StaticSentence(s
-                , "SELECT COUNT(*)  FROM PROMOTIONRULE WHERE PROMOTIONCAMPAIGNID IN ("+campaignId+") AND (PROMOTIONTYPEID='SIBG' )AND ISPROMOPRODUCT='Y' AND ISCROSSPROMOPRODUCT='N' AND ISSKU='N' "
-                , SerializerWriteString.INSTANCE
-                    , new SerializerReadBasic(new Datas[] {Datas.STRING})).find();
-            int i = Integer.parseInt(record[0]==null ? "0" :record[0].toString());
-            return (i == 0 ? 0 : i);
+
+    public int getLeastPromo(String campaignId) throws BasicException {
+        Object[] record = null;
+        record = (Object[]) new StaticSentence(s, "SELECT COUNT(*)  FROM PROMOTIONRULE WHERE PROMOTIONCAMPAIGNID IN (" + campaignId + ") AND (PROMOTIONTYPEID='SIBG' )AND ISPROMOPRODUCT='Y' AND ISCROSSPROMOPRODUCT='N' AND ISSKU='N' ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+        int i = Integer.parseInt(record[0] == null ? "0" : record[0].toString());
+        return (i == 0 ? 0 : i);
 
     }
-        public int getBuyGetPromo(String campaignId) throws BasicException {
-         Object[] record = null;
-        record = (Object[]) new StaticSentence(s
-                , "SELECT COUNT(*)  FROM PROMOTIONRULE WHERE PROMOTIONCAMPAIGNID IN ("+campaignId+") AND (PROMOTIONTYPEID='SIBG' )AND ISPROMOPRODUCT='Y' AND ISCROSSPROMOPRODUCT='N' AND ISSKU='Y' "
-                , SerializerWriteString.INSTANCE
-                    , new SerializerReadBasic(new Datas[] {Datas.STRING})).find();
-            int i = Integer.parseInt(record[0]==null ? "0" :record[0].toString());
-            return (i == 0 ? 0 : i);
+
+    public int getBuyGetPromo(String campaignId) throws BasicException {
+        Object[] record = null;
+        record = (Object[]) new StaticSentence(s, "SELECT COUNT(*)  FROM PROMOTIONRULE WHERE PROMOTIONCAMPAIGNID IN (" + campaignId + ") AND (PROMOTIONTYPEID='SIBG' )AND ISPROMOPRODUCT='Y' AND ISCROSSPROMOPRODUCT='N' AND ISSKU='Y' ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
+        int i = Integer.parseInt(record[0] == null ? "0" : record[0].toString());
+        return (i == 0 ? 0 : i);
 
     }
+
+    //KDS Integration
+    public List<StationInfo> getStationList() throws BasicException {
+
+        return (List<StationInfo>) new StaticSentence(s, "SELECT ID,SEARCHKEY,NAME FROM STATION ", null, new SerializerReadClass(StationInfo.class)).list();
+    }
+
+    public List<StationMapInfo> getStationMapList(String roIeId) throws BasicException {
+
+        return (List<StationMapInfo>) new StaticSentence(s, "SELECT ID,ROLEID,USERID,STATION FROM STATIONUSERMAP WHERE ROLEID ='" + roIeId + "'", null, new SerializerReadClass(StationMapInfo.class)).list();
+    }
+    
+        public final synchronized void updateStationUserMap(final String roleId, final String userId, final java.util.List<String> selectedList, final java.util.List<String> userList)
+            throws BasicException {
+
+        Transaction t = new Transaction(s) {
+            public Object transact() throws BasicException {
+
+
+
+                if (selectedList != null) {
+                    for (final String u : userList) {
+                        new StaticSentence(s, "DELETE FROM STATIONUSERMAP WHERE USERID = ?", SerializerWriteString.INSTANCE).exec(u);
+                        for (final String l : selectedList) {
+                            new PreparedSentence(s, "INSERT INTO STATIONUSERMAP (ID, ROLEID, USERID,STATION) "
+                                    + "VALUES(?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
+                                public void writeValues() throws BasicException {
+                                    setString(1, UUID.randomUUID().toString().replaceAll("-", ""));
+                                    setString(2, roleId);
+                                    setString(3, u);
+                                    setString(4, l);
+                                }
+                            });
+                        }
+                    }
+                }
+                return null;
+            }
+        };
+        t.execute();
+    }
+            public List<RoleUserInfo> getUserList(String roleId) throws BasicException {
+
+        return (List<RoleUserInfo>) new StaticSentence(s, "SELECT ID, NAME FROM PEOPLE WHERE ROLE='" + roleId + "' ", null, new SerializerReadClass(RoleUserInfo.class)).list();
+    }
+    
 }
