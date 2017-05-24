@@ -16,12 +16,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 public interface ISQLBuilderStatic {
-    
-    public String getSQL(SerializerWrite sw, Object params) throws BasicException;     
+
+    public String getSQL(SerializerWrite sw, Object params) throws BasicException;
 }

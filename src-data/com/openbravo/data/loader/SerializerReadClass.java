@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
@@ -24,12 +23,14 @@ import com.openbravo.basic.BasicException;
 public class SerializerReadClass implements SerializerRead {
 
     private Class m_clazz;
-    
-    /** Creates a new instance of DefaultSerializerRead */
+
+    /**
+     * Creates a new instance of DefaultSerializerRead
+     */
     public SerializerReadClass(Class clazz) {
         m_clazz = clazz;
     }
-    
+
     public Object readValues(DataRead dr) throws BasicException {
         try {
             SerializableRead sr = (SerializableRead) m_clazz.newInstance();

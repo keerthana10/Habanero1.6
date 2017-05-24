@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import java.sql.SQLException;
@@ -24,26 +23,27 @@ import com.openbravo.basic.BasicException;
 
 /**
  *
- * @author adrianromero
- * Created on 26 de febrero de 2007, 21:50
+ * @author adrianromero Created on 26 de febrero de 2007, 21:50
  *
  */
 public abstract class Transaction<T> {
-    
+
     private Session s;
-    
-    /** Creates a new instance of Transaction */
+
+    /**
+     * Creates a new instance of Transaction
+     */
     public Transaction(Session s) {
         this.s = s;
     }
-    
+
     public final T execute() throws BasicException {
-        
+
         if (s.isTransaction()) {
             return transact();
         } else {
             try {
-                try {    
+                try {
                     s.begin();
                     T result = transact();
                     s.commit();
@@ -57,6 +57,6 @@ public abstract class Transaction<T> {
             }
         }
     }
-    
+
     protected abstract T transact() throws BasicException;
 }

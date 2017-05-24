@@ -35,7 +35,7 @@ BILLAMOUNT,
 sum(price) AS NET,
 SUM(IF(name = "Food", PRICE, 0)) Food,
 SUM(IF(name = "Beverage", PRICE, 0)) Beverage,
-SUM(IF(name = "Liquor", PRICE, 0)) Liquor,
+SUM(IF(name in ("Liquor","One Plus One Offer","MRP Offer Bottle"), PRICE, 0)) Liquor,
 SUM(IF(name = "Tobacco", PRICE, 0)) Tobacco,
 sum(price) AS BASIC,sum(discountprice) AS DISCOUNTPRICE, SUM(PROMODISCOUNTPRICE) AS PROMODISCOUNTPRICE, TAX,
 CASH,COMPLEMENTARY,CHEQUE,STAFF,VOUCHER,MOBILE,VCLOUD,AMEX,FOODPANDA,
@@ -115,7 +115,7 @@ order by FLOORNAME,accountdate]]></queryString>
 	<field name="ZOMATO" class="java.lang.Double"/>
 	<field name="COALESCE(SWACHBHARATHTAXAMT,0)" class="java.lang.Double"/>
 	<field name="NOW()" class="java.util.Date"/>
-	<field name="ACCOUNTDATE" class="java.sql.Date"/>
+	<field name="ACCOUNTDATE" class="java.util.Date"/>
 	<field name="KRISHIKALYANTAX" class="java.lang.Double"/>
 	<field name="FLOOR" class="java.lang.String"/>
 	<field name="FLOORNAME" class="java.lang.String"/>
@@ -1407,24 +1407,6 @@ order by FLOORNAME,accountdate]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{COALESCE(SERVICECHARGEAMT,0)}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd-MMM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="107"
-						height="20"
-						key="textField"/>
-					<box>					<pen lineWidth="0.75"/>
-					<topPen lineWidth="0.75"/>
-					<leftPen lineWidth="0.75"/>
-					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.75"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{datenew}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="549"
@@ -1478,6 +1460,24 @@ order by FLOORNAME,accountdate]]></queryString>
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{BILLAMOUNT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="d/M/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="107"
+						height="20"
+						key="textField-3"/>
+					<box>					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{ACCOUNTDATE}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

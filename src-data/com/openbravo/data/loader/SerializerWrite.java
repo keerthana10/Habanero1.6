@@ -16,12 +16,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 public interface SerializerWrite<T> {
-    
-    public void writeValues(DataWrite dp, T obj) throws BasicException;   
+
+    public void writeValues(DataWrite dp, T obj) throws BasicException;
 }

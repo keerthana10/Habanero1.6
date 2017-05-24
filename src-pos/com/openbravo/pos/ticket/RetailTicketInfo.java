@@ -149,8 +149,12 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     private Map<String, NameTaxMapInfo> nametaxMap;
     private double billTotal;
     private boolean promoAction;
+    private Date objectUpdateDate;
+    private String takeaway;
 
-    /** Creates new TicketModel */
+    /**
+     * Creates new TicketModel
+     */
     public RetailTicketInfo() {
         m_sId = UUID.randomUUID().toString();
         m_sId = m_sId.replaceAll("-", "");
@@ -191,10 +195,13 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         oldTableName = null;
         swachBharattaxes = null;
         taxMap = new HashMap();
-        nametaxMap= new HashMap();
+        nametaxMap = new HashMap();
         billTotal = 0;
-           promoAction=false;
-           leastValueDiscount=0;
+        promoAction = false;
+        leastValueDiscount = 0;
+        objectUpdateDate = null;
+         takeaway = "N";
+
     }
 
     public RetailTicketInfo(String rate) {
@@ -202,8 +209,8 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         m_sId = m_sId.replaceAll("-", "");
         tickettype = RECEIPT_NORMAL;
         m_iTicketId = 0; // incrementamos
-       m_dDate=new Date();
-       attributes = new Properties();
+        m_dDate = new Date();
+        attributes = new Properties();
         m_User = null;
         m_Customer = null;
         dAmt = 0;
@@ -233,10 +240,13 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         oldTableName = null;
         swachBharattaxes = null;
         taxMap = null;
-        nametaxMap= null;
+        nametaxMap = null;
         billTotal = 0;
-           promoAction=false;
-           leastValueDiscount=0;
+        promoAction = false;
+        leastValueDiscount = 0;
+        objectUpdateDate = null;
+         takeaway = "N";
+
     }
 
     //Print before billing,settlement,exiting table
@@ -285,9 +295,12 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         out.writeDouble(swachBharatTax);
         out.writeObject(taxMap);
         out.writeDouble(billTotal);
-     out.writeBoolean(promoAction);
-out.writeDouble(leastValueDiscount);
-out.writeObject(nametaxMap);
+        out.writeBoolean(promoAction);
+        out.writeDouble(leastValueDiscount);
+        out.writeObject(nametaxMap);
+        out.writeObject(objectUpdateDate);
+         out.writeObject(takeaway);
+
     }
 
     //entering table,reprint after billing
@@ -340,10 +353,13 @@ out.writeObject(nametaxMap);
             placeId = (String) in.readObject();
             swachBharatTax = in.readDouble();
             taxMap = (Map<Double, TaxMapInfo>) in.readObject();
-           billTotal = in.readDouble();
-              promoAction=in.readBoolean();
-leastValueDiscount=in.readDouble();
-            nametaxMap=((Map<String, NameTaxMapInfo>) in.readObject());
+            billTotal = in.readDouble();
+            promoAction = in.readBoolean();
+            leastValueDiscount = in.readDouble();
+            nametaxMap = ((Map<String, NameTaxMapInfo>) in.readObject());
+            objectUpdateDate = (Date) in.readObject();
+             takeaway = ((String) in.readObject());
+
         } catch (IOException e) {
         }
     }
@@ -412,9 +428,12 @@ leastValueDiscount=in.readDouble();
         t.oldTableName = oldTableName;
         t.taxMap = taxMap;
         t.billTotal = billTotal;
-          t.promoAction=promoAction;
-          t.leastValueDiscount=leastValueDiscount;
-          t.nametaxMap=nametaxMap;
+        t.promoAction = promoAction;
+        t.leastValueDiscount = leastValueDiscount;
+        t.nametaxMap = nametaxMap;
+        t.objectUpdateDate = objectUpdateDate;
+         t.takeaway = takeaway;
+
         return t;
     }
 
@@ -459,8 +478,11 @@ leastValueDiscount=in.readDouble();
         t.oldTableName = oldTableName;
         //  t.taxMap=taxMap;
         t.billTotal = billTotal;
-          t.promoAction=promoAction;
-          t.leastValueDiscount=leastValueDiscount;
+        t.promoAction = promoAction;
+        t.leastValueDiscount = leastValueDiscount;
+        t.objectUpdateDate = objectUpdateDate;
+         t.takeaway = takeaway;
+
         return t;
     }
 
@@ -498,8 +520,11 @@ leastValueDiscount=in.readDouble();
         t.storeName = storeName;
         t.taxMap = taxMap;
         t.billTotal = billTotal;
-          t.promoAction=promoAction;
-          t.nametaxMap=nametaxMap;
+        t.promoAction = promoAction;
+        t.nametaxMap = nametaxMap;
+        t.objectUpdateDate = objectUpdateDate;
+         t.takeaway = takeaway;
+
         return t;
     }
 
@@ -1346,14 +1371,14 @@ leastValueDiscount=in.readDouble();
     }
 
     public String printPromoDiscount() {
-        return Formats.CURRENCY.formatValue(new Double(getOfferDiscount()+getLeastValueDiscount()));
+        return Formats.CURRENCY.formatValue(new Double(getOfferDiscount() + getLeastValueDiscount()));
     }
 
     public double getOfferDiscount() {
         double discount = 0.0;
         for (RetailTicketLineInfo line : m_aLines) {
-           //    if(!(line.getPromoType().equals("SIBG")&& line.getIsCrossProduct().equals("N"))){
-                discount += line.getOfferDiscount();
+            //    if(!(line.getPromoType().equals("SIBG")&& line.getIsCrossProduct().equals("N"))){
+            discount += line.getOfferDiscount();
             // }
         }
         return discount;
@@ -2306,7 +2331,8 @@ leastValueDiscount=in.readDouble();
     public void setM_App(AppView m_App) {
         this.m_App = m_App;
     }
-     /**
+
+    /**
      * @return the promoAction
      */
     public boolean isPromoAction() {
@@ -2333,4 +2359,32 @@ leastValueDiscount=in.readDouble();
     public void setNametaxMap(Map<String, NameTaxMapInfo> nametaxMap) {
         this.nametaxMap = nametaxMap;
     }
+
+    /**
+     * @return the objectUpdateDate
+     */
+    public Date getObjectUpdateDate() {
+        return objectUpdateDate;
     }
+
+    /**
+     * @param objectUpdateDate the objectUpdateDate to set
+     */
+    public void setObjectUpdateDate(Date objectUpdateDate) {
+        this.objectUpdateDate = objectUpdateDate;
+    }
+    
+        /**
+     * @return the takeaway
+     */
+    public String getTakeaway() {
+        return takeaway;
+    }
+
+    /**
+     * @param takeaway the takeaway to set
+     */
+    public void setTakeaway(String takeaway) {
+        this.takeaway = takeaway;
+    }
+}
