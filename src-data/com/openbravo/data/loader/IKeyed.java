@@ -16,14 +16,16 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 /**
  *
- * @author adrianromero Created on 27 de febrero de 2007, 22:08
+ * @author adrianromero
+ * Created on 27 de febrero de 2007, 22:08
  *
  */
 public interface IKeyed {
-
-    public Object getKey();
+    
+    public Object getKey();    
 }

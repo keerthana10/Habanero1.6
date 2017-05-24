@@ -16,21 +16,20 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 public class SerializerWriteInteger implements SerializerWrite<Integer> {
-
+    
     public static final SerializerWrite INSTANCE = new SerializerWriteInteger();
-
-    /**
-     * Creates a new instance of SerializerWriteInteger
-     */
+    
+    /** Creates a new instance of SerializerWriteInteger */
     private SerializerWriteInteger() {
     }
-
+    
     public void writeValues(DataWrite dp, Integer obj) throws BasicException {
         Datas.INT.setValue(dp, 1, obj);
-    }
+    }  
 }

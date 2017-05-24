@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
@@ -25,22 +26,19 @@ import com.openbravo.basic.BasicException;
  * @author adrian
  */
 public class BasicSentenceEnum implements SentenceEnum {
-
+    
     BaseSentence sent;
     DataResultSet SRS;
-
-    /**
-     * Creates a new instance of AbstractSentenceEnum
-     */
+    
+    /** Creates a new instance of AbstractSentenceEnum */
     public BasicSentenceEnum(BaseSentence sent) {
         this.sent = sent;
         this.SRS = null;
     }
-
+    
     public void load() throws BasicException {
         load(null);
     }
-
     public void load(Object params) throws BasicException {
         SRS = sent.openExec(params);
     }
@@ -48,18 +46,18 @@ public class BasicSentenceEnum implements SentenceEnum {
     public Object getCurrent() throws BasicException {
         if (SRS == null) {
             throw new BasicException(LocalRes.getIntString("exception.nodataset"));
-        }
-
-        return SRS.getCurrent();
+        } 
+        
+        return SRS.getCurrent();  
     }
-
+    
     public boolean next() throws BasicException {
         if (SRS == null) {
             throw new BasicException(LocalRes.getIntString("exception.nodataset"));
-        }
-
+        } 
+        
         if (SRS.next()) {
-            return true;
+            return true;  
         } else {
             SRS.close();
             SRS = null;

@@ -16,15 +16,14 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 public interface SentenceExec {
-
+    
     public int exec() throws BasicException;
-
     public int exec(Object params) throws BasicException;
-
     public int exec(Object... params) throws BasicException;
 }

@@ -31,7 +31,7 @@ report.setSentence(" SELECT  C1.NAME, CTG.NAME AS SUBCATEGORY,  P.CODE, P.NAME A
                     " LEFT JOIN  PRODUCTS AS P ON P.ID = TL.PRODUCT" +
                     " INNER JOIN CATEGORIES AS CTG ON P.CATEGORY = CTG.ID" +
                     "  LEFT JOIN CATEGORIES C1 ON C1.ID=CTG.PARENTID   " + 
-                    " WHERE  TICKETS.ISCANCELTICKET='N' AND TICKETS.ISNONCHARGABLE='N' AND ?(QBF_FILTER) " +
+                    " WHERE  TICKETS.ISCANCELTICKET='N' AND ?(QBF_FILTER) " +
                     " GROUP BY C1.NAME,P.CODE, P.NAME" +
                     " ORDER BY C1.NAME,P.CODE,P.NAME");
 

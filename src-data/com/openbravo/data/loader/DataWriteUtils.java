@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import java.util.Date;
@@ -24,18 +25,16 @@ import java.text.SimpleDateFormat;
 
 /**
  *
- * @author adrian
+ * @author  adrian
  */
 public class DataWriteUtils {
-
-    private static DateFormat tsf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-
-    /**
-     * Creates a new instance of DataWriteUtils
-     */
+    
+    private static DateFormat tsf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); 
+    
+    /** Creates a new instance of DataWriteUtils */
     public DataWriteUtils() {
     }
-
+    
     public static String getSQLValue(Object obj) {
         if (obj == null) {
             return "NULL";
@@ -51,9 +50,9 @@ public class DataWriteUtils {
             return getSQLValue((Date) obj);
         } else {
             return getSQLValue(obj.toString());
-        }
+        }            
     }
-
+    
     public static String getSQLValue(Integer iValue) {
         if (iValue == null) {
             return "NULL";
@@ -61,7 +60,7 @@ public class DataWriteUtils {
             return iValue.toString();
         }
     }
-
+    
     public static String getSQLValue(Double dValue) {
         if (dValue == null) {
             return "NULL";
@@ -69,7 +68,7 @@ public class DataWriteUtils {
             return dValue.toString();
         }
     }
-
+    
     public static String getSQLValue(Boolean bValue) {
         if (bValue == null) {
             return "NULL";
@@ -77,7 +76,7 @@ public class DataWriteUtils {
             return bValue.booleanValue() ? "TRUE" : "FALSE";
         }
     }
-
+    
     public static String getSQLValue(String sValue) {
         if (sValue == null) {
             return "NULL";
@@ -85,7 +84,7 @@ public class DataWriteUtils {
             return '\'' + getEscaped(sValue) + '\'';
         }
     }
-
+    
     public static String getSQLValue(Date dValue) {
         if (dValue == null) {
             return "NULL";
@@ -93,7 +92,7 @@ public class DataWriteUtils {
             return "{ts '" + tsf.format(dValue) + "'}";
         }
     }
-
+    
     public static String getEscaped(String sValue) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < sValue.length(); i++) {
@@ -101,7 +100,7 @@ public class DataWriteUtils {
                 case '\\':
                     sb.append("\\\\");
                     break;
-                case '\'':
+                 case '\'':
                     sb.append("\\'");
                     break;
                 case '\n':
@@ -110,11 +109,11 @@ public class DataWriteUtils {
                 case '\r':
                     sb.append("\\r");
                     break;
-                default:
+                default: 
                     sb.append(sValue.charAt(i));
                     break;
             }
         }
         return sb.toString();
     }
-}
+ }

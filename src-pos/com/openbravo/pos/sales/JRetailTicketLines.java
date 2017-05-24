@@ -171,6 +171,8 @@ public class JRetailTicketLines extends javax.swing.JPanel {
     }
     
     public void addTicketLine(RetailTicketLineInfo oLine) {
+        
+        System.out.println("addTicketLine 7 one parameter oline  ---"+oLine.getTbl_orderId());
    
         m_jTableModel.addRow(oLine);
 //        System.out.println("oLine.getPreparationStatus();---"+oLine.getPreparationStatus());
@@ -180,12 +182,13 @@ public class JRetailTicketLines extends javax.swing.JPanel {
     }    
    
     public void insertTicketLine(int index, RetailTicketLineInfo oLine) {
+        System.out.println("insert TicketLine 8");
         m_jTableModel.insertRow(index, oLine); 
         // Selecciono la que acabamos de anadir.            
         setSelectedIndex(index);   
     }     
     public void removeTicketLine(int i){
-
+        System.out.println("remove TicketLine 1");
         m_jTableModel.removeRow(i);
 
         // Escojo una a seleccionar
@@ -200,6 +203,7 @@ public class JRetailTicketLines extends javax.swing.JPanel {
     }
     
     public void setSelectedIndex(int i){
+                System.out.println("set selected Index TicketLine");
         
         // Seleccionamos
         m_jTicketTable.getSelectionModel().setSelectionInterval(i, i);
@@ -372,8 +376,6 @@ public class JRetailTicketLines extends javax.swing.JPanel {
 
         }
       }
-
-
 
       fireTableCellUpdated(row, column);
 

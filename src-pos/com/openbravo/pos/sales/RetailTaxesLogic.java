@@ -31,9 +31,11 @@ import com.openbravo.pos.ticket.TicketTaxInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,6 +51,32 @@ public class RetailTaxesLogic {
     private Map<String, TaxesLogicElement> taxtrees;
     private RetailTicketInfo ticket;
     private Map<String, TaxStructureInfo> taxMap = null;
+    
+     private double fetchtaxline;
+static double sumlinetax=0.0;
+public int index=0;
+static double base1;
+
+//public Map<String, Double> linestringtaxmap=null; 
+
+static Map<Double, List<Double>> filtertaxmap = new HashMap<Double , List<Double>>() {}; 
+//static Map<Double, Double> linedoubletaxmap = new HashMap<Double , Double>() {};  
+static Map<Double, ArrayList<Double>> linedoubletaxmap = new HashMap<Double , ArrayList<Double>>() {}; 
+public ArrayList<Double> myTaxList = new ArrayList<Double>() ;
+public List<Double> myTaxUnlist = new ArrayList<Double>() ;
+public Stack st=new Stack();
+public String newlinetax;
+//Map<Integer, T> map = new HashMap<Integer, T>(list.size());
+//for(T item : list) {
+//    map.put(item.getId(), item);
+//}
+    public double getFetchtaxline() {
+        return fetchtaxline;
+    }
+
+    public void setFetchtaxline(double fetchtaxline) {
+        this.fetchtaxline = fetchtaxline;
+    }
     //  private Map<String, TaxStructureInfo> takeAwayTaxMap = null;
 
     public RetailTaxesLogic(List<TaxInfo> taxlist, AppView app) {
@@ -126,15 +154,96 @@ public class RetailTaxesLogic {
 
     public List<TicketTaxInfo> calculateTaxes(RetailTicketLineInfo line, RetailTicketInfo ticket) throws TaxesException {
 
+//Need to set RetailTicketLineInfo setLineTax with discountvalue - May18
+        //Add Up discount return values with subtotal
 
+//           System.out.println("RetailTicketInfo--ID"+ticket.getId());
+//            System.out.println("RetailTicketInfo--OrderID"+ticket.getOrderId());
+//              System.out.println("RetailTicketInfoPlaceID"+ticket.getPlaceId());
+                
+                         
+                         
+                         
         TaxesLogicElement taxesapplied = getTaxesApplied(line.getTaxInfo());
+       
         //if its line level discount
+                         
         if (ticket.iscategoryDiscount()) {
-            return calculateLineTaxes(line.getSubValueOnProductCat(), taxesapplied, ticket);
+            //return calculateLineTaxes(line.getSubValueOnProductCat(), taxesapplied, ticket);
+            List<TicketTaxInfo>  linetaxlistreturn=calculateLineTaxes(line.getSubValueOnProductCat(), taxesapplied, ticket);
+                 System.out.println("Check---IF");    
+                 for(Map.Entry m:linedoubletaxmap.entrySet()){  
+                System.out.println(m.getKey()+" "+m.getValue());  
+                    }  
+       
+            return linetaxlistreturn;
+            
+             
         } else {
             //if its bill level discount
-            return calculateLineTaxes(line.getSubValue(), taxesapplied, ticket);
+            
+            //------------
+            //return calculateLineTaxes(line.getSubValue(), taxesapplied, ticket);
+             List<TicketTaxInfo>  linetaxlistreturn=calculateLineTaxes(line.getSubValue(), taxesapplied, ticket);
+               System.out.println("Check---Else");  
+              // linedoubletaxmap.put(base,myTaxList); 
+               
+                System.out.println(linedoubletaxmap.size());  
+                for(Map.Entry m:linedoubletaxmap.entrySet()){  
+              System.out.println(m.getKey()+" "+m.getValue());  
+                  }  
+      System.out.println("-------------------");
+      Double sum=0.0;
+      try{
+       for(int i=0;i<5;i++)
+                   {System.out.print("line.getSubValue()pop -> "+line.getSubValue());
+                    System.out.println("stack: " + st);
+      Double a = (Double) st.pop();
+      if(a!=null)
+      {
+      sum=sum+a;
+      System.out.println(a);
+      }
+      else
+      {
+          a=0.0;
+       sum=sum+a;
+      System.out.println(a);
+                   }
+               }
+     
+       System.out.println("sumLineTax"+sum);
+       
+      
+      }catch(EmptyStackException e){}
+       newlinetax=sum.toString();
+       
+       line.setLineTax(sum.toString());
+       
+//             for(Map.Entry m:linedoubletaxmap.entrySet()){  
+//                   //  List<Double> list = new ArrayList<Double>();
+//                System.out.println("Iteration starts"+m.getKey()+" "+m.getValue());  
+//              myTaxUnlist = (List<Double>) m.getValue();
+//              
+//             Stack st = null;
+//                
+//               System.out.println("#1 normal for loop"+myTaxUnlist.size());
+//		for (int i=0; i <= myTaxUnlist.size();i++) {
+//                    st.push(new Double(myTaxUnlist.get(i)));
+//                  
+//			System.out.println(i+"--"+myTaxUnlist.get(i));
+//                  
+//                    
+//		}//end for
+//                
+//              
+//              
+//              
+//                    }     //end for  HahMap
+//                 
+            return linetaxlistreturn;
         }
+
     }
 
     private TaxesLogicElement getTaxesApplied(TaxInfo t) throws TaxesException {
@@ -153,13 +262,16 @@ public class RetailTaxesLogic {
         return taxtrees.get(id);
     }
     //Method is used to calculate the line taxes for a selected products
-    private List<TicketTaxInfo> calculateLineTaxes(double base, TaxesLogicElement taxesapplied, RetailTicketInfo ticket) {
+    private List<TicketTaxInfo> calculateLineTaxes(double base, TaxesLogicElement taxesapplied,RetailTicketInfo ticket) {
         List<TicketTaxInfo> linetaxes = new ArrayList<TicketTaxInfo>();
         //executes?
         //If parent tax do not have child tax
         if (taxesapplied.getSons().isEmpty()) {
             TicketTaxInfo tickettax = new TicketTaxInfo(taxesapplied.getTax());
+            //May18 - 
+            
             tickettax.addErpStdTax(base, ticket, taxMap);
+            
             linetaxes.add(tickettax);
             tickettax.setTaxAmount(ticket.getTaxValue());
         } else {
@@ -169,28 +281,75 @@ public class RetailTaxesLogic {
             //Iterating the child taxes
             for (TaxesLogicElement te : taxesapplied.getSons()) {
                 taxMap.put(te.getTax().getId(), new TaxStructureInfo(te.getTax().getBaseAmt(), te.getTax().getRate(), 0, false));
-                List<TicketTaxInfo> sublinetaxes = calculateLineTaxes(
-                        te.getTax().isCascade() ? acum : base,
-                        te);
+                List<TicketTaxInfo> sublinetaxes = calculateLineTaxes(te.getTax().isCascade() ? acum : base,te);
+                
                 linetaxes.addAll(sublinetaxes);
                 acum += sumTaxes(sublinetaxes);
+                
+                //Added on May 2017
+                System.out.println("Check---");
+//                 for(Map.Entry m:linedoubletaxmap.entrySet()){  
+//                System.out.println(m.getKey()+" "+m.getValue());  
+//                    }  
             }
 
         }
 
         return linetaxes;
     }
+    
+   
+    public void calculatelinetaxamount(double base,double returntax,List myTaxList,Stack st)
+    {   
+   // Map<Double,Double> linetaxmap=new HashMap<Double,Double>();  
+       // linedoubletaxmap=linetaxmap;
+        double tempfetchtaxline=getFetchtaxline();
+             if(base==tempfetchtaxline){
+                  System.out.println("base--"+base+"tempfetchline--"+tempfetchtaxline+"returntax--"+returntax);
+                  myTaxList.add(returntax);                 
+                   st.push(returntax);
+                  
+                   
+//                
+//               System.out.println("#1 normal for loop"+myTaxUnlist.size());
+//		for (int i=0; i <= myTaxUnlist.size();i++) {
+//                    st.push(new Double(myTaxUnlist.get(i)));
+//                  
+//			System.out.println(i+"--"+myTaxUnlist.get(i));
+//                  
+//                    
+//		}//end for
+                  sumlinetax+=returntax;
+              
+             
+             
+             }
+            
+   
+    }
 
     private List<TicketTaxInfo> calculateLineTaxes(double base, TaxesLogicElement taxesapplied) {
-
+ 
         List<TicketTaxInfo> linetaxes = new ArrayList<TicketTaxInfo>();
         //true always?
         //Checking for multiple child taxes
         if (taxesapplied.getSons().isEmpty()) {
             TicketTaxInfo tickettax = new TicketTaxInfo(taxesapplied.getTax());
-            //calculating child tax value 
-            tickettax.addErpStdTax(base, ticket, taxMap);
-            linetaxes.add(tickettax);
+            //calculating child tax value             
+             double returntax=tickettax.addErpStdTax(base, ticket, taxMap);
+             //System.out.println("Ticket Line -PlaceID--"+ticket.getPlaceId());       
+          myTaxList.add(returntax);
+          st.push(returntax);
+          linedoubletaxmap.put(base,myTaxList); 
+
+         // System.out.println("---RETURN TAX--"+returntax);
+          
+          //May 18 -next 2 lines
+            setFetchtaxline(base); 
+        //  calculatelinetaxamount(base,returntax,myTaxList,st);
+           
+           
+             linetaxes.add(tickettax);
         } else {
             double acum = base;
 
@@ -233,6 +392,8 @@ public class RetailTaxesLogic {
     }
 
     private List<TicketTaxInfo> sumLineTaxes(List<TicketTaxInfo> list1, List<TicketTaxInfo> list2) {
+       
+        
         for (TicketTaxInfo tickettax : list2) {
             //Changed the sum logic based on tax rate 
             //      TicketTaxInfo i = searchTicketTax(list1, tickettax.getTaxInfo().getRate());

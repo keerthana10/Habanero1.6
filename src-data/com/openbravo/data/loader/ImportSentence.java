@@ -16,29 +16,28 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 /**
  *
- * @author adrian
+ * @author  adrian
  */
 public class ImportSentence extends BaseSentence {
-
-    /**
-     * Creates a new instance of ImportSentence
-     */
+    
+    /** Creates a new instance of ImportSentence */
     public ImportSentence() {
     }
-
+    
     public void closeExec() throws BasicException {
     }
-
+    
     public DataResultSet moreResults() throws BasicException {
         return null;
     }
-
+    
     public DataResultSet openExec(Object params) throws BasicException {
         return null;
     }

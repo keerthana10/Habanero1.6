@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.pos.ticket;
 
 import java.awt.image.BufferedImage;
@@ -34,6 +35,7 @@ import java.util.Properties;
 public class ProductInfoExt {
 
     private static final long serialVersionUID = 7587696873036L;
+
     protected String m_ID;
     protected String m_sRef;
     protected String m_sCode;
@@ -59,12 +61,9 @@ public class ProductInfoExt {
     private String parentCatId;
     private String preparationTime;
     private String swachBharatTaxId;
-    private String comboProduct;
-    private String station;
+     private String comboProduct;
 
-    /**
-     * Creates new ProductInfo
-     */
+    /** Creates new ProductInfo */
     public ProductInfoExt() {
         m_ID = null;
         m_sRef = "0000";
@@ -78,20 +77,19 @@ public class ProductInfoExt {
         m_dPriceBuy = 0.0;
         m_dPriceSell = 0.0;
         m_Image = null;
-        multiply = 1;
+         multiply = 1;
         attributes = new Properties();
         itemCode = null;
         mrp = 0.0;
         uom = null;
-        productType = null;
-        productionAreaType = null;
-        servicechargeid = null;
-        servicetaxid = null;
-        parentCatId = null;
-        preparationTime = null;
-        swachBharatTaxId = null;
-        comboProduct = null;
-        station = null;
+        productType=null;
+        productionAreaType=null;
+        servicechargeid=null;
+        servicetaxid=null;
+        parentCatId=null;
+        preparationTime=null;
+        swachBharatTaxId=null;
+        comboProduct=null;
     }
 
     public final String getID() {
@@ -109,7 +107,6 @@ public class ProductInfoExt {
     public final void setReference(String sRef) {
         m_sRef = sRef;
     }
-
     public final String getItemCode() {
         return itemCode;
     }
@@ -117,7 +114,6 @@ public class ProductInfoExt {
     public final void setItemCode(String itemCode) {
         this.itemCode = itemCode;
     }
-
     public final String getCode() {
         return m_sCode;
     }
@@ -169,7 +165,6 @@ public class ProductInfoExt {
     public final String getAttributeSetID() {
         return attributesetid;
     }
-
     public final void setAttributeSetID(String value) {
         attributesetid = value;
     }
@@ -181,8 +176,7 @@ public class ProductInfoExt {
     public final void setPriceBuy(double dPrice) {
         m_dPriceBuy = dPrice;
     }
-
-    public final double getMrp() {
+     public final double getMrp() {
         return mrp;
     }
 
@@ -209,90 +203,78 @@ public class ProductInfoExt {
     public String printPriceSellTax(TaxInfo tax) {
         return Formats.CURRENCY.formatValue(new Double(getPriceSellTax(tax)));
     }
-
+    
     public BufferedImage getImage() {
         return m_Image;
     }
-
     public void setImage(BufferedImage img) {
         m_Image = img;
     }
-
+    
     public String getProperty(String key) {
         return attributes.getProperty(key);
     }
-
     public String getProperty(String key, String defaultvalue) {
         return attributes.getProperty(key, defaultvalue);
     }
-
     public void setProperty(String key, String value) {
         attributes.setProperty(key, value);
     }
-
     public Properties getProperties() {
         return attributes;
     }
-
-    public double getMultiply() {
+ public double getMultiply() {
         return multiply;
     }
-
-    public final String getUom() {
+ public final String getUom() {
         return uom;
     }
 
     public final void setUom(String uom) {
-        this.uom = uom;
+       this.uom = uom;
     }
-
-    public final String getProductType() {
+     public final String getProductType() {
         return productType;
     }
 
     public final void setProductType(String productType) {
         this.productType = productType;
     }
-
     /**
      * @param multiply the multiply to set
      */
     public void setMultiply(double multiply) {
         this.multiply = multiply;
     }
-
     public static SerializerRead getSerializerRead() {
-        return new SerializerRead() {
-            public Object readValues(DataRead dr) throws BasicException {
-                ProductInfoExt product = new ProductInfoExt();
-                product.m_ID = dr.getString(1);
-                product.m_sRef = dr.getString(2);
-                product.m_sCode = dr.getString(3);
-                product.m_sName = dr.getString(4);
-                product.m_bCom = dr.getBoolean(5).booleanValue();
-                product.m_bScale = dr.getBoolean(6).booleanValue();
-                product.m_dPriceBuy = dr.getDouble(7).doubleValue();
-                product.m_dPriceSell = dr.getDouble(8).doubleValue();
-                product.taxcategoryid = dr.getString(9);
-                product.categoryid = dr.getString(10);
-                product.attributesetid = dr.getString(11);
-                product.m_Image = ImageUtils.readImage(dr.getBytes(12));
-                product.attributes = ImageUtils.readProperties(dr.getBytes(13));
-                product.itemCode = dr.getString(14);
-                product.mrp = dr.getDouble(15).doubleValue();
-                product.uom = dr.getString(16);
-                product.productType = dr.getString(17);
-                product.productionAreaType = dr.getString(18);
-                product.servicechargeid = dr.getString(19);
-                product.servicetaxid = dr.getString(20);
-                product.parentCatId = dr.getString(21);
-                product.preparationTime = dr.getString(22);
-                product.swachBharatTaxId = dr.getString(23);
-                product.comboProduct = dr.getString(24);
-                product.station = dr.getString(25);
-                return product;
-            }
-        };
+        return new SerializerRead() { public Object readValues(DataRead dr) throws BasicException {
+            ProductInfoExt product = new ProductInfoExt();
+            product.m_ID = dr.getString(1);
+            product.m_sRef = dr.getString(2);
+            product.m_sCode = dr.getString(3);
+            product.m_sName = dr.getString(4);
+            product.m_bCom = dr.getBoolean(5).booleanValue();
+            product.m_bScale = dr.getBoolean(6).booleanValue();
+            product.m_dPriceBuy = dr.getDouble(7).doubleValue();
+            product.m_dPriceSell = dr.getDouble(8).doubleValue();
+            product.taxcategoryid = dr.getString(9);
+            product.categoryid = dr.getString(10);
+            product.attributesetid = dr.getString(11);
+            product.m_Image = ImageUtils.readImage(dr.getBytes(12));
+            product.attributes = ImageUtils.readProperties(dr.getBytes(13));
+            product.itemCode = dr.getString(14);
+            product.mrp = dr.getDouble(15).doubleValue();
+            product.uom = dr.getString(16);
+            product.productType = dr.getString(17);
+            product.productionAreaType=dr.getString(18);
+            product.servicechargeid=dr.getString(19);
+            product.servicetaxid=dr.getString(20);
+            product.parentCatId=dr.getString(21);
+            product.preparationTime=dr.getString(22);
+            product.swachBharatTaxId=dr.getString(23);
+            product.comboProduct=dr.getString(24);
+            return product;
+        }};
     }
 
     @Override
@@ -313,16 +295,16 @@ public class ProductInfoExt {
     public void setProductionAreaType(String productionAreaType) {
         this.productionAreaType = productionAreaType;
     }
-
-    public final String getServiceChargeID() {
+    
+       public final String getServiceChargeID() {
         return servicechargeid;
     }
 
     public final void setServiceChargeID(String value) {
         servicechargeid = value;
     }
-
-    public final String getServiceTaxID() {
+    
+      public final String getServiceTaxID() {
         return servicetaxid;
     }
 
@@ -357,8 +339,7 @@ public class ProductInfoExt {
     public void setPreparationTime(String preparationTime) {
         this.preparationTime = preparationTime;
     }
-
-    public final String getSwachBharatTaxId() {
+       public final String getSwachBharatTaxId() {
         return swachBharatTaxId;
     }
 
@@ -380,17 +361,4 @@ public class ProductInfoExt {
         this.comboProduct = comboProduct;
     }
 
-    /**
-     * @return the station
-     */
-    public String getStation() {
-        return station;
-    }
-
-    /**
-     * @param station the station to set
-     */
-    public void setStation(String station) {
-        this.station = station;
-    }
 }

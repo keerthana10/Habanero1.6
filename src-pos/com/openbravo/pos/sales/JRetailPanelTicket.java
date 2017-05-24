@@ -40,10 +40,8 @@ import com.openbravo.data.gui.ListKeyed;
 import com.openbravo.data.loader.Datas;
 import com.openbravo.data.loader.PreparedSentence;
 import com.openbravo.data.loader.SentenceList;
-import com.openbravo.data.loader.SerializerReadBasic;
 import com.openbravo.data.loader.SerializerReadClass;
 import com.openbravo.data.loader.SerializerWriteBasicExt;
-import com.openbravo.data.loader.SerializerWriteString;
 import com.openbravo.data.loader.StaticSentence;
 import com.openbravo.data.loader.Transaction;
 import com.openbravo.format.Formats;
@@ -68,7 +66,6 @@ import com.openbravo.pos.forms.JPrincipalApp;
 import com.openbravo.pos.forms.JRootApp;
 import com.openbravo.pos.forms.PromoRuleIdInfo;
 import com.openbravo.pos.forms.PromoRuleInfo;
-import com.openbravo.pos.inventory.RoleUserInfo;
 import com.openbravo.pos.inventory.TaxCategoryInfo;
 import com.openbravo.pos.payment.JPaymentInterface;
 import com.openbravo.pos.payment.JPaymentSelectReceipt;
@@ -88,7 +85,6 @@ import com.openbravo.pos.printer.printer.KotBillPrinter;
 import com.openbravo.pos.printer.printer.KotImagePrinter;
 import com.openbravo.pos.printer.printer.TicketLineConstructor;
 import com.openbravo.pos.sales.restaurant.Floor;
-import com.openbravo.pos.sales.restaurant.JRetailBufferWindow;
 import com.openbravo.pos.sales.restaurant.JRetailTicketsBagRestaurant;
 import com.openbravo.pos.sales.restaurant.Place;
 import com.openbravo.pos.ticket.MenuInfo;
@@ -101,7 +97,6 @@ import com.openbravo.pos.ticket.ServiceChargeInfo;
 import com.openbravo.pos.util.JRPrinterAWT300;
 import com.openbravo.pos.util.ReportUtils;
 import com.openbravo.pos.util.ThumbNailBuilderPopularItems;
-import com.openbravo.util.date.DateFormats;
 import com.sysfore.pos.homedelivery.DeliveryBoyInfo;
 import com.sysfore.pos.hotelmanagement.BusinessServiceChargeInfo;
 import com.sysfore.pos.hotelmanagement.BusinessServiceTaxInfo;
@@ -307,15 +302,8 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     private RefreshPromotion autoRefreshPromotion = new RefreshPromotion();
     private Timer promoTimer = new Timer(1200, autoRefreshPromotion);
     private java.util.List<CampaignIdInfo> promotionList = null;
-    boolean leastValuePromo = false;
-    boolean buyGetPromo = false;
-    private static DateFormat m_dateformat = new SimpleDateFormat("yyyy-MM-dd");
-    private static DateFormat m_dateformattime = new SimpleDateFormat("HH:mm:ss");
-    Date dbUpdatedDate = null;
-    Map<String, String> userMap = new HashMap<String, String>();
-    public int oldordernum;
-    public int newordernum;
-    public String loginUserId;
+      boolean leastValuePromo = false;
+       boolean buyGetPromo = false;
 
     /**
      * Creates new form JTicketView
@@ -329,10 +317,12 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         txtL = new TextListener();
         itemName.addFocusListener(txtL);
         Action doMorething = new AbstractAction() {
+
             public void actionPerformed(ActionEvent e) {
                 m_jKeyFactory.setFocusable(true);
                 m_jKeyFactory.setText(null);
                 java.awt.EventQueue.invokeLater(new Runnable() {
+
                     public void run() {
                         m_jKeyFactory.requestFocus();
                     }
@@ -344,6 +334,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
         // Add Action listener for item name drop down field
         itemName.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 if (!itemName.getText().equals("") || !itemName.getText().equals(null)) {
 
@@ -437,9 +428,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             logger.info("Order No. " + m_oTicket.getOrderId() + "exception in cashPayment closeTicketWithButton" + ex.getMessage());
             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
 
+    }
     //Method is called when click on vCloud payment
+
     public void vCloudPayment(int print, RetailTicketInfo ticket) {
         logger.info("Enter vCloudPayment");
         m_aPaymentInfo = new PaymentInfoList();
@@ -480,8 +472,8 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     //Method is called when click on card payment
+
     public void cardPayment(int print, RetailTicketInfo ticket, String paymentMode) {
         logger.info("Enter cardPayment");
         m_aPaymentInfo = new PaymentInfoList();
@@ -501,58 +493,52 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     //Method is called when click on cheque payment
-    public void chequePayment(int print, RetailTicketInfo ticket, String chequeNo) {
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            m_aPaymentInfo = new PaymentInfoList();
-            //Adding the cheque payment details to PaymentInfoList for saving the payment details
-            chequetransaction = new PaymentInfoChequeDetails(ticket.getTotal(), ticket.getTotal(), chequeNo);
-            if (chequetransaction != null) {
-                m_aPaymentInfo.add(chequetransaction);
 
-            }
-            ticket.setPrintStatus(print);
-            try {
-                logger.info("chequePayment Before close ticket button action");
-                //Method is for closing the ticket
-                closeTicketWithButton(ticket, m_oTicketExt, m_aPaymentInfo);
-                logger.info("chequePayment after close ticket button action");
-            } catch (BasicException ex) {
-                logger.info("Order No. " + m_oTicket.getOrderId() + "exception in chequePayment closeTicketWithButton" + ex.getMessage());
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public void chequePayment(int print, RetailTicketInfo ticket, String chequeNo) {
+
+        m_aPaymentInfo = new PaymentInfoList();
+        //Adding the cheque payment details to PaymentInfoList for saving the payment details
+        chequetransaction = new PaymentInfoChequeDetails(ticket.getTotal(), ticket.getTotal(), chequeNo);
+        if (chequetransaction != null) {
+            m_aPaymentInfo.add(chequetransaction);
+
+        }
+        ticket.setPrintStatus(print);
+        try {
+            logger.info("chequePayment Before close ticket button action");
+            //Method is for closing the ticket
+            closeTicketWithButton(ticket, m_oTicketExt, m_aPaymentInfo);
+            logger.info("chequePayment after close ticket button action");
+        } catch (BasicException ex) {
+            logger.info("Order No. " + m_oTicket.getOrderId() + "exception in chequePayment closeTicketWithButton" + ex.getMessage());
+            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     //Method is called when click on staff payment
+
     public void staffPayment(int print, RetailTicketInfo ticket) {
         logger.info("Enter staffPayment method");
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            m_aPaymentInfo = new PaymentInfoList();
-            //Adding the staff payment details to PaymentInfoList for saving the payment details
-            staff = new PaymentInfoStaff(m_oTicket.getTotal(), m_oTicket.getTotal());
-            if (staff != null) {
-                m_aPaymentInfo.add(staff);
-            }
-            m_oTicket.setPrintStatus(print);
-            try {
-                logger.info("staffPayment Before close ticket button action");
-                //Method is for closing the ticket
-                closeTicketWithButton(ticket, m_oTicketExt, m_aPaymentInfo);
-                logger.info("staffPayment after close ticket button action");
-            } catch (BasicException ex) {
-                logger.info("Order No. " + m_oTicket.getOrderId() + "exception in staffPayment closeTicketWithButton" + ex.getMessage());
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        m_aPaymentInfo = new PaymentInfoList();
+        //Adding the staff payment details to PaymentInfoList for saving the payment details
+        staff = new PaymentInfoStaff(m_oTicket.getTotal(), m_oTicket.getTotal());
+        if (staff != null) {
+            m_aPaymentInfo.add(staff);
+
+        }
+        m_oTicket.setPrintStatus(print);
+        try {
+            logger.info("staffPayment Before close ticket button action");
+            //Method is for closing the ticket
+            closeTicketWithButton(ticket, m_oTicketExt, m_aPaymentInfo);
+            logger.info("staffPayment after close ticket button action");
+        } catch (BasicException ex) {
+            logger.info("Order No. " + m_oTicket.getOrderId() + "exception in staffPayment closeTicketWithButton" + ex.getMessage());
+            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     //Method is called when click on nonchargeable payment
+
     public void complimentaryPayment(int print, RetailTicketInfo ticket) {
         logger.info("Enter complimentaryPayment method");
         m_aPaymentInfo = new PaymentInfoList();
@@ -575,28 +561,25 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     //Method is called when click on voucher payment
 
     public void voucherPayment(int print, RetailTicketInfo ticket, String voucherNo) {
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            logger.info("Enter voucherPayment method");
-            m_aPaymentInfo = new PaymentInfoList();
-            //Adding the voucher payment details to PaymentInfoList for saving the payment details
-            voucher = new PaymentInfoVoucherDetails(ticket.getTotal(), ticket.getTotal(), voucherNo);
-            if (voucher != null) {
-                m_aPaymentInfo.add(voucher);
+        logger.info("Enter voucherPayment method");
+        m_aPaymentInfo = new PaymentInfoList();
+        //Adding the voucher payment details to PaymentInfoList for saving the payment details
+        voucher = new PaymentInfoVoucherDetails(ticket.getTotal(), ticket.getTotal(), voucherNo);
+        if (voucher != null) {
+            m_aPaymentInfo.add(voucher);
 
-            }
-            ticket.setPrintStatus(print);
-            try {
-                logger.info("voucherPayment Before close ticket button action");
-                //Method is for closing the ticket
-                closeTicketWithButton(ticket, m_oTicketExt, m_aPaymentInfo);
-                logger.info("voucherPayment after close ticket button action");
-            } catch (BasicException ex) {
-                logger.info("Order No. " + m_oTicket.getOrderId() + "exception in voucherPayment closeTicketWithButton" + ex.getMessage());
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
+        ticket.setPrintStatus(print);
+        try {
+            logger.info("voucherPayment Before close ticket button action");
+            //Method is for closing the ticket
+            closeTicketWithButton(ticket, m_oTicketExt, m_aPaymentInfo);
+            logger.info("voucherPayment after close ticket button action");
+        } catch (BasicException ex) {
+            logger.info("Order No. " + m_oTicket.getOrderId() + "exception in voucherPayment closeTicketWithButton" + ex.getMessage());
+            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     private void customerFocus() {
@@ -664,7 +647,9 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         if (!mandatoryProduct.isEmpty()) {
             for (ProductInfoExt mandatory : mandatoryProduct) {
                 TaxInfo tax = taxeslogic.getTaxInfo(mandatory.getTaxCategoryID(), m_oTicket.getCustomer(), "N");
-                addTicketLine(new RetailTicketLineInfo(mandatory, mandatory.getMultiply(), mandatory.getMrp(), promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, mandatory.getName(), mandatory.getProductType(), mandatory.getProductionAreaType(), (java.util.Properties) (mandatory.getProperties().clone()), addonId, 0, null, 0, null, null, null, null, null, mandatory.getParentCatId(), mandatory.getPreparationTime(), null, null, null, null, null, 1, null, false, mandatory.getStation()));
+                
+                addTicketLine(new RetailTicketLineInfo(mandatory, mandatory.getMultiply(), mandatory.getMrp(), promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, mandatory.getName(), mandatory.getProductType(), mandatory.getProductionAreaType(), (java.util.Properties) (mandatory.getProperties().clone()), addonId, 0, null, 0, null, null, null, null, null, mandatory.getParentCatId(), mandatory.getPreparationTime(), null, null, null, null, null, 1, null,false));
+            
             }
         }
     }
@@ -695,15 +680,16 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
     //Method is used for setting the valid promotions
     private String setPromotionData() {
-        System.out.println("setpromotion data====");
+        System.out.println("setpromotion data==== ");
         String day = getWeekDay();
-        String promotionName = "";
+        
+        String promotionName="";
         logger.info("after m_ticketsbag activate method");
         java.util.ArrayList<String> campaignId = new ArrayList<String>();
         promoRuleIdList = null;
         try {
             campaignIdList = (ArrayList<CampaignIdInfo>) dlSales.getCampaignId(day);
-            System.out.println("setpromotion data====" + campaignIdList.size());
+             System.out.println("setpromotion data==== continued in same call"+campaignIdList.size());
             if (campaignIdList.size() != 0) {
             }
         } catch (BasicException ex) {
@@ -727,24 +713,27 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             if (campaignIdList != null) {
                 try {
                     promoRuleIdList = (ArrayList<PromoRuleIdInfo>) dlSales.getPromoRuleId(Id);
-                    int leastPromotionCount = dlSales.getLeastPromo(Id);
-                    int buyGetPromotionCount = dlSales.getBuyGetPromo(Id);
-                    if (leastPromotionCount != 0) {
-                        promotionName = "LeastValue";
+                       int leastPromotionCount = dlSales.getLeastPromo(Id);
+                         int buyGetPromotionCount = dlSales.getBuyGetPromo(Id);
+                    if (leastPromotionCount != 0  ) {
+                        System.out.println("Least Value");
+                         promotionName="LeastValue";
+                         
                         m_jCalculatePromotion.setEnabled(true);
-                    } else if (buyGetPromotionCount != 0) {
-                        promotionName = "BuyGet";
+                    } else   if ( buyGetPromotionCount!=0) {
+                        promotionName="BuyGet";
+                        System.out.println("Buy Get");
                         m_jCalculatePromotion.setEnabled(true);
-                    } else {
-                        m_jCalculatePromotion.setEnabled(false);
+                    }else{
+                         m_jCalculatePromotion.setEnabled(false);
                     }
                 } catch (BasicException ex) {
                     Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
-        } else {
-            m_jCalculatePromotion.setEnabled(false);
+        }else{
+             m_jCalculatePromotion.setEnabled(false);
         }
         return promotionName;
     }
@@ -764,8 +753,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             if (e.getSource() == cusName) {
                 type = "c";
                 cusName.addKeyListener(new KeyAdapter() {
+
                     public void keyTyped(KeyEvent e) {
                         EventQueue.invokeLater(new Runnable() {
+
                             public void run() {
                                 String text = cusName.getText();
                                 if (text.length() == 0) {
@@ -830,8 +821,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             } else if (e.getSource() == cusPhoneNo) {
                 type = "n";
                 cusPhoneNo.addKeyListener(new KeyAdapter() {
+
                     public void keyTyped(KeyEvent e) {
                         EventQueue.invokeLater(new Runnable() {
+
                             public void run() {
                                 String text = cusPhoneNo.getText();
                                 if (text.length() == 0) {
@@ -875,8 +868,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             } else if (e.getSource() == itemName) {
                 type = "m";
                 itemName.addKeyListener(new KeyAdapter() {
+
                     public void keyTyped(KeyEvent e) {
                         EventQueue.invokeLater(new Runnable() {
+
                             public void run() {
                                 String text = itemName.getText();
                                 if (text.length() == 0) {
@@ -983,7 +978,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         catcontainer.setVisible(true);
         m_jCalculatePromotion.setVisible(true);
         m_jCalculatePromotion.setEnabled(false);
-        //m_jBtnServed.setVisible(false);
+        m_jBtnServed.setVisible(false);
         // The model tax
         senttax = dlSales.getRetailTaxList();
         sentcharge = dlSales.getRetailServiceChargeList();
@@ -1166,67 +1161,60 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }
 
     public void paymentDetail(double cashAmount, double cardAmount) {
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            m_aPaymentInfo = new PaymentInfoList();
-            totalAmount = cashAmount + chequeAmount + cardAmount + foodCouponAmount + voucherAmount + creditAmount;
-            double change = totalAmount - m_oTicket.getTotal();
-            cash = new PaymentInfoCash(m_oTicket.getTotal(), cashAmount, change);
-            if (cash != null) {
-                m_aPaymentInfo.add(cash);
-
-            }
-            card = new PaymentInfoCard(m_oTicket.getTotal(), cardAmount);
-            if (card != null) {
-                m_aPaymentInfo.add(card);
+        m_aPaymentInfo = new PaymentInfoList();
 
 
-            }
-            try {
-                closeTicket(m_oTicket, m_oTicketExt, m_aPaymentInfo);
+        totalAmount = cashAmount + chequeAmount + cardAmount + foodCouponAmount + voucherAmount + creditAmount;
+        double change = totalAmount - m_oTicket.getTotal();
+        cash = new PaymentInfoCash(m_oTicket.getTotal(), cashAmount, change);
+        if (cash != null) {
+            m_aPaymentInfo.add(cash);
 
-            } catch (BasicException ex) {
-                logger.info("Order No. " + m_oTicket.getOrderId() + "exception in paymentDetail closeTicket" + ex.getMessage());
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
-        //Method is called when click on split payment
+        card = new PaymentInfoCard(m_oTicket.getTotal(), cardAmount);
+        if (card != null) {
+            m_aPaymentInfo.add(card);
+
+
+        }
+        try {
+            closeTicket(m_oTicket, m_oTicketExt, m_aPaymentInfo);
+        } catch (BasicException ex) {
+            logger.info("Order No. " + m_oTicket.getOrderId() + "exception in paymentDetail closeTicket" + ex.getMessage());
+            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    //Method is called when click on split payment
 
     public void paymentDetail(double cashAmount, double cardAmount, double voucherAmount, double vCloudAmount, String cardType, String decription) {
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            m_aPaymentInfo = new PaymentInfoList();
+        m_aPaymentInfo = new PaymentInfoList();
 
 
-            totalAmount = cashAmount + chequeAmount + cardAmount + foodCouponAmount + voucherAmount + creditAmount + vCloudAmount;
-            double change = totalAmount - m_oTicket.getTotal();
-            cash = new PaymentInfoCash(m_oTicket.getTotal(), cashAmount, change);
-            if (cash != null) {
-                m_aPaymentInfo.add(cash);
+        totalAmount = cashAmount + chequeAmount + cardAmount + foodCouponAmount + voucherAmount + creditAmount + vCloudAmount;
+        double change = totalAmount - m_oTicket.getTotal();
+        cash = new PaymentInfoCash(m_oTicket.getTotal(), cashAmount, change);
+        if (cash != null) {
+            m_aPaymentInfo.add(cash);
 
-            }
-            otherPayment = new PaymentInfoOtherPayment(m_oTicket.getTotal(), cardAmount, "Card", cardType, decription);
-            if (otherPayment != null) {
-                m_aPaymentInfo.add(otherPayment);
-            }
-            voucher = new PaymentInfoVoucherDetails(m_oTicket.getTotal(), voucherAmount);
-            if (voucher != null) {
-                m_aPaymentInfo.add(voucher);
-            }
-            vCloud = new PaymentInfoVcloud(m_oTicket.getTotal(), vCloudAmount);
-            if (vCloud != null) {
-                m_aPaymentInfo.add(vCloud);
-            }
+        }
+        otherPayment = new PaymentInfoOtherPayment(m_oTicket.getTotal(), cardAmount, "Card", cardType, decription);
+        if (otherPayment != null) {
+            m_aPaymentInfo.add(otherPayment);
+        }
+        voucher = new PaymentInfoVoucherDetails(m_oTicket.getTotal(), voucherAmount);
+        if (voucher != null) {
+            m_aPaymentInfo.add(voucher);
+        }
+        vCloud = new PaymentInfoVcloud(m_oTicket.getTotal(), vCloudAmount);
+        if (vCloud != null) {
+            m_aPaymentInfo.add(vCloud);
+        }
 
-            try {
-                closeTicket(m_oTicket, m_oTicketExt, m_aPaymentInfo);
-            } catch (BasicException ex) {
-                logger.info("Order No. " + m_oTicket.getOrderId() + "exception in paymentDetail closeTicket" + ex.getMessage());
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            closeTicket(m_oTicket, m_oTicketExt, m_aPaymentInfo);
+        } catch (BasicException ex) {
+            logger.info("Order No. " + m_oTicket.getOrderId() + "exception in paymentDetail closeTicket" + ex.getMessage());
+            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1322,11 +1310,11 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         m_jbtnScale.setVisible(false);
         jLblPrinterStatus.setText("");
         String servedStatus = m_App.getProperties().getProperty("machine.servedstatus");
-        if (servedStatus.equals("true")) {
-            m_jBtnServed.setVisible(true);
-        } else {
-            m_jBtnServed.setVisible(false);
-        }
+//        if (servedStatus.equals("true")) {
+//            m_jBtnServed.setVisible(true);
+//        } else {
+//            m_jBtnServed.setVisible(false);
+//        }
         //Added new logic to change tax calculations based on store name
         storeName = m_App.getProperties().getProperty("machine.StoreName");
         populateDeliveryBoy();
@@ -1422,7 +1410,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         promoTimer.start();
 
         String role = m_App.getAppUserView().getUser().getRole();
-        loginUserId = m_App.getAppUserView().getUser().getId();
         try {
             roleName = dlReceipts.getRoleByUser(role);
         } catch (BasicException ex) {
@@ -1467,64 +1454,37 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     //method is called on logout action and closing the application
     public boolean deactivate() {
         int i = 0;
-        if (m_oTicket != null) {
-            try {
-                String currentUpdated = m_dateformat.format(m_oTicket.getObjectUpdateDate()) + " " + m_dateformattime.format(m_oTicket.getObjectUpdateDate());
-                String dbUpdated = dlReceipts.getUpdatedTime(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-                Date currentUpdatedDate = DateFormats.StringToDateTime(currentUpdated);
-                Date dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
-                if (dbUpdated.equals(null) || dbUpdated.equals("")) {
-                    showMessage(this, "This Bill is no longer exist");
-                    logger.info("This Bill is no longer exist");
-                } else if (dbUpdatedDate.compareTo(currentUpdatedDate) > 0) {
-                    logger.info("The Table is being accessed by another User!Cannot update the bill");
-                    int iskds = dlReceipts.getKdsUpdateStatus(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-                    if (iskds == 1) {
-                        RetailTicketInfo ticket = dlReceipts.getRetailSharedTicketSplit(m_PlaceCurrent.getId(), m_oTicket.getSplitSharedId());
-                        if (ticket != null) {
-                            ticket.setTicketOpen(false);
-                            dlReceipts.updateSharedTicket(m_PlaceCurrent.getId(), ticket);
-                        }
-                    }
-
-
-
-
-
-                    logger.info("The Table is being accessed by another User!Cannot update the bill");
-                    // showMessage(this, "The Table is being accessed by another User!Cannot update the bill");
-
+        if (m_oTicket != null) { System.out.println("within deactivate ");
+            logger.info("within deactivate ");
+            //if no kot done    
+            if (m_oTicket.getOrderId() == 0) {
+                try {
+                   logger.info("Order No." + m_oTicket.getOrderId() + "deleting 0 order no. Bill in deactivate method of "+m_oTicket.getTableName()+" id is "+m_oTicket.getPlaceId());
+                      dlReceipts.deleteSharedTicket(m_oTicket.getPlaceId());
+                       m_ticketsbag.deleteTicket();
+                } //if kot done but cancelled all lines
+                catch (BasicException ex) {
+                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                System.out.println("within deactivate ");
-                logger.info("within deactivate ");
-                //if no kot done    
-                if (m_oTicket.getOrderId() == 0) {
-                    try {
-                        logger.info("Order No." + m_oTicket.getOrderId() + "deleting 0 order no. Bill in deactivate method of " + m_oTicket.getTableName() + " id is " + m_oTicket.getPlaceId());
-                        dlReceipts.deleteSharedTicket(m_oTicket.getPlaceId());
-                        m_ticketsbag.deleteTicket();
-                    } //if kot done but cancelled all lines
-                    catch (BasicException ex) {
-                        Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else if (m_oTicket.getOrderId() != 0 && m_oTicket.getLinesCount() == 0) {
-                    m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
-                    m_oTicket.setActiveCash(m_App.getActiveCashIndex());
-                    m_oTicket.setActiveDay(m_App.getActiveDayIndex());
-                    m_oTicket.setDate(new Date()); //
-                    String ticketDocument;
-                    ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + m_oTicket.getTicketId();
-                    String reason = "Splitted with zero lines/cancelled all kot lines";
-                    try {
-                        dlSales.saveRetailCancelTicket(m_oTicket, m_App.getProperties().getStoreName(), ticketDocument, "Y", m_App.getInventoryLocation(), reason, "", m_App.getProperties().getPosNo(), "N");
-                    } catch (BasicException ex) {
-                        logger.info("ORDER NO. " + m_oTicket.getOrderId() + "exception in saveRetailCancelTicket in deactivate method" + ex.getMessage());
-                        Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    if (m_oTicket.getSplitValue().equals("")) {
-                        //     logger.info("Order No." + m_oTicket.getOrderId() + "deleting cancelled kot bill in deactivate method");
-                        m_ticketsbag.deleteTicket();
-                    }
+            }
+            else if (m_oTicket.getOrderId() != 0 && m_oTicket.getLinesCount() == 0) {
+                m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
+                m_oTicket.setActiveCash(m_App.getActiveCashIndex());
+                m_oTicket.setActiveDay(m_App.getActiveDayIndex());
+                m_oTicket.setDate(new Date()); //
+                String ticketDocument;
+                ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + m_oTicket.getTicketId();
+                String reason = "Splitted with zero lines/cancelled all kot lines";
+                try {
+                    dlSales.saveRetailCancelTicket(m_oTicket, m_App.getProperties().getStoreName(), ticketDocument, "Y", m_App.getInventoryLocation(), reason, "", m_App.getProperties().getPosNo(), "N");
+                } catch (BasicException ex) {
+                    logger.info("ORDER NO. " + m_oTicket.getOrderId() + "exception in saveRetailCancelTicket in deactivate method" + ex.getMessage());
+                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (m_oTicket.getSplitValue().equals("")) {
+               //     logger.info("Order No." + m_oTicket.getOrderId() + "deleting cancelled kot bill in deactivate method");
+                    m_ticketsbag.deleteTicket();
+                } 
 //                else {
 //                    try {
 //                        logger.info("Order No." + m_oTicket.getOrderId() + "deleting cancelled kot splitted Bill in deactivate method");
@@ -1534,41 +1494,38 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //                        Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
 //                    }
 //                }
-                }//delete all non kot items
-                else {
-                    //    if(IsSteward==0){
-                    while (i < m_oTicket.getLinesCount()) {
-                        if (m_oTicket.getLine(i).getIsKot() == 0) {
-                            removeTicketLine(i);
-                            i = 0;
-                        } else {
-                            i++;
-                        }
+            }//delete all non kot items
+            else {
+                //    if(IsSteward==0){
+                while (i < m_oTicket.getLinesCount()) {
+                    if (m_oTicket.getLine(i).getIsKot() == 0) {
+                        removeTicketLine(i);
+                        i = 0;
+                    } else {
+                        i++;
                     }
-                    m_oTicket.refreshTxtFields(0);
-                    if (m_oTicket.getLinesCount() == 0) {
-                        logger.info("Order No." + m_oTicket.getOrderId() + "deleting zero lines Bill in deactivate method");
-                        if (m_oTicket.getOrderId() != 0) {
-                            m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
-                            m_oTicket.setActiveCash(m_App.getActiveCashIndex());
-                            m_oTicket.setActiveDay(m_App.getActiveDayIndex());
-                            m_oTicket.setDate(new Date()); //
-                            String ticketDocument;
-                            ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + m_oTicket.getTicketId();
-                            String reason = "cancelled all kot lines";
-                            try {
-                                dlSales.saveRetailCancelTicket(m_oTicket, m_App.getProperties().getStoreName(), ticketDocument, "Y", m_App.getInventoryLocation(), reason, "", m_App.getProperties().getPosNo(), "N");
-                            } catch (BasicException ex) {
-                                logger.info("newTicket saveRetailCancelTicket exception 2" + ex.getMessage() + ";");
-                                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        m_ticketsbag.deleteTicket();
-                    }
-
                 }
-            } catch (BasicException ex) {
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+                m_oTicket.refreshTxtFields(0);
+                if (m_oTicket.getLinesCount() == 0) {
+                    logger.info("Order No." + m_oTicket.getOrderId() + "deleting zero lines Bill in deactivate method");
+                    if (m_oTicket.getOrderId() != 0) {
+                        m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo()); // El usuario que lo cobra
+                        m_oTicket.setActiveCash(m_App.getActiveCashIndex());
+                        m_oTicket.setActiveDay(m_App.getActiveDayIndex());
+                        m_oTicket.setDate(new Date()); //
+                        String ticketDocument;
+                        ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + m_oTicket.getTicketId();
+                        String reason = "cancelled all kot lines";
+                        try {
+                            dlSales.saveRetailCancelTicket(m_oTicket, m_App.getProperties().getStoreName(), ticketDocument, "Y", m_App.getInventoryLocation(), reason, "", m_App.getProperties().getPosNo(), "N");
+                        } catch (BasicException ex) {
+                            logger.info("newTicket saveRetailCancelTicket exception 2" + ex.getMessage() + ";");
+                            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    m_ticketsbag.deleteTicket();
+                }
+
             }
         }
         RefreshTicketTimer.stop();
@@ -1592,30 +1549,11 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         catcontainer.setVisible(true);
         if (m_oTicket != null) {
             JRetailTicketsBagRestaurant.stopReloadTimer();
-            leastValuePromo = false;
-            buyGetPromo = false;
+            leastValuePromo=false;
+            buyGetPromo=false;
             m_oTicket.setM_App(m_App);
             tableId = m_oTicket.getPlaceId();
             RefreshTicketTimer.start();
-            m_oTicket.setM_App(m_App);
-            m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo());
-            //  if (m_oTicket.getSplitValue().equals("")) {
-            String splitId1 = m_oTicket.getSplitSharedId();
-            System.out.println("splitId :" + splitId1);
-            if (dbUpdatedDate == null) {
-                try {
-                    String splitId = m_oTicket.getSplitSharedId();
-                    System.out.println("splitId :" + splitId);
-                    Object[] record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-                    if (record != null) {
-                        m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-                    }
-                    System.out.println("m_oTicket.GET ObjectUpdateDate :  " + m_oTicket.getObjectUpdateDate());
-                } catch (BasicException ex) {
-                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                    ex.printStackTrace();
-                }
-            }
             kotaction = 0;
             m_oTicket.setTableName(oTicketExt.toString());
             try {
@@ -1635,26 +1573,12 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             if (m_oTicket.getSplitValue().equals("Split")) {
                 m_oTicket.setTicketOpen(true);
                 m_oTicket.setUser(m_App.getAppUserView().getUser().getUserInfo());
-                //     try { 
-                // dlReceipts.updateSharedTicket(m_oTicket.getPlaceId(), m_oTicket);
-                if (dbUpdatedDate == null) {
-                    try {
-                        String splitId = m_oTicket.getSplitSharedId();
-                        System.out.println("splitId :" + splitId);
-                        Object[] record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-                        if (record != null) {
-                            m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-                        }
-                    } catch (BasicException ex) {
-                        ex.printStackTrace();
-                        Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                try {
+                    dlReceipts.updateSharedTicket(m_oTicket.getPlaceId(), m_oTicket);
+                } catch (BasicException ex) {
+                    logger.info("exception in setRetailActiveTicket while updatesharedticket" + ex.getMessage());
+                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-//                } catch (BasicException ex) {
-//                    logger.info("exception in setRetailActiveTicket while updatesharedticket" + ex.getMessage());
-//                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-//                }
             }
 
             // Asign preeliminary properties to the receipt
@@ -1760,6 +1684,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
             m_jKeyFactory.setText(null);
             java.awt.EventQueue.invokeLater(new Runnable() {
+
                 public void run() {
                     m_jKeyFactory.requestFocus();
                 }
@@ -1871,6 +1796,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }
 
     public void printPartialTotals() {
+        System.out.println("partial totals-2017");
 
         if (m_oTicket.getLinesCount() == 0) {
             m_jSubtotalEuros1.setText(null);
@@ -1884,8 +1810,8 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             m_jTaxList.setModel(new DefaultListModel());
             m_jServiceTaxLbl.setVisible(false);
             m_jSwachBharatLbl.setVisible(false);
-            leastValuePromo = false;
-            buyGetPromo = false;
+            leastValuePromo=false;
+            buyGetPromo=false;
         } else {
 
             try {
@@ -1900,6 +1826,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             }
 
             m_jSubtotalEuros1.setText(m_oTicket.printSubTotalValueBeforeDiscount());
+            System.out.println("Before Callingm_jSubtotalEuros1 from JRetailPanelTicket");
             m_jTaxesEuros1.setText(m_oTicket.printTax());
             m_jTotalEuros.setText(m_oTicket.printTotal());
             m_jDiscount1.setText(m_oTicket.printDiscount());
@@ -1918,7 +1845,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         for (int i = 0; i < ticket.getTaxes().size(); i++) {
             rate = ticket.getTaxes().get(i).getTaxInfo().getRate();
             taxName = ticket.getTaxes().get(i).getTaxInfo().getSplitName();
-            //     System.out.println("rate-----"+rate+" name--"+taxName);
+         //     System.out.println("rate-----"+rate+" name--"+taxName);
 //            if (taxName.startsWith("KRISHI")) {
 //                rate = 0.0021;
 //            }
@@ -1926,11 +1853,11 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             taxValue = ticket.getTaxes().get(i).getRetailTax();
             String strTaxValue = String.format("%.2f", taxValue);
             taxValue = Double.parseDouble(strTaxValue);
-            if (taxMap.get(taxName) == null) {
-                taxMap.put(taxName, new NameTaxMapInfo(taxName, taxValue));
+          if (taxMap.get(taxName) == null) {
+                taxMap.put(taxName,  new NameTaxMapInfo(taxName, taxValue));
             } else {
                 taxValue = taxValue + taxMap.get(taxName).getTaxValue();
-                taxMap.put(taxName, new NameTaxMapInfo(taxName, taxValue));
+                taxMap.put(taxName,  new NameTaxMapInfo(taxName, taxValue));
             }
 
         }
@@ -1993,6 +1920,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }
 
     private void paintKotTicketLine(int index, RetailTicketLineInfo oLine) {
+        System.out.println("print TicketLine 1");
         if (executeEventAndRefreshForKot("ticket.setline", new ScriptArg("index", index), new ScriptArg("line", oLine)) == null) {
             m_oTicket.setLine(index, oLine);
             m_ticketlines.setTicketLine(index, oLine);
@@ -2004,26 +1932,35 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
     //Method is used for adding ticket lines 
     private void addTicketLine(ProductInfoExt oProduct, double dMul, double dPrice) {
+        System.out.println("addTicketLine 1");
         kotaction = 1;
         TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(), m_oTicket.getCustomer(), "N");
         ServiceChargeInfo charge = chargeslogic.getChargeInfo(oProduct.getServiceChargeID(), m_oTicket.getCustomer());
         TaxInfo sertax = staxeslogic.getTaxInfo(oProduct.getServiceTaxID(), m_oTicket.getCustomer());
         TaxInfo sbTax = sbtaxeslogic.getTaxInfo(oProduct.getSwachBharatTaxId(), m_oTicket.getCustomer());
         if (oProduct.getComboProduct().equals("Y")) {
+            System.out.println("addTicketLine 2 -if combo prod. ");
             addonId = UUID.randomUUID().toString();
             addonId = addonId.replaceAll("-", "");
-            addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 1, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, null, null, null, 1, null, false, oProduct.getStation()));
+            //addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 1, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, null, null, null, 1, null,false));
+
+            addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 1, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, null, null, null, 1, null,false));
+            
             checkMandatoryAddon(oProduct, addonId);
         } else {
-            addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 0, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, null, null, null, 0, null, false, oProduct.getStation()));
+            System.out.println("addTicketLine 2 -else  if not combo prod.");
+            
+            addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 0, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, null, null, null, 0, null,false));
+            
         }
         addonId = null;
-        if (leastValuePromo) {
-            checkLeastValuePromotion();
-        }
+           if(leastValuePromo){
+        checkLeastValuePromotion();
+           }
     }
 
     public void addTicketLine(RetailTicketLineInfo oLine) {
+        System.out.println("addTicketLine 3");
 
         if (executeEventAndRefresh("ticket.addline", new ScriptArg("line", oLine)) == null) {
 
@@ -2121,22 +2058,23 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                     isPromoProduct = "Y";
                     //Method for calculation price off promotion discount value
                     productDiscount = line.getPriceoffDiscount(line.getProductID(), isPrice, isPromoProduct, promoRuleId, productqty);
-
+System.out.println("PDRs."+productDiscount);
                 } else if (promoType.equals("PDPercent")) {
                     isPrice = "N";
                     isPromoProduct = "Y";
                     //Method for calculation Percentage off promotion discount value
                     productDiscount = line.getPercentageoffDiscount(line.getProductID(), isPrice, isPromoProduct, promoRuleId, productqty);
+                    System.out.println("PD%"+productDiscount);
                 } else //Product promotion type is SIBG
-                if (promoType.equals("SIBG")) {
+                if (promoType.equals("SIBG") ) {
                     line.setSibgId(UUID.randomUUID().toString());
                     isPrice = "N";
                     isPromoProduct = "Y";
                     //Method is for calculating the buy one get one promotion
                     newLine = line.getBuyGetDiscount(line.getProductID(), isPrice, isPromoProduct, promoRuleId, productqty);
-                    System.out.println("newline---" + newLine);
+                    System.out.println("newline---"+newLine);
                     productDiscount = 0;
-
+System.out.println("Check BuyGet Promotions"+productDiscount);
                 }
             }
         }
@@ -2154,7 +2092,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 m_ticketlines.removeTicketLine(i);
             } else {
 
-                if (m_oTicket.getLine(i).getPromoType().equals("SIBG") && m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
+                if (m_oTicket.getLine(i).getPromoType().equals("SIBG")  && m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
                     if (m_oTicket.getLine(i).getActualPrice() != 0) {
 
                         m_oTicket.removeLine(i);
@@ -2760,6 +2698,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //            }
 //        }
 //    }
+
     private boolean closeSplitTicket(RetailTicketInfo ticket, Object ticketext) {
         ticket.setActiveDay(m_App.getActiveDayIndex());
         ticket.setActiveCash(m_App.getActiveCashIndex());
@@ -2941,6 +2880,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //        return resultok;
 //    }
     //Method is called when click on nonchargable button in payment screen
+
 //    private boolean closeTicketNonChargable(RetailTicketInfo ticket, Object ticketext, PaymentInfoList m_aPaymentInfo) throws BasicException {
 //        boolean resultok = false;
 //
@@ -3021,6 +2961,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //        return resultok;
 //    }
     //Method is called when click on payment mode in payment screen
+
     private boolean closeTicketWithButton(RetailTicketInfo ticket, Object ticketext, PaymentInfoList m_aPaymentInfo) throws BasicException {
         logger.info("enter the closeTicketWithButton method" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
         boolean resultok = false;
@@ -3048,6 +2989,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 Integer ticketDocNoInt = null;
                 String ticketDocument = null;
                 if (ticket.getTicketType() == RetailTicketInfo.RECEIPT_NORMAL) {
+
                     ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + ticket.getTicketId();
                 }
 
@@ -3214,12 +3156,12 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             m_oTicket.resetCharges();
             m_oTicket.resetTaxes();
             m_oTicket.resetPayments();
-            //  m_oTicket.setPromoAction(false);
+          //  m_oTicket.setPromoAction(false);
             activate();
             logger.info("After activate method");
             setClosePayment(true);
             if (!ticket.getSplitValue().equals("Split")) {
-                //    logger.info("Order No." + ticket.getOrderId() + " deleting shared ticket after settle bill");
+            //    logger.info("Order No." + ticket.getOrderId() + " deleting shared ticket after settle bill");
                 m_ticketsbag.deleteTicket();
             }
 //            else {
@@ -3230,8 +3172,8 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             logger.info("Order No." + ticket.getOrderId() + " exception while calling saveRetailTicket " + ex.getMessage());
             showMessage(this, "Settlement is not happened ! Please check with the Network connection and resettle the bill");
         }
-        leastValuePromo = false;
-        buyGetPromo = false;
+          leastValuePromo = false;
+          buyGetPromo=false;
         logger.info("After save receipt completed ");
 //        if (getEditSale() == "Edit") {
 //            RetailTicketInfo editTicket = null;
@@ -3305,6 +3247,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //
 //    }
     //Method is called for saving the non chargable receipt
+
 //    public void saveNonChargableReceipt(RetailTicketInfo ticket, String inventoryLocation, String posNo, String storeName, String ticketDocument, ArrayList<BuyGetPriceInfo> priceInfo, String chequeNos, String deliveryBoy, double advanceissued, double creditAmount, Object ticketext, String status, String file, String isCredit, String nonChargable) {
 //        double tipsAmt = 0;//Double.parseDouble(m_jTxtTips.getText());
 //        String homeDelivery;
@@ -3353,6 +3296,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //        activate();
 //
 //    }
+
     public void saveNotReceipt(RetailTicketInfo ticket, String inventoryLocation, String posNo, String storeName, String ticketDocument, ArrayList<BuyGetPriceInfo> priceInfo, String chequeNos, String deliveryBoy, double advanceissued, double creditAmount, Object ticketext, String status) {
         double tipsAmt = 0;
         String homeDelivery;
@@ -3394,6 +3338,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         m_jKeyFactory.setFocusable(true);
         m_jKeyFactory.setText(null);
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 m_jKeyFactory.requestFocus();
             }
@@ -3422,8 +3367,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
     private java.util.List<TicketLineConstructor> getAllLines(RetailTicketInfo ticket, Object ticketext) {
 
-
-
         java.util.List<TicketLineConstructor> allLines = new ArrayList<TicketLineConstructor>();
         allLines.add(new TicketLineConstructor(m_App.getProperties().getProperty("machine.address1")));
         allLines.add(new TicketLineConstructor(m_App.getProperties().getProperty("machine.address2")));
@@ -3444,15 +3387,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
             String prodName = tLine.printName();
             String qty = tLine.printMultiply();
-
-//            if (ticket.getTaxes().size() != 0) {
-//                for (Map.Entry<String, NameTaxMapInfo> entry : m_oTicket.getNametaxMap().entrySet()) {
-//                    String taxName = entry.getValue().getName();
-//                    double taxValue = entry.getValue().getTaxValue();
-//                    System.out.println("TAX. getSubValueBeforeDiscount() : "+tLine.getSubValueBeforeDiscount()+taxValue);
-//                }
-//            }
-
             String total = Formats.DoubleValue.formatValue(tLine.getSubValueBeforeDiscount());
             if (prodName.length() > 22) {
                 prodName = WordUtils.wrap(prodName, 22);
@@ -3954,9 +3888,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         m_jCalculatePromotion = new javax.swing.JButton();
         m_jAction = new javax.swing.JButton();
         m_jDelete = new javax.swing.JButton();
-        m_jBtnServed = new javax.swing.JButton();
         m_jKot = new javax.swing.JButton();
+        m_jBtnServed = new javax.swing.JButton();
         m_jEraser = new javax.swing.JButton();
+        m_jEditLine1 = new javax.swing.JButton();
         m_jContEntries = new javax.swing.JPanel();
         m_jPanEntries = new javax.swing.JPanel();
         catcontainer = new javax.swing.JPanel();
@@ -4210,7 +4145,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 jButtonAddonActionPerformed(evt);
             }
         });
-        jPanel10.add(jButtonAddon, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 0, 90, 40));
+        jPanel10.add(jButtonAddon, new org.netbeans.lib.awtextra.AbsoluteConstraints(793, 2, 90, 40));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/1Category.png"))); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -4218,7 +4153,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel10.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 0, 90, 40));
+        jPanel10.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(888, 2, 90, 40));
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/subcategory.png"))); // NOI18N
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -4226,7 +4161,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel10.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 0, 90, 40));
+        jPanel10.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(983, 2, 90, 40));
 
         m_jLblItemCode.setText("ITEM CODE");
         jPanel10.add(m_jLblItemCode, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 8, 90, 20));
@@ -4242,7 +4177,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         jPanel10.add(m_jTxtItemCode, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, -1, 20));
 
         m_jLblItemName.setText("ITEM NAME");
-        jPanel10.add(m_jLblItemName, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, -1, 20));
+        jPanel10.add(m_jLblItemName, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 10, -1, 20));
 
         m_jCboItemName.setEditable(true);
         m_jCboItemName.setAutoscrolls(true);
@@ -4257,7 +4192,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 m_jCboItemNameActionPerformed(evt);
             }
         });
-        jPanel10.add(m_jCboItemName, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 10, 340, -1));
+        jPanel10.add(m_jCboItemName, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 10, 340, -1));
 
         m_jPanTicket.add(jPanel10, java.awt.BorderLayout.PAGE_START);
 
@@ -4349,21 +4284,21 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             }
         });
 
-        m_jBtnServed.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/servedsymbol.png"))); // NOI18N
-        m_jBtnServed.setToolTipText("Serve Selected Item");
-        m_jBtnServed.setPreferredSize(new java.awt.Dimension(91, 73));
-        m_jBtnServed.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_jBtnServedActionPerformed(evt);
-            }
-        });
-
         m_jKot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/TKOT.png"))); // NOI18N
         m_jKot.setToolTipText("Send All Fresh Items to Kitchen");
         m_jKot.setPreferredSize(new java.awt.Dimension(51, 42));
         m_jKot.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_jBtnKotActionPerformed(evt);
+            }
+        });
+
+        m_jBtnServed.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/servedsymbol.png"))); // NOI18N
+        m_jBtnServed.setToolTipText("Serve Selected Item");
+        m_jBtnServed.setPreferredSize(new java.awt.Dimension(91, 73));
+        m_jBtnServed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jBtnServedActionPerformed(evt);
             }
         });
 
@@ -4380,47 +4315,66 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             }
         });
 
+        m_jEditLine1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/cart_rep.jpg"))); // NOI18N
+        m_jEditLine1.setMnemonic('e');
+        m_jEditLine1.setToolTipText("Edit Properties of selected item");
+        m_jEditLine1.setFocusPainted(false);
+        m_jEditLine1.setFocusable(false);
+        m_jEditLine1.setMargin(new java.awt.Insets(8, 14, 8, 14));
+        m_jEditLine1.setRequestFocusEnabled(false);
+        m_jEditLine1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jEditLine1ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(168, 168, 168)
-                .add(m_jAction, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(m_jBtnServed, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jEraser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jKot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jCalculatePromotion, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jEditLine, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jDelete, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jMinus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(m_jPlus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(m_jBtnServed, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(m_jPlus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(m_jMinus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(m_jDelete, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(m_jCalculatePromotion, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(m_jKot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(m_jEraser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(112, 112, 112)
+                        .add(m_jAction, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(m_jEditLine, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(m_jEditLine1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
+                .add(m_jPlus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(m_jMinus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(m_jDelete, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(m_jEditLine, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(m_jEditLine1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(m_jCalculatePromotion, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
-                        .add(242, 242, 242)
-                        .add(m_jAction, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(15, 15, 15)
+                        .add(m_jAction, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel2Layout.createSequentialGroup()
-                        .add(m_jPlus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(3, 3, 3)
-                        .add(m_jMinus, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(3, 3, 3)
-                        .add(m_jDelete, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(2, 2, 2)
-                        .add(m_jEditLine, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(3, 3, 3)
-                        .add(m_jCalculatePromotion, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 7, Short.MAX_VALUE)
-                        .add(m_jBtnServed, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
-                .add(m_jKot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(3, 3, 3)
-                .add(m_jEraser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 45, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(36, 36, 36))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(m_jKot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 34, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(m_jEraser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 35, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(57, 57, 57)
+                        .add(m_jBtnServed, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         jPanel5.add(jPanel2, java.awt.BorderLayout.NORTH);
@@ -4709,6 +4663,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_jKeyFactoryKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_m_jKeyFactoryKeyTyped
+
 //        m_jKeyFactory.setText(null);
 //        try {
 //            stateTransition(evt.getKeyChar());
@@ -4716,6 +4671,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 //            logger.info("Order No." + m_oTicket.getOrderId() + " exception while calling stateTransition" + ex.getMessage());
 //            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
 //        }
+
     }//GEN-LAST:event_m_jKeyFactoryKeyTyped
 
     //Action performed method is called when click on delete line button
@@ -4729,89 +4685,52 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             String addonVal = m_oTicket.getLine(i).getAddonId();
             int primaryAddon = m_oTicket.getLine(i).getPrimaryAddon();
             int comboAddon = m_oTicket.getLine(i).getComboAddon();
-            String promoType = m_oTicket.getLine(i).getPromoType();
-            String isPromoSku = m_oTicket.getLine(i).getIsPromoSku();
+              String promoType = m_oTicket.getLine(i).getPromoType();
+               String isPromoSku=m_oTicket.getLine(i).getIsPromoSku();
             //Checking whether the item is sent to Kot
             if (kotStatus != 0) {
                 //Checking whether the role is admin or cashier. Only Admin or Cashier can cancel the item
                 if (roleName.equals("Admin") || roleName.equals("Cashier")) {
                     //For adding the cancel reason
-                    boolean billUpdated = JReasonEditor.showMessage(this, dlReceipts, m_oTicket, selectedProduct, i, "lineDelete");
-                    if (billUpdated) {
-                        // showMessage(this, "The Table is being accessed by another User!Try after sometime");
-                        RetailTicketInfo dbticket = null;
+                    JReasonEditor.showMessage(this, dlReceipts, m_oTicket, selectedProduct, i, "lineDelete");
+                    if (JReasonEditor.getCancel() == true) {
+                        String sessionId = null;
                         try {
-                            dbticket = dlReceipts.getRetailSharedTicketSplit(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
+                            sessionId = dlReceipts.getFloorId(m_oTicket.getPlaceId());
+                            printerInfo = dlReceipts.getPrinterInfo(sessionId);
                         } catch (BasicException ex) {
-                            logger.info("Exception while selecting the dbticket on cancel item action ");
                             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        if (dbticket != null) {
-                            //  String dbUpdated = dlReceipts.getUpdatedTime(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-                            // dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
-                            dbticket.setObjectUpdateDate(JReasonEditor.dbUpdatedDate);
-                            for (int index = 0; index < m_oTicket.getLinesCount(); index++) {
-                                if (m_oTicket.getLine(index).getIsKot() == 0) {
-                                    m_oTicket.getLine(index).setDiscount(Double.parseDouble(dbticket.getRate()) * 100);
-                                    dbticket.addLine(m_oTicket.getLine(index));
+                        //Method is used for printing cancel kot items
+                        printCancelKotTicket(m_oTicket, m_oTicket.getLine(i), m_oTicketExt, printerInfo);
+                        //Removing the lines from ticketlines
+                        removeTicketLine(i);
+                        //adding the logic of deleting the addon items
+                        if ((addonVal != null && primaryAddon == 1) || (addonVal != null && comboAddon == 1)) {
+                            int j = 0;
+                            while (j < m_oTicket.getLinesCount()) {
+                                if (addonVal.equals(m_oTicket.getLine(j).getAddonId())) {
+                                    removeTicketLine(j);
+                                    j = 0;
+                                } else {
+                                    j++;
                                 }
                             }
-                            JRetailBufferWindow.showMessage(this);
-                            logger.info("This Bill is updated one.Loading.......");
-                            setRetailActiveTicket(dbticket, m_oTicketExt);
-                            dbUpdatedDate = null;
-                            kotaction = 1;
-
-                        } else {
-                            showMessage(this, "This Bill is no longer exist");
-                            logger.info("This Bill is no longer exist");
-                            m_ticketsbag.activate();
                         }
-                    } else {
-                        if (JReasonEditor.getCancel() == true) {
-                            String sessionId = null;
-                            try {
-                                sessionId = dlReceipts.getFloorId(m_oTicket.getPlaceId());
-                                printerInfo = dlReceipts.getPrinterInfo(sessionId);
-                            } catch (BasicException ex) {
-                                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            //Method is used for printing cancel kot items
-                            printCancelKotTicket(m_oTicket, m_oTicket.getLine(i), m_oTicketExt, printerInfo);
-                            //NewKDS March2017
-                            dlReceipts.updateServedTransactionCancel(m_oTicket, m_oTicket.getLine(i).getTbl_orderId());
-                            if (m_oTicket.getLine(i).getAddonId() != null) {
-                                dlReceipts.updateServedTransactionCancelAddOn(m_oTicket, m_oTicket.getLine(i).getAddonId());
-                            }
-                            //Removing the lines from ticketlines
-                            removeTicketLine(i);
-                            //adding the logic of deleting the addon items
-                            if ((addonVal != null && primaryAddon == 1) || (addonVal != null && comboAddon == 1)) {
-                                int j = 0;
-                                while (j < m_oTicket.getLinesCount()) {
-                                    if (addonVal.equals(m_oTicket.getLine(j).getAddonId())) {
-                                        removeTicketLine(j);
-                                        j = 0;
-                                    } else {
-                                        j++;
-                                    }
-                                }
-                            }
-                            try {
-                                if (promoType.equals("SIBG") && leastValuePromo == true && isPromoSku.equals("N")) {
-                                    checkLeastValuePromotion();
-                                }
-                            } catch (Exception e) {
-                            }
-                            m_oTicket.refreshTxtFields(0);
-                            if (m_oTicket.getLinesCount() == 0) {
-                                m_oTicket.setPromoAction(false);
-                                m_jTxtChange.setText("");
-                                m_jTaxesEuros1.setText("Rs. 0.00");
-                                m_jTotalEuros.setText("Rs. 0.00");
-                                refreshTicket();
-                                taxModel.removeAllElements();
-                            }
+                         try {
+                    if (promoType.equals("SIBG") && leastValuePromo == true&& isPromoSku.equals("N")) {
+                        checkLeastValuePromotion();
+                    }
+                } catch (Exception e) {
+                }
+                        m_oTicket.refreshTxtFields(0);
+                        if (m_oTicket.getLinesCount() == 0) {
+                              m_oTicket.setPromoAction(false);
+                            m_jTxtChange.setText("");
+                            m_jTaxesEuros1.setText("Rs. 0.00");
+                            m_jTotalEuros.setText("Rs. 0.00");
+                            refreshTicket();
+                            taxModel.removeAllElements();
                         }
                     }
                 } else {
@@ -4830,47 +4749,21 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                         }
                     }
                 }
-                try {
-                    System.out.println("inside here>");
-                    if (promoType.equals("SIBG") && leastValuePromo == true && isPromoSku.equals("N")) {
-                        checkLeastValuePromotion();
+                   try {System.out.println("inside here>");
+                    if (promoType.equals("SIBG") && leastValuePromo == true&& isPromoSku.equals("N")) {
+                         checkLeastValuePromotion();
                     }
                 } catch (Exception e) {
                 }
                 m_oTicket.refreshTxtFields(0);
                 if (m_oTicket.getLinesCount() == 0) {
-                    m_oTicket.setPromoAction(false);
+                   m_oTicket.setPromoAction(false);
                     m_jTxtChange.setText("");
                     m_jTaxesEuros1.setText("Rs. 0.00");
                     m_jTotalEuros.setText("Rs. 0.00");
                     refreshTicket();
                     taxModel.removeAllElements();
                 }
-
-                // Date updated = new Date();
-                Object[] values = new Object[]{m_oTicket.getPlaceId(), m_oTicket.getName(), m_oTicket, m_oTicket.getSplitSharedId(), m_oTicket.isPrinted(), m_oTicket.isListModified()};
-                Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING, Datas.SERIALIZABLE, Datas.STRING, Datas.BOOLEAN, Datas.BOOLEAN};
-                try {
-                    new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?, UPDATED=NOW() , ISKDS=0  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-//                                    if (m_oTicket.getTakeaway().equals("Y")) {
-//                                        new PreparedSentence(m_App.getSession(), "UPDATE TAKEAWAYTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?,UPDATED=NOW()  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-//                                    }
-                } catch (BasicException ex) {
-                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                String splitId = m_oTicket.getSplitSharedId();
-                Object[] record;
-                try {
-                    record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-                    if (record != null) {
-                        m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-
-                    }
-                } catch (BasicException ex) {
-                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-
             }
         }
         m_jTxtItemCode.setText("");
@@ -4954,14 +4847,14 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             //Checking whether the selected item is non kot item
             if (m_oTicket.getLine(i).getIsKot() != 1) {
                 //Checking whether the selected item having SIBG promotion.If promotion is applicable, then it will increase the free item quantity also
-                if (m_oTicket.getLine(i).getPromoType().equals("SIBG") && m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
+                if (m_oTicket.getLine(i).getPromoType().equals("SIBG")&& m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
                     if (m_oTicket.getLine(i).getActualPrice() != 0) {
                         newline.setMultiply(newline.getMultiply() + 1.0);
                         int index = i + 1;
                         m_oTicket.getLine(index).setMultiply(m_oTicket.getLine(index).getMultiply() + 1);
                         m_oTicket.getLine(index).setOfferDiscount(m_oTicket.getLine(index).getPrice() * m_oTicket.getLine(index).getMultiply());
                     }
-
+                    
                 } else {
                     //Increasing the quantity of the selected item
                     newline.setMultiply(newline.getMultiply() + 1.0);
@@ -4987,107 +4880,44 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 //Checking whether the role is admin or cashier. Only Admin or Cashier can cancel the item
                 if (roleName.equals("Admin") || roleName.equals("Cashier")) {
                     //For adding the cancel reason
-                    boolean billUpdated = JReasonEditor.showMessage(this, dlReceipts, m_oTicket, selectedProduct, i, "lineMinus");
-
-                    if (billUpdated) {
-                        // showMessage(this, "The Table is being accessed by another User!Try after sometime");
-                        RetailTicketInfo dbticket = null;
-                        try {
-                            dbticket = dlReceipts.getRetailSharedTicketSplit(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-                        } catch (BasicException ex) {
-                            logger.info("Exception while selecting the dbticket on cancel item action ");
-                            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        if (dbticket != null) {
-                            //      String  dbUpdated = dlReceipts.getUpdatedTime(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-                            // dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
-                            dbticket.setObjectUpdateDate(JReasonEditor.dbUpdatedDate);
-                            for (int index = 0; index < m_oTicket.getLinesCount(); index++) {
-                                if (m_oTicket.getLine(index).getIsKot() == 0) {
-                                    m_oTicket.getLine(index).setDiscount(Double.parseDouble(dbticket.getRate()) * 100);
-                                    dbticket.addLine(m_oTicket.getLine(index));
-                                }
-                            }
-                            JRetailBufferWindow.showMessage(this);
-                            logger.info("This Bill is updated one.Loading.......");
-                            setRetailActiveTicket(dbticket, m_oTicketExt);
-                            dbUpdatedDate = null;
-                            kotaction = 1;
-                        } else {
-                            showMessage(this, "This Bill is no longer exist");
-                            logger.info("This Bill is no longer exists");
-                            m_ticketsbag.activate();
-                        }
-                    } else {
-
-                        if (JReasonEditor.getCancel() == true) {
-                            //Checking whether the selected item having SIBG promotion.If promotion is applicable, then it will decrease the free item quantity also
-                            if (m_oTicket.getLine(i).getPromoType().equals("SIBG") && m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
-                                if (m_oTicket.getLine(i).getActualPrice() != 0) {
-                                    newline.setMultiply(newline.getMultiply() - 1.0);
-                                    dlReceipts.updateServedTransactionMinus(m_oTicket, newline.getTbl_orderId(), newline.getMultiply());
-                                    if (m_oTicket.getLine(i).getAddonId() != null) {
-                                        dlReceipts.updateServedTransactionMinusAddOn(m_oTicket, newline.getAddonId(), newline.getMultiply());
-                                    }
-                                    int index = i + 1;
-                                    m_oTicket.getLine(index).setMultiply(m_oTicket.getLine(index).getMultiply() - 1);
-                                    m_oTicket.getLine(index).setOfferDiscount(m_oTicket.getLine(index).getPrice() * (m_oTicket.getLine(index).getMultiply()));
-                                }
-                            } else {//Decreasing the quantity of the selected item
+                    JReasonEditor.showMessage(this, dlReceipts, m_oTicket, selectedProduct, i, "lineMinus");
+                    if (JReasonEditor.getCancel() == true) {
+                        //Checking whether the selected item having SIBG promotion.If promotion is applicable, then it will decrease the free item quantity also
+                        if (m_oTicket.getLine(i).getPromoType().equals("SIBG")&& m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
+                            if (m_oTicket.getLine(i).getActualPrice() != 0) {
                                 newline.setMultiply(newline.getMultiply() - 1.0);
-                                dlReceipts.updateServedTransactionMinus(m_oTicket, newline.getTbl_orderId(), newline.getMultiply());
-
+                                int index = i + 1;
+                                m_oTicket.getLine(index).setMultiply(m_oTicket.getLine(index).getMultiply() - 1);
+                                m_oTicket.getLine(index).setOfferDiscount(m_oTicket.getLine(index).getPrice() * (m_oTicket.getLine(index).getMultiply()));
                             }
-                            if (addonVal != null && primaryAddon == 1) {
-                                int j = 0;
-                                while (j < m_oTicket.getLinesCount()) {
-                                    //if its addon item
-                                    if (addonVal.equals(m_oTicket.getLine(j).getAddonId()) && m_oTicket.getLine(j).getPrimaryAddon() == 0) {
-                                        removeTicketLine(j);
-                                        j = 0;
-                                    } else {
-                                        j++;
-                                    }
-                                }
-                            }
-
-                            // Date updated = new Date();
-                            Object[] values = new Object[]{m_oTicket.getPlaceId(), m_oTicket.getName(), m_oTicket, m_oTicket.getSplitSharedId(), m_oTicket.isPrinted(), m_oTicket.isListModified()};
-                            Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING, Datas.SERIALIZABLE, Datas.STRING, Datas.BOOLEAN, Datas.BOOLEAN};
-                            try {
-                                try {
-                                    new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?,UPDATED=NOW() , ISKDS=0  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-//                                    if (m_oTicket.getTakeaway().equals("Y")) {
-//                                        new PreparedSentence(m_App.getSession(), "UPDATE TAKEAWAYTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?,UPDATED=NOW()  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-//                                    }
-                                } catch (BasicException ex) {
-                                    logger.info("Order NO." + m_oTicket.getOrderId() + " exception in  MINUS action updating shared ticket" + ex.getMessage());
-                                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                String splitId = m_oTicket.getSplitSharedId();
-                                Object[] record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-                                if (record != null) {
-                                    m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-
-                                }
-                            } catch (BasicException ex) {
-                                logger.info("Order NO." + m_oTicket.getOrderId() + " exception in  printRetailKotTicket updating shared ticket" + ex.getMessage());
-                                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
+                        } else {//Decreasing the quantity of the selected item
+                            newline.setMultiply(newline.getMultiply() - 1.0);
                         }
+                        if (addonVal != null && primaryAddon == 1) {
+                            int j = 0;
+                            while (j < m_oTicket.getLinesCount()) {
+                                //if its addon item
+                                if (addonVal.equals(m_oTicket.getLine(j).getAddonId()) && m_oTicket.getLine(j).getPrimaryAddon() == 0) {
+                                    removeTicketLine(j);
+                                    j = 0;
+                                } else {
+                                    j++;
+                                }
+                            }
+                        }
+
                     }
                 } else {
                     showMessage(this, "Item is sent to kot.Only Cashier or Manager can cancel the line.");
                 }
             } else { //Checking whether the selected item having SIBG promotion.If promotion is applicable, then it will decrease the free item quantity also
-                if (m_oTicket.getLine(i).getPromoType().equals("SIBG") && m_oTicket.getLine(i).getIsPromoSku().equals("Y") && m_oTicket.getLine(i).isPromoAction()) {
+                if (m_oTicket.getLine(i).getPromoType().equals("SIBG")&& m_oTicket.getLine(i).getIsPromoSku().equals("Y")&& m_oTicket.getLine(i).isPromoAction()) {
                     if (m_oTicket.getLine(i).getActualPrice() != 0) {
                         newline.setMultiply(newline.getMultiply() - 1.0);
                         int index = i + 1;
                         m_oTicket.getLine(index).setMultiply(m_oTicket.getLine(index).getMultiply() - 1);
-                        System.out.println("m_oTicket.getLine(index).getPrice()" + m_oTicket.getLine(index).getPrice() + "m_oTicket.getLine(index).getMultiply()" + m_oTicket.getLine(index).getMultiply());
-                        m_oTicket.getLine(index).setOfferDiscount(m_oTicket.getLine(index).getPrice() * (m_oTicket.getLine(index).getMultiply()));
+                        System.out.println("m_oTicket.getLine(index).getPrice()"+m_oTicket.getLine(index).getPrice()+"m_oTicket.getLine(index).getMultiply()"+m_oTicket.getLine(index).getMultiply());
+                         m_oTicket.getLine(index).setOfferDiscount(m_oTicket.getLine(index).getPrice() * (m_oTicket.getLine(index).getMultiply()));
                     }
                 } else {//Decreasing the quantity of the selected item
                     newline.setMultiply(newline.getMultiply() - 1.0);
@@ -5127,7 +4957,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
                     //add promotion logic
                     //Checking whether the selected item having SIBG promotion.If promotion is applicable, then it will edit the free item quantity also
-                    if (m_oTicket.getLine(i).getPromoType().equals("SIBG") && m_oTicket.getLine(i).getIsPromoSku().equals("Y") && buyGetPromo) {
+                    if (m_oTicket.getLine(i).getPromoType().equals("SIBG")&& m_oTicket.getLine(i).getIsPromoSku().equals("Y") && buyGetPromo) {
                         if (m_oTicket.getLine(i).getActualPrice() != 0) {
                             //Opening the popup screen for editing the quantity
                             newline = JRetailProductLineEdit.showMessage(this, m_App, m_oTicket.getLine(i));
@@ -5146,12 +4976,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                     new MessageInf(e).show(this);
                 }
             }
-        } else {
-            logger.info("showing kds details");
-            if (userMap.isEmpty()) {
-                populateUsers();
-            }
-            JRetailKdsDetails.showItemsScreen(this, m_oTicket.getLine(i), dlReceipts, userMap);
         }
     }//GEN-LAST:event_m_jEditLineActionPerformed
     //Action Performed method is called when click on logout button in sales screen
@@ -5173,27 +4997,32 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 }//GEN-LAST:event_m_jLogoutActionPerformed
 
     private void m_jCalculatePromotionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jCalculatePromotionActionPerformed
-        String promotionName = setPromotionData();
-        if (promotionName.equals("BuyGet")) {
-            buyGetPromo = true;
-            m_oTicket.setPromoAction(true);
-        } else {
-            checkLeastValuePromotion();
-        }
+      String promotionName=setPromotionData();
+      System.out.println("promo Name"+promotionName);
+       if(promotionName.equals("BuyGet")){
+           buyGetPromo=true;
+           m_oTicket.setPromoAction(true);
+       }else {
+           checkLeastValuePromotion(); 
+       }
 }//GEN-LAST:event_m_jCalculatePromotionActionPerformed
-
-    private void calculateLeastValueDiscount(ArrayList<BuyGetPriceInfo> pdtLeastPriceList1) {
+  
+      private void calculateLeastValueDiscount(ArrayList<BuyGetPriceInfo> pdtLeastPriceList1) {
+          System.out.println("calculateLeastValueDiscount");
         for (final RetailTicketLineInfo l : m_oTicket.getLines()) {
             System.out.println("pdtBuyGetPriceLis--------checkvalue---" + pdtBuyGetPriceList.size() + "===" + pdtBuyGetPriceList);
             if (pdtBuyGetPriceList.size() != 0) {
                 for (int i = 0; i < pdtBuyGetPriceList.size(); i++) {
-
+ //System.out.println(i);
                     String productId = pdtBuyGetPriceList.get(i).getProductID();
+                     System.out.println(i +"--"+productId );
                     if (l.getProductID().equals(productId)) {
                         pdtBuyGetPriceList.remove(i);
                         l.setPromodiscountPercent(100);
                         l.setPromoType("SIBG");
+                           //System.out.println("l.getPrice"+l.getPrice());
                         l.setOfferDiscount(l.getPrice());
+                        System.out.println(i +"--Id--"+productId +"--Price--"+l.getPrice());
                         break;
                     }
 
@@ -5204,12 +5033,11 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                     l.setPromodiscountPercent(0);
                     l.setPromoType("SIBG");
                     l.setOfferDiscount(0);
-                }
+                  }
             }
         }
     }
-
-    public void checkLeastValuePromotion() {
+        public void checkLeastValuePromotion() {
         leastValuePromo = true;
         ArrayList<BuyGetPriceInfo> leastProductList = new ArrayList<BuyGetPriceInfo>();
         StringBuilder b = new StringBuilder();
@@ -5222,9 +5050,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             // System.out.println("m_oTicket----" + m_oTicket.getLine(0).getCampaignId());
             dlSales.saveRetailTempTicketlines(m_oTicket);
             java.util.ArrayList<String> campaignId = new ArrayList<String>();
-            // m_oTicket.setLeastValueDiscount(0.00);
+           // m_oTicket.setLeastValueDiscount(0.00);
             pdtCampaignIdList = (ArrayList<CampaignIdInfo>) dlSales.getPdtCampaignId();
             for (int i = 0; i < pdtCampaignIdList.size(); i++) {
+                System.out.println("pdtCampaignIdList.get(i).getcampaignId()"+pdtCampaignIdList.get(i).getcampaignId());
                 campaignId.add("'" + pdtCampaignIdList.get(i).getcampaignId() + "'");
             }
 
@@ -5245,26 +5074,43 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                 pdtBuyGetList = (ArrayList<BuyGetInfo>) dlSales.getbuyGetTotalQty(promoCampaignId);
 
                 for (int i = 0; i < pdtBuyGetList.size(); i++) {
+                     System.out.println("pdtBuyGetList.size()"+pdtBuyGetList.size());
+                      System.out.println("pdtBuyGetList--iteration"+i);
+                    
 
                     pdtBuyGetQtyList = (ArrayList<BuyGetQtyInfo>) dlSales.getbuyGetQty(pdtBuyGetList.get(i).getCampaignId(), pdtBuyGetList.get(i).getQty());
                     int sumOfBuyGet = (int) pdtBuyGetQtyList.get(0).getBuyQty() + (int) pdtBuyGetQtyList.get(0).getQty();
+                     System.out.println("sumOfBuyGet"+sumOfBuyGet +"getbuyqty"+pdtBuyGetQtyList.get(0).getBuyQty()+ "getqty"+pdtBuyGetQtyList.get(0).getQty());
                     int remaining = 0;
+                    System.out.println("pdtBuyGetList.get(0).getQty()"+pdtBuyGetList.get(0).getQty());
                     remaining = pdtBuyGetList.get(0).getQty() / (int) sumOfBuyGet;
+                     System.out.println("sumOfBuyGet -remaining"+remaining);
                     int qty = remaining * pdtBuyGetQtyList.get(0).getQty();
+                    System.out.println("sumOfBuyGet -remaining -qty"+qty);
+                    
+                    //Main Calculation Part
                     if (pdtBuyGetQtyList.size() != 0) {
                         pdtBuyGetPriceList = (ArrayList<BuyGetPriceInfo>) dlSales.getbuyGetLeastPrice(pdtBuyGetList.get(i).getCampaignId(), qty);
                         pdtLeastPriceList = new ArrayList<BuyGetPriceInfo>();
                         for (int j = 0; j < pdtBuyGetPriceList.size(); j++) {
+                             System.out.println("sumOfBuyGet -remaining -qty-getbuyGetLeastPrice list taken "+j);
                             price = price + pdtBuyGetPriceList.get(j).getPrice();
+                              System.out.println("sumOfBuyGet -remaining -qty-getbuyGetLeastPrice list price "+j +price);
 //                            taxAmount = taxAmount + pdtBuyGetPriceList.get(j).getTaxRate();
 //                            serviceTaxAmount = serviceTaxAmount + pdtBuyGetPriceList.get(j).getServiceTax();
 //                            sbtaxAmount = sbtaxAmount + pdtBuyGetPriceList.get(j).getSbtax();
                             if (pdtLeastPriceList.size() == 0) {
+                                  System.out.println("If part sumOfBuyGet -remaining -qty-pdtLeastPrice list taken when size is 0 "+j);
                                 pdtLeastPriceList.add(pdtBuyGetPriceList.get(j));
                             } else {
+                                System.out.println("Else part sumOfBuyGet -remaining -qty-pdtLeastPrice list taken when size is not  0 "+j);
                                 boolean flag = false;
                                 for (int k = 0; k < pdtLeastPriceList.size(); k++) {
-                                    if (pdtLeastPriceList.get(k).getProductID() == pdtBuyGetPriceList.get(j).getProductID()) {
+                                    
+                                      System.out.println("pdtLeastPriceList--"+k);
+                                    if (pdtLeastPriceList.get(k).getProductID() == pdtBuyGetPriceList.get(j).getProductID())
+                                    {
+                                        System.out.println("pdtLeastPriceList--"+"inside if --" +k);
                                         BuyGetPriceInfo info = pdtLeastPriceList.get(k);
                                         info.setQuantity((info.getQuantity() + 1));
                                         pdtLeastPriceList.remove(k);
@@ -5274,6 +5120,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                                     }
                                 }
                                 if (flag == false) {
+                                      System.out.println("pdtLeastPriceList--"+"inside else outside for ");
                                     pdtLeastPriceList.add(pdtBuyGetPriceList.get(j));
                                 }
                             }
@@ -5283,7 +5130,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
                 }
                 setPriceInfo(leastProductList);
-                //    m_oTicket.setLeastValueDiscount(price);
+            //    m_oTicket.setLeastValueDiscount(price);
 //                m_oTicket.setTaxValue(taxAmount);
 //                m_oTicket.setServiceTaxLeastAmount(serviceTaxAmount);
 //                m_oTicket.setSbTaxLeastAmount(sbtaxAmount);
@@ -5379,73 +5226,67 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     //Method is called when click on kot button, setting all the non kot lines based on
     //production area and session and sending the lines for printing
     public final synchronized void kotDisplay() throws BasicException {
-        //   System.out.println("ticket.setObjectUpdateDate KOT1  : " + m_oTicket.getObjectUpdateDate());
-
-        boolean updated = checkTicketUpdation();
-        System.out.println("updated " + updated);
-
-        if (!updated) {
-            dbUpdatedDate = null;
-            kotprintIssue = 0;
-            logger.info("kotaction value" + kotaction);
-            int orderId = 0;
-            if (m_oTicket.getOrderId() == 0) {
-                if (m_oTicket.getLinesCount() != 0) {
-                    //Setting the new order no
-                    orderId = dlSales.getNextTicketOrderNumber();
-                    m_oTicket.setOrderId(orderId);
-                }
+        kotprintIssue = 0;
+        logger.info("kotaction value" + kotaction);
+        int orderId = 0;
+        if (m_oTicket.getOrderId() == 0) {
+            if (m_oTicket.getLinesCount() != 0) {
+                //Setting the new order no
+                orderId = dlSales.getNextTicketOrderNumber();
+                m_oTicket.setOrderId(orderId);
             }
+        }
 
-            final int kotTicket;
-            int kotTicketId = 0;
-            kotTicketId = dlSales.getNextKotIndex();
-            if (kotTicketId == 0) {
-                kotTicket = 1;
-            } else {
-                kotTicket = kotTicketId;
-            }
+        final int kotTicket;
+        int kotTicketId = 0;
+        kotTicketId = dlSales.getNextKotIndex();
+        if (kotTicketId == 0) {
+            kotTicket = 1;
+        } else {
+            kotTicket = kotTicketId;
 
-            RetailTicketInfo info = getActiveTicket();
-            java.util.List<kotPrintedInfo> kPrintedInfolist = null;
-            //Getting all the lines from current bill
-            final java.util.List<RetailTicketLineInfo> panelLines = info.getLines();
-            final java.util.List<RetailTicketLineInfo> panelNonKotLines = new ArrayList();
+        }
 
-            String sessionId = null;
-            String floorName = null;
-            java.util.List<Floor> m_afloors;
-            //Fetch the floor id and based on floor id get all the printer details
+        RetailTicketInfo info = getActiveTicket();
+        java.util.List<kotPrintedInfo> kPrintedInfolist = null;
+        //Getting all the lines from current bill
+        final java.util.List<RetailTicketLineInfo> panelLines = info.getLines();
+        final java.util.List<RetailTicketLineInfo> panelNonKotLines = new ArrayList();
 
+        String sessionId = null;
+        String floorName=null;
+         java.util.List<Floor> m_afloors;
+        //Fetch the floor id and based on floor id get all the printer details
+       
             SentenceList sent = new StaticSentence(
                     m_App.getSession(),
-                    "SELECT FLOORS.ID, FLOORS.NAME,'' FROM PLACES LEFT JOIN FLOORS ON PLACES.FLOOR=FLOORS.ID WHERE  PLACES.ID='" + m_oTicket.getPlaceId() + "'",
+                    "SELECT FLOORS.ID, FLOORS.NAME,'' FROM PLACES LEFT JOIN FLOORS ON PLACES.FLOOR=FLOORS.ID WHERE  PLACES.ID='"+m_oTicket.getPlaceId()+"'",
                     null,
                     new SerializerReadClass(Floor.class));
             m_afloors = sent.list();
-            //  sessionId = dlReceipts.getFloorId(m_oTicket.getPlaceId());
+          //  sessionId = dlReceipts.getFloorId(m_oTicket.getPlaceId());
             sessionId = m_afloors.get(0).getID();
-            floorName = m_afloors.get(0).getName();
-            printerInfo = dlReceipts.getPrinterInfo(sessionId);
-            for (int i = 0; i < panelLines.size(); i++) {
-                //Add all the non kot lines to the list for printing the kot based on production area
-                if (panelLines.get(i).getIsKot() == 0) {
-                    String tbl_orderitemId = UUID.randomUUID().toString();
-                    tbl_orderitemId = tbl_orderitemId.replaceAll("-", "");
-                    panelLines.get(i).setTbl_orderId(tbl_orderitemId);
-                    panelLines.get(i).setKotid(kotTicket);
-                    panelLines.get(i).setKotdate(m_oTicket.getDate());
-                    panelLines.get(i).setKottable(m_oTicket.getPlaceId());
-                    panelLines.get(i).setKotuser(m_oTicket.getUser().getId());
-                    panelNonKotLines.add(panelLines.get(i));
-                }
-
+            floorName= m_afloors.get(0).getName();
+        printerInfo = dlReceipts.getPrinterInfo(sessionId);
+        for (int i = 0; i < panelLines.size(); i++) {
+            //Add all the non kot lines to the list for printing the kot based on production area
+            if (panelLines.get(i).getIsKot() == 0) {
+                String tbl_orderitemId = UUID.randomUUID().toString();
+                tbl_orderitemId = tbl_orderitemId.replaceAll("-", "");
+                System.out.println("Table Order Id generated in kot display after kot punch");
+                panelLines.get(i).setTbl_orderId(tbl_orderitemId);
+                panelLines.get(i).setKotid(kotTicket);
+                panelLines.get(i).setKotdate(m_oTicket.getDate());
+                panelLines.get(i).setKottable(m_oTicket.getPlaceId());
+                panelLines.get(i).setKotuser(m_oTicket.getUser().getId());
+                panelNonKotLines.add(panelLines.get(i));
             }
-            //Method is used for print the non kot lines
-            printRetailKotTicket("Printer.Kot", m_oTicket, panelNonKotLines, m_oTicketExt, printerInfo, kotTicket, floorName);
-            Runtime.getRuntime().gc();
 
         }
+        //Method is used for print the non kot lines
+        printRetailKotTicket("Printer.Kot", m_oTicket, panelNonKotLines, m_oTicketExt, printerInfo, kotTicket,floorName);
+        Runtime.getRuntime().gc();
+
     }
     //This method is called when click on move table button for sending the move table details to kot printers
 
@@ -5461,7 +5302,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }
     //Method is called for printing the kot items
 
-    private synchronized void printRetailKotTicket(String sresourcename, RetailTicketInfo ticket, java.util.List<RetailTicketLineInfo> kot, Object ticketExt, java.util.List<ProductionPrinterInfo> printerInfo, int kotTicket, String floorName) {
+    private synchronized void printRetailKotTicket(String sresourcename, RetailTicketInfo ticket, java.util.List<RetailTicketLineInfo> kot, Object ticketExt, java.util.List<ProductionPrinterInfo> printerInfo, int kotTicket,String floorName) {
         java.util.List<TicketLineConstructor> allLines = null;
         logger.info("start printing the kot" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
         com.openbravo.pos.printer.printer.KotImagePrinter printer = new KotImagePrinter();
@@ -5482,11 +5323,11 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             }
             logger.info("kot print count based on production areas" + uniqueProductionAreas.size());
             if (uniqueProductionAreas.size() != 0) {
-                allLines = getRetailAllLines(ticket, ticketExt, uniqueProductionAreas, kotTicket, floorName);
+                allLines = getRetailAllLines(ticket, ticketExt, uniqueProductionAreas, kotTicket,floorName);
                 try {
                     // sending for kot print based on store
                     if (storeLocation.equals("BlrIndranagar") || storeLocation.equals("BlrKoramangala") || storeLocation.equals("Chennai") || storeLocation.equals("Hyderabad")) {
-                        //Thermal ?
+                            //Thermal ?
                         printer.printKot(allLines, printerInfo.get(j).getPath());
                     } else {
                         printerKot.print(allLines, printerInfo.get(j).getPath());
@@ -5496,17 +5337,13 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                         uniqueProductionAreas.get(i).setIsKot(1);
                         if (uniqueProductionAreas.get(i).getPreparationStatus() != 3) {
                             uniqueProductionAreas.get(i).setPreparationStatus(4);
+                            
+                            System.out.println("TableOrder Id From RetailPanelTicketuniqueProductionAreas.5399line--"+uniqueProductionAreas.get(i).getTbl_orderId());
                         }
-                        System.out.println("uniqueProductionAreas.get(i). Station : " + uniqueProductionAreas.get(i).getStation());
-                        //New KDS Added on 7-03-17
-                        String txstatus = "ADD";
-                        String tableid_unique = uniqueProductionAreas.get(i).getTbl_orderId();
-                        dlReceipts.insertServedTransaction(m_oTicket, txstatus, tableid_unique);
 
                     }
                 } catch (PrinterException ex) {
                     logger.info("Order NO." + m_oTicket.getOrderId() + " The printer action" + ex.getMessage());
-                    ex.printStackTrace();
                     kotprintIssue = 1;
                     Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                     for (int i = 0; i < uniqueProductionAreas.size(); i++) {
@@ -5515,47 +5352,26 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                         if (uniqueProductionAreas.get(i).getPreparationStatus() != 3) {
                             uniqueProductionAreas.get(i).setPreparationStatus(0);
                         }
-
-                        //New KDS Added on 7-03-17
-                        String txstatus = "ADD";
-                        String tableid_unique = uniqueProductionAreas.get(i).getTbl_orderId();
-                        System.out.println("uniqueProductionAreas Station " + uniqueProductionAreas.get(i).getStation());
-
-                        dlReceipts.insertServedTransaction(m_oTicket, txstatus, tableid_unique);
                     }
                     kotaction = 1;
                     showMessage(this, "KOT action not happened! Please retry");
                 }
             }
+
         }
 
         for (int i = 0; i < ticket.getLinesCount(); i++) {
+            System.out.println("Before PaintTicketLine"+ticket.getLine(i).getTbl_orderId());
             paintKotTicketLine(i, ticket.getLine(i));
         }
-        // Date updated = new Date();
         Object[] values = new Object[]{m_oTicket.getPlaceId(), m_oTicket.getName(), m_oTicket, m_oTicket.getSplitSharedId(), m_oTicket.isPrinted(), m_oTicket.isListModified()};
         Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING, Datas.SERIALIZABLE, Datas.STRING, Datas.BOOLEAN, Datas.BOOLEAN};
         try {
-            try {
-                new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?,UPDATED=NOW() ,ISKDS=0  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-
-            } catch (BasicException ex) {
-                logger.info("Order NO." + m_oTicket.getOrderId() + " exception in  updating shared ticket" + ex.getMessage());
-                ex.printStackTrace();
-                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            String splitId = m_oTicket.getSplitSharedId();
-            Object[] record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-            if (record != null) {
-
-                m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-
-            }
+            new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ? WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
         } catch (BasicException ex) {
             logger.info("Order NO." + m_oTicket.getOrderId() + " exception in  printRetailKotTicket updating shared ticket" + ex.getMessage());
             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         logger.info("kot lines passing to print" + kotTicketlist.size());
         logger.info("end printing the kot" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
     }
@@ -5590,14 +5406,14 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }
     //This method is called for aligning and setting the kot lines for printing
 
-    private java.util.List<TicketLineConstructor> getRetailAllLines(RetailTicketInfo ticket, Object ticketext, java.util.List<RetailTicketLineInfo> kot, int kotTicket, String floorName) {
+    private java.util.List<TicketLineConstructor> getRetailAllLines(RetailTicketInfo ticket, Object ticketext, java.util.List<RetailTicketLineInfo> kot, int kotTicket,String floorName) {
 
         java.util.List<TicketLineConstructor> allLines = new ArrayList<TicketLineConstructor>();
         double qtySum = 0;
-        if ("Habanero-Jarota".equals(m_App.getProperties().getStoreName()) || "Habanero-Goa".equals(m_App.getProperties().getStoreName())) {
-            allLines.add(new TicketLineConstructor("         " + floorName.toUpperCase()));
-        } else {
-            allLines.add(new TicketLineConstructor("          KITCHEN ORDER TICKET"));
+         if("Habanero-Jarota".equals(m_App.getProperties().getStoreName()) || "Habanero-Goa".equals(m_App.getProperties().getStoreName())){
+        allLines.add(new TicketLineConstructor("         "+floorName.toUpperCase()));
+       }else{
+              allLines.add(new TicketLineConstructor("          KITCHEN ORDER TICKET"));
         }
         allLines.add(new TicketLineConstructor("Date: " + (ticket.printDate().substring(0, 12)) + getSpaces(13 - (ticket.printDate().substring(0, 12).length())) + "Kot No: " + kotTicket));
         allLines.add(new TicketLineConstructor("Time: " + (ticket.printTime()) + getSpaces(13 - (ticket.printTime().length())) + "Table No:" + getSpaces(1) + ticket.getName(m_oTicketExt)));
@@ -5705,63 +5521,53 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         String storeLocation = m_App.getProperties().getProperty("machine.storelocation");
         try {
             if (m_oTicket.getLinesCount() != 0) {
-                boolean updated = checkTicketUpdation();
-                if (!updated) {
-                    dbUpdatedDate = null;
-                    //if exist non kot items
-                    if (kotaction == 1) {
-                        //Method is used for printing non kot items
-                        kotDisplay();
-                    } else {
-                        Runtime.getRuntime().gc();
-                    }
-                    //Method is for setting all the lines to be served status
-                    serveAllLines();
-                    if (kotprintIssue == 0) {
-                        int res = JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.wannaPrint"), AppLocal.getIntString("message.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (res == JOptionPane.YES_OPTION) {
-                            boolean reasonStatus = true;
+                //if exist non kot items
+                if (kotaction == 1) {
+                    //Method is used for printing non kot items
+                    kotDisplay();
+                } else {
+                    Runtime.getRuntime().gc();
+                }
+                //Method is for setting all the lines to be served status
+                serveAllLines();
+                if (kotprintIssue == 0) {
+                    int res = JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.wannaPrint"), AppLocal.getIntString("message.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (res == JOptionPane.YES_OPTION) {
+                        boolean reasonStatus = true;
+                        try {
+                            logger.info("Start Printing :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
+                            logger.info("No. of Line Items during Print Bill : " + m_oTicket.getLinesCount());
+                            reasonStatus = doPrintValidation();
+                        } catch (BasicException ex) {
+                            logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking print bill doPrintValidation" + ex.getMessage());
+                            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if (reasonStatus) {
+                            String file;
+                            file = "Printer.Bill";
+                            m_jLblBillNo.setText(m_oTicket.getTicketId() == 0 ? "--" : String.valueOf(m_oTicket.getTicketId()));
                             try {
-                                logger.info("Start Printing :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
-                                logger.info("No. of Line Items during Print Bill : " + m_oTicket.getLinesCount());
-                                reasonStatus = doPrintValidation();
-                            } catch (BasicException ex) {
-                                logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking print bill doPrintValidation" + ex.getMessage());
+
+                                taxeslogic.calculateTaxes(m_oTicket);
+
+                            } catch (TaxesException ex) {
+                                logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking print bill calculateTaxes" + ex.getMessage());
                                 Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            if (reasonStatus) {
-                                String file;
-                                file = "Printer.Bill";
-                                m_jLblBillNo.setText(m_oTicket.getTicketId() == 0 ? "--" : String.valueOf(m_oTicket.getTicketId()));
-                                try {
-
-                                    taxeslogic.calculateTaxes(m_oTicket);
-
-                                } catch (TaxesException ex) {
-                                    logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking print bill calculateTaxes" + ex.getMessage());
-                                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                //Based on store location
-                                if (storeLocation.equals("BlrIndranagar") || storeLocation.equals("ITPL")) {
-                                    //Method is used for generic text printer
-                                    printTicketGeneric(file, m_oTicket, m_oTicketExt);
-                                } else {
-                                    //Method is used for thermal printer
-                                    printTicket(file, m_oTicket, m_oTicketExt);
-                                }
-                                logger.info("bill has been printed");
-                                m_oTicket.setPrinted(true);
-                                Object[] values = new Object[]{m_oTicket.getPlaceId(), m_oTicket.getName(), m_oTicket, m_oTicket.getSplitSharedId(), m_oTicket.isPrinted(), m_oTicket.isListModified()};
-                                Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING, Datas.SERIALIZABLE, Datas.STRING, Datas.BOOLEAN, Datas.BOOLEAN};
-                                new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?, UPDATED=NOW(), ISKDS=0  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-                                String splitId = m_oTicket.getSplitSharedId();
-                                Object[] record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-                                if (record != null) {
-                                    m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-
-                                }
-                                logger.info("End Printing :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
+                            //Based on store location
+                            if (storeLocation.equals("BlrIndranagar") || storeLocation.equals("ITPL")) {
+                                //Method is used for generic text printer
+                                printTicketGeneric(file, m_oTicket, m_oTicketExt);
+                            } else {
+                                //Method is used for thermal printer
+                                printTicket(file, m_oTicket, m_oTicketExt);
                             }
+                            logger.info("bill has been printed");
+                            m_oTicket.setPrinted(true);
+                            Object[] values = new Object[]{m_oTicket.getPlaceId(), m_oTicket.getName(), m_oTicket, m_oTicket.getSplitSharedId(), m_oTicket.isPrinted(), m_oTicket.isListModified()};
+                            Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING, Datas.SERIALIZABLE, Datas.STRING, Datas.BOOLEAN, Datas.BOOLEAN};
+                            new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ? WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
+                            logger.info("End Printing :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
                         }
                     }
                 }
@@ -5816,31 +5622,27 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         if (m_oTicket.getLinesCount() == 0) {
             return;
         }
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            //Checking whether non kot items is there in the bill
-            if (kotaction == 1) {
-                try {
-                    kotDisplay();
-                } catch (BasicException ex) {
-                    logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking settle bill kot action" + ex.getMessage());
-                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        //Checking whether non kot items is there in the bill
+        if (kotaction == 1) {
+            try {
+                kotDisplay();
+            } catch (BasicException ex) {
+                logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking settle bill kot action" + ex.getMessage());
+                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //Checking whether the bill is printed
-            if (!m_oTicket.isPrinted()) {
-                showMessage(this, "Settle bill is allowed after Bill is Printed");
-                logger.info("Settle bill is allowed after Bill is Printed");
-                return;
-                //Checking whether bill is modified after the print
-            } else if (m_oTicket.isPrinted() && m_oTicket.isListModified()) {
-                showMessage(this, "Bill is Modified after previous print. So please print it again");
-                logger.info("Bill is Modified after previous print. So please print it again");
-                return;
-            }
-            JPaymentEditor.showMessage(JRetailPanelTicket.this, dlReceipts, m_oTicket, this, "Sales");
         }
+        //Checking whether the bill is printed
+        if (!m_oTicket.isPrinted()) {
+            showMessage(this, "Settle bill is allowed after Bill is Printed");
+            logger.info("Settle bill is allowed after Bill is Printed");
+            return;
+            //Checking whether bill is modified after the print
+        } else if (m_oTicket.isPrinted() && m_oTicket.isListModified()) {
+            showMessage(this, "Bill is Modified after previous print. So please print it again");
+            logger.info("Bill is Modified after previous print. So please print it again");
+            return;
+        }
+     JPaymentEditor.showMessage(JRetailPanelTicket.this, dlReceipts, m_oTicket, this, "Sales");
 }//GEN-LAST:event_m_jSettleBillActionPerformed
     //Method is used for splitting the bill
 
@@ -5887,7 +5689,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             ticket1.setTicketOpen(false);
             ticket1.setDiscountMap(m_oTicket.getDiscountMap());
             ticket1.setCategoryDiscount(m_oTicket.iscategoryDiscount());
-
             RetailTicketInfo ticket2 = new RetailTicketInfo(m_oTicket.getRate());
             ticket2.setOrderId(0);
             ticket2.setCustomer(m_oTicket.getCustomer());
@@ -5902,41 +5703,34 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             ticket2.setCategoryDiscount(m_oTicket.iscategoryDiscount());
             ticket2.setStoreName(storeName);
             if (splitdialog.showDialog(ticket1, ticket2, m_oTicketExt)) {
-                boolean updated = checkTicketUpdation();
-                System.out.println("updated 222: " + updated);
-
-                if (!updated) {
-                    dbUpdatedDate = null;
-                    try {
-                        //Method is used for setting the order no for first bill
-                        setKotAndServedOnSplit(ticket1);
-                        if (splitdialog.window.equals("OK")) {
-                            //Method is used for setting the order no for second bill
-                            logger.info("splitfunction on  saying ok ");
-                            setKotAndServedOnSplit(ticket2);
-                        } //on clicking print button
-                        else {
-                            //Sending the second bill for printing
-                            logger.info("splitfunction on saying print ");
-                            m_oTicket = ticket2;
-                            setKotServedAndPrintOnSplit(m_oTicket);
-                        }
-                        cancelTIcket.setSplitValue("Split");
-                        String ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + cancelTIcket.getTicketId();
-                        //Cancel the existing bill to db
-                        dlSales.saveRetailCancelSplitTicket(cancelTIcket, m_App.getProperties().getStoreName(), ticketDocument, "Y", m_App.getInventoryLocation(), "Split Bill", "", m_App.getProperties().getPosNo(), "Y");
-                    } catch (BasicException ex) {
-                        logger.info("Order NO." + m_oTicket.getOrderId() + "exception while splitting the bill" + ex.getMessage());
-                        Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+                try {
+                    //Method is used for setting the order no for first bill
+                    setKotAndServedOnSplit(ticket1);
+                    if (splitdialog.window.equals("OK")) {
+                        //Method is used for setting the order no for second bill
+                        logger.info("splitfunction on  saying ok ");
+                        setKotAndServedOnSplit(ticket2);
+                    } //on clicking print button
+                    else {
+                        //Sending the second bill for printing
+                        logger.info("splitfunction on saying print ");
+                        m_oTicket = ticket2;
+                        setKotServedAndPrintOnSplit(m_oTicket);
                     }
-                    logger.info("cancelled splitted older bill ");
-                    JRetailTicketsBagRestaurant.setNewSplitTicket(ticket1, ticket2);
-
+                    cancelTIcket.setSplitValue("Split");
+                    String ticketDocument = m_App.getProperties().getStoreName() + "-" + m_App.getProperties().getPosNo() + "-" + cancelTIcket.getTicketId();
+                    //Cancel the existing bill to db
+                    dlSales.saveRetailCancelSplitTicket(cancelTIcket, m_App.getProperties().getStoreName(), ticketDocument, "Y", m_App.getInventoryLocation(), "Split Bill", "", m_App.getProperties().getPosNo(), "Y");
+                } catch (BasicException ex) {
+                    logger.info("Order NO." + m_oTicket.getOrderId() + "exception while splitting the bill" + ex.getMessage());
+                    Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                logger.info("cancelled splitted older bill ");
+                JRetailTicketsBagRestaurant.setNewSplitTicket(ticket1, ticket2);
 
             }
-        }
 
+        }
 
     }
     //Action Performed method is called when click on split bill button
@@ -5945,24 +5739,14 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         logger.info("Split Bill Action");
         if (m_oTicket.getLinesCount() != 0) {
             try {
-                boolean updated = checkTicketUpdation();
-                System.out.println("updated " + updated);
-
-                if (!updated) {
-                    dbUpdatedDate = null;
-                    //if exist non kot items
-                    if (kotaction == 1) {
-                        //Method is used for printing non kot items
-                        kotDisplay();
-                    }
-                    if (kotprintIssue == 0) {
-                        splitBill();
-                    }
+                //if exist non kot items
+                if (kotaction == 1) {
+                    //Method is used for printing non kot items
+                    kotDisplay();
                 }
-
-
-
-
+                if (kotprintIssue == 0) {
+                    splitBill();
+                }
             } catch (BasicException ex) {
                 logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking split bill" + ex.getMessage());
                 Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
@@ -5972,14 +5756,13 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }//GEN-LAST:event_m_jSplitBtnActionPerformed
     //Action Performed method is called when click on kot button
     private void m_jBtnKotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jBtnKotActionPerformed
-        try {
-            dbUpdatedDate = null;
-            logger.info("Start kot Button:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
-            logger.info("No. of Line Items during Kot : " + m_oTicket.getLinesCount());
-            if (m_oTicket.getLinesCount() != 0) {
+        logger.info("Start kot Button:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
+        logger.info("No. of Line Items during Kot : " + m_oTicket.getLinesCount());
+        if (m_oTicket.getLinesCount() != 0) {
+            try {
+
                 if (kotaction == 1) {
                     logger.info("kotaction is 1");
-                    // System.out.println("ticket.setObjectUpdateDate KOT ACTION : " + m_oTicket.getObjectUpdateDate());
                     kotDisplay();
                 }
 
@@ -5993,12 +5776,11 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                     logger.info("End Logout Button : for Steward User" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
                 }
 
+            } catch (BasicException ex) {
+                logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking kot button" + ex.getMessage());
+                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (BasicException ex) {
-            logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking kot button" + ex.getMessage());
-            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         logger.info("End Kot Button :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
     }//GEN-LAST:event_m_jBtnKotActionPerformed
 
@@ -6047,7 +5829,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                     } else {
                         productListval = dlSales.getMenuProductInfoAddon(id, menuId);
                     }
-
                     incProduct(productListval);
                 }
             }
@@ -6058,91 +5839,23 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }//GEN-LAST:event_jButtonAddonActionPerformed
     //Action Performed method is called when click on served button
     private void m_jBtnServedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jBtnServedActionPerformed
-//        if (m_oTicket.getLinesCount() != 0) {
-//            try {
-//                int i = m_ticketlines.getSelectedIndex();
-//                if (m_oTicket.getLine(i).getPreparationStatus() != 3) {
-//                    m_oTicket.getLine(i).setPreparationStatus(3);
-//                    if (kotaction == 1) {
-//                        kotDisplay();
-//                    }
-//                    if (m_oTicket.getLine(i).getIsKot() == 0) {
-//                        //this is condition is if printer fails then reverting back the status of serve
-//                        m_oTicket.getLine(i).setPreparationStatus(0);
-//                    }
-//                    m_oTicket.getLine(i).setTbl_orderId(m_oTicket.getLine(i).getTbl_orderId());
-//                    setServedStatus(1);
-//                    paintKotTicketLine(i, m_oTicket.getLine(i));// TODO add your handling code here:
-//                    setServedStatus(0);
-//                }
-//            } catch (BasicException ex) {
-//                logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking served" + ex.getMessage());
-//                Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        }
-
-        logger.info("Start Served Button:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
-        int i = m_ticketlines.getSelectedIndex();
-        if (m_oTicket.getLinesCount() != 0 && m_oTicket.getLine(i).getIsKot() == 1) {
-            logger.info("if kot done");
+        if (m_oTicket.getLinesCount() != 0) {
             try {
-                dbUpdatedDate = null;
-
-                //RetailTicketLineInfo newline = new RetailTicketLineInfo(m_oTicket.getLine(i));
-                // java.util.List<ServedTransactionInfo> stList;
-
-//                stList = dlReceipts.getUpdateFromServedTransaction(m_oTicket.getLine(i).getTbl_orderId());
-//                for (ServedTransactionInfo servedTrans : stList) {
-//                    System.out.println("PREPARATION STATUS : " + servedTrans.getPreparationStatus());
-
+                int i = m_ticketlines.getSelectedIndex();
                 if (m_oTicket.getLine(i).getPreparationStatus() != 3) {
-                    //   if (servedTrans.getPreparationStatus() != 3) {
-                    logger.info("if not served");
-                    boolean updated = checkTicketUpdation();
-                    if (!updated) {//added which was causing lock issue on 12/08/2016
-                        logger.info("This Bill is not updated by anyone");
-                        dbUpdatedDate = null;
-                        m_oTicket.getLine(i).setPreparationStatus(3);
-                        //  servedTrans.setPreparationStatus(3);
-                        Object[] record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT NOW() FROM DUAL ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find();
-                        Date servedDate = null;
-                        if (record != null) {
-                            servedDate = DateFormats.StringToDateTime((String) record[0]);
-                        }
-                        m_oTicket.getLine(i).setServedTime(servedDate);
-                        if (userMap.isEmpty()) {
-                            populateUsers();
-                        }
-                        m_oTicket.getLine(i).setServedBy(m_oTicket.getUser().getId());
-                        String servedName = dlReceipts.getServedName();
-                        System.out.println("servedName : " + servedName);
-                        m_oTicket.getLine(i).setKdsPrepareStatus(servedName);
-                        //Update servedTime and Served by  in ServedTransaction Table - code by B.keerthana
-                        dlReceipts.updateServedTransactionTime(m_oTicket, m_oTicket.getLine(i).getTbl_orderId(), loginUserId);
-                        m_oTicket.getLine(i).setTbl_orderId(m_oTicket.getLine(i).getTbl_orderId());
-                        setServedStatus(1);
-                        paintKotTicketLine(i, m_oTicket.getLine(i));// TODO add your handling code here:
-                        setServedStatus(0);
-
-                        //added newly on 21/07/2016
-                        Object[] values = new Object[]{m_oTicket.getPlaceId(), m_oTicket.getName(), m_oTicket, m_oTicket.getSplitSharedId(), m_oTicket.isPrinted(), m_oTicket.isListModified()};
-                        Datas[] datas = new Datas[]{Datas.STRING, Datas.STRING, Datas.SERIALIZABLE, Datas.STRING, Datas.BOOLEAN, Datas.BOOLEAN};
-                        new PreparedSentence(m_App.getSession(), "UPDATE SHAREDTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?,UPDATED=NOW(), ISKDS=0  WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-//                        if (m_oTicket.getTakeaway().equals("Y")) {
-//                            new PreparedSentence(m_App.getSession(), "UPDATE TAKEAWAYTICKETS SET NAME = ?, CONTENT = ?, ISPRINTED = ?, ISMODIFIED = ?,UPDATED=NOW(),ISKDS=0 WHERE ID = ? AND SPLITID=? ", new SerializerWriteBasicExt(datas, new int[]{1, 2, 4, 5, 0, 3})).exec(values);
-//                        }
-                        String splitId = m_oTicket.getSplitSharedId();
-                        record = (Object[]) new StaticSentence(m_App.getSession(), "SELECT UPDATED FROM SHAREDTICKETS WHERE ID = ? AND SPLITID='" + splitId + "'", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING})).find(m_oTicket.getPlaceId());
-                        if (record != null) {
-                            m_oTicket.setObjectUpdateDate(DateFormats.StringToDateTime((String) record[0]));
-
-                        }
-                        logger.info("updated sharedticket.");
-
+                    m_oTicket.getLine(i).setPreparationStatus(3);
+                    if (kotaction == 1) {
+                        kotDisplay();
                     }
+                    if (m_oTicket.getLine(i).getIsKot() == 0) {
+                        //this is condition is if printer fails then reverting back the status of serve
+                        m_oTicket.getLine(i).setPreparationStatus(0);
+                    }
+                    m_oTicket.getLine(i).setTbl_orderId(m_oTicket.getLine(i).getTbl_orderId());
+                    setServedStatus(1);
+                    paintKotTicketLine(i, m_oTicket.getLine(i));// TODO add your handling code here:
+                    setServedStatus(0);
                 }
-                //   }
             } catch (BasicException ex) {
                 logger.info("Order NO." + m_oTicket.getOrderId() + "exception on clicking served" + ex.getMessage());
                 Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
@@ -6161,16 +5874,12 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }//GEN-LAST:event_m_jbtnScaleActionPerformed
     //Action Performed method is called when click on cancel bill button
     private void m_jBtnCancelBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jBtnCancelBillActionPerformed
-        boolean updated = checkTicketUpdation();
-        if (!updated) {
-            dbUpdatedDate = null;
-            logger.info("Start Cancel Bill Button :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
-            int linesCount = m_oTicket.getLinesCount();
-            for (int i = 0; i < m_oTicket.getLinesCount(); i++) {
-                if (m_oTicket.getLine(i).getIsKot() == 1) {
-                    JRetailTicketsBagRestaurant.clickCancel();
-                    break;
-                }
+        logger.info("Start Cancel Bill Button :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
+        int linesCount = m_oTicket.getLinesCount();
+        for (int i = 0; i < m_oTicket.getLinesCount(); i++) {
+            if (m_oTicket.getLine(i).getIsKot() == 1) {
+                JRetailTicketsBagRestaurant.clickCancel();
+                break;
             }
         }
         logger.info("End Cancel Bill Button :" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date()));
@@ -6271,6 +5980,10 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
         action5Performed = false;// TODO add your handling code here:// TODO add your handling code here:
 
     }//GEN-LAST:event_m_jCboItemNameActionPerformed
+
+    private void m_jEditLine1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jEditLine1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_m_jEditLine1ActionPerformed
     //Method is called when click on split bill button
 
     private void setKotAndServedOnSplit(RetailTicketInfo splitTicket) {
@@ -6281,8 +5994,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             logger.info("Order NO." + m_oTicket.getOrderId() + "exception in setKotAndServedOnSplit" + ex.getMessage());
             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        oldordernum = m_oTicket.getOrderId();
-        newordernum = orderId;
         splitTicket.setOrderId(orderId);
 
         int numlines = splitTicket.getLinesCount();
@@ -6296,11 +6007,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             } else {
                 servedStatus = 1;
             }
-            //NewKds  added to change orderitemid on split bill
-            String oldtableorderitemid = splitTicket.getLine(i).getTbl_orderId();
-            //  System.out.println("old OrderItem Id"+oldtableorderitemid+"i"+i+splitTicket.getLine(i).getTbl_orderId()+"New orderItemId"+tbl_orderitemId);
-            // System.out.println("kot id "+splitTicket.getLine(i).getKotid());
-            dlReceipts.updateServedTransactionSplit(m_oTicket, m_oTicket.getPlaceId(), splitTicket.getLine(i).getTbl_orderId(), tbl_orderitemId, oldordernum, newordernum);
             splitTicket.getLine(i).setTbl_orderId(tbl_orderitemId);
         }
 
@@ -6311,6 +6017,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     private final synchronized void setKotServedAndPrintOnSplit(final RetailTicketInfo splitTicket) throws BasicException {
 
         Transaction t = new Transaction(m_App.getSession()) {
+
             @Override
             protected Object transact() throws BasicException {
                 int orderId = 0;
@@ -6386,6 +6093,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     }
 
     public void setPriceInfo(java.util.ArrayList<BuyGetPriceInfo> pdtBuyGetPriceList) {
+        System.out.println("setprice info call from least product list - pdtBuyGetPriceList added");
         this.pdtBuyGetPriceList = pdtBuyGetPriceList;
     }
 
@@ -6500,6 +6208,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     public final synchronized void serveAllLines() throws BasicException {
 
         Transaction t = new Transaction(m_App.getSession()) {
+
             int isallServed = 0;
 
             @Override
@@ -6596,69 +6305,6 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             m_jBtnBillOnHold.setVisible(false);
         }
     }
-
-    public boolean checkTicketUpdation() {
-        System.out.println("INSIDE TICKET UPDATION ");
-        boolean updated = false;
-        try {
-            System.out.println("m_oTicket.getObjectUpdateDate() : " + m_oTicket.getObjectUpdateDate());
-            String currentUpdated = m_dateformat.format(m_oTicket.getObjectUpdateDate()) + " " + m_dateformattime.format(m_oTicket.getObjectUpdateDate());
-            System.out.println("my current updated date" + currentUpdated);
-            String dbUpdated = dlReceipts.getUpdatedTime(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-            System.out.println("dbUpdated----" + dbUpdated);
-            Date currentUpdatedDate = DateFormats.StringToDateTime(currentUpdated);
-            dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
-            System.out.println("dbUpdatedDate : " + dbUpdatedDate + "currentUpdatedDate : " + currentUpdatedDate);
-            //if the table is deleted by (settlement/cancel/move)
-            if (dbUpdated.equals(null) || dbUpdated.equals("")) {
-                logger.info("This Bill is no longer exist");
-                showMessage(this, "This Bill is no longer exist");
-                updated = true;
-                m_ticketsbag.activate();
-            }//if the table is updated
-            else if (dbUpdatedDate.compareTo(currentUpdatedDate) > 0) {
-                //Taking the updated sharedticket
-                System.out.println("CURRENT -------");
-                RetailTicketInfo dbticket = dlReceipts.getRetailSharedTicketSplit(m_oTicket.getPlaceId(), m_oTicket.getSplitSharedId());
-                dbticket.setObjectUpdateDate(dbUpdatedDate);
-                //assigning the discount percentage to fetched sharedticket from existing sharedticket (if applied)
-                for (int index = 0; index < m_oTicket.getLinesCount(); index++) {
-                    if (m_oTicket.getLine(index).getIsKot() == 0) {
-                        m_oTicket.getLine(index).setDiscount(Double.parseDouble(dbticket.getRate()) * 100);
-                        dbticket.addLine(m_oTicket.getLine(index));
-                    }
-                }
-                //showing loading popup for 1 sec
-                JRetailBufferWindow.showMessage(this);
-                logger.info("This Bill is updated one.Loading.......");
-                //setting the updated sharedticket to billing screen
-                setRetailActiveTicket(dbticket, m_oTicketExt);
-                dbUpdatedDate = null;
-                //allowing to further kots
-                kotaction = 1;
-                updated = true;
-            } else {
-                updated = false;
-            }
-
-        } catch (BasicException ex) {
-            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return updated;
-    }
-
-    private void populateUsers() {
-        java.util.List<RoleUserInfo> userList = null;
-        try {
-            userList = dlReceipts.getUsers();
-        } catch (BasicException ex) {
-            Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        for (RoleUserInfo user : userList) {
-            userMap.put(user.getId(), user.getName());
-        }
-
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel catcontainer;
     private javax.swing.JButton jButton2;
@@ -6700,6 +6346,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
     private javax.swing.JButton m_jDelete;
     public static javax.swing.JLabel m_jDiscount1;
     private javax.swing.JButton m_jEditLine;
+    private javax.swing.JButton m_jEditLine1;
     private javax.swing.JButton m_jEraser;
     private javax.swing.JTextField m_jKeyFactory;
     private javax.swing.JButton m_jKot;

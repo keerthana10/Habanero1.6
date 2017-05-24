@@ -16,41 +16,36 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
 
 /**
  *
- * @author adrian
+ * @author  adrian
  */
 public class SentenceUpdateResultSet implements DataResultSet {
-
+    
     private int m_iUpdateCount;
-
-    /**
-     * Creates a new instance of UpdateResultSet
-     */
+    
+    /** Creates a new instance of UpdateResultSet */
     public SentenceUpdateResultSet(int iUpdateCount) {
         m_iUpdateCount = iUpdateCount;
     }
-
+    
     public Integer getInt(int columnIndex) throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
     public String getString(int columnIndex) throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
     public Double getDouble(int columnIndex) throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
     public Boolean getBoolean(int columnIndex) throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
     public java.util.Date getTimestamp(int columnIndex) throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
@@ -59,27 +54,26 @@ public class SentenceUpdateResultSet implements DataResultSet {
     public byte[] getBytes(int columnIndex) throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
-    public Object getObject(int columnIndex) throws BasicException {
+    public Object getObject(int columnIndex) throws BasicException  {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
 
 //    public int getColumnCount() throws DataException;
     public DataField[] getDataField() throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
-    }
-
+    }        
+    
     public Object getCurrent() throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
+    
     public boolean next() throws BasicException {
         throw new BasicException(LocalRes.getIntString("exception.nodataset"));
     }
-
+     
     public void close() throws BasicException {
     }
-
+   
     public int updateCount() throws BasicException {
         return m_iUpdateCount;
     }

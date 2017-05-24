@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.model;
 
 /**
@@ -23,17 +24,16 @@ package com.openbravo.data.model;
  * @author adrian
  */
 public class Column {
-
+    
     private String name;
-
+    
     public Column(String name) {
         this.name = name;
     }
-
     public String getName() {
         return name;
     }
-
+    
     public boolean isPK() {
         return false;
     }

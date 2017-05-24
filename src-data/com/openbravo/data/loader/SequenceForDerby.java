@@ -16,9 +16,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.loader;
 
 import com.openbravo.basic.BasicException;
+
 
 public class SequenceForDerby extends BaseSentence {
 
@@ -26,9 +28,7 @@ public class SequenceForDerby extends BaseSentence {
     private BaseSentence sent2;
     private BaseSentence sent3;
 
-    /**
-     * Creates a new instance of SequenceForMySQL
-     */
+    /** Creates a new instance of SequenceForMySQL */
     public SequenceForDerby(Session s, String sSeqTable) {
 
         sent1 = new StaticSentence(s, "DELETE FROM  " + sSeqTable);
@@ -42,11 +42,9 @@ public class SequenceForDerby extends BaseSentence {
         sent2.exec();
         return sent3.openExec(null);
     }
-
     public DataResultSet moreResults() throws BasicException {
         return sent3.moreResults();
     }
-
     public void closeExec() throws BasicException {
         sent3.closeExec();
     }

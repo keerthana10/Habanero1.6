@@ -34,11 +34,14 @@ public class TicketTaxInfo {
     private double retailSBTaxTotal;
     private double retailServiceTaxTotal;
     private double retailSwachBharatTaxTotal;
-    private double retailTaxesLineTotal;
+    public double retailTaxesLineTotal;
     private double taxbasetotal;
     private double servicetaxbasetotal;
     private double swatchBharatbasetotal;
+    public int k=0;
+   
 
+    
     /**
      * Creates a new instance of TicketTaxInfo
      */
@@ -96,24 +99,38 @@ public class TicketTaxInfo {
 //        retailTaxesLineTotal=retailTaxesLineTotal+retailTaxTotal;
 //
 //    }
+    
     //Developed by Shilpa
     // implementing erp tax calculation
-    public void addErpStdTax(double dValue, RetailTicketInfo ticket, Map<String, TaxStructureInfo> taxMap) {
-        subtotal = dValue;
+    public double addErpStdTax(double dValue, RetailTicketInfo ticket, Map<String, TaxStructureInfo> taxMap) {
+        System.out.println("adddErpSTANADARD");
+             subtotal = dValue;     
+                        
+        //System.out.println("subtotal"+subtotal);
         taxbasetotal += dValue;
+        // System.out.println("taxbasetotal"+taxbasetotal);
         //if calculation type is LNA (Line Amount) 
         if (tax.getBaseAmt().equals("LNA")) {
             retailTaxTotal = subtotal * tax.getRate();
+                       System.out.println("---retailTaxTotal--Ifff--"+retailTaxTotal);
             taxMap.put(tax.getId(), new TaxStructureInfo(tax.getBaseAmt(), tax.getRate(), retailTaxTotal, true));
         } else {
-            //if calculation type is LNATAX/TAX (Line Amount+Tax) /Tax
-            retailTaxTotal = calculateTaxValue(taxMap, tax, tax.getId());
-
+             //if calculation type is LNATAX/TAX (Line Amount+Tax) /Tax
+                       retailTaxTotal = calculateTaxValue(taxMap, tax, tax.getId());
+                         System.out.println("---retailTaxTotal--Elseeee--"+retailTaxTotal);
+          
         }
-        retailTaxesLineTotal = retailTaxesLineTotal + retailTaxTotal;
-
+        
+        //System.out.println("----------------------retailTaxTotal------"+retailTaxTotal);
+         retailTaxesLineTotal = retailTaxesLineTotal + retailTaxTotal;
+        //System.out.println("---RETAILTAXESLINETOTAL------"+ k++ +"----"+retailTaxesLineTotal);
+         
+         
+        return retailTaxesLineTotal;
+ 
     }
-
+ 
+    
     //Developed by Shilpa
     public double calculateTaxValue(Map<String, TaxStructureInfo> taxMap, TaxInfo tax, String taxId) {
         //check the calculation type of tax
@@ -123,35 +140,36 @@ public class TicketTaxInfo {
             //if its LNA The tax value will be subtotal*tax rate
             taxValue = (taxMap.get(taxId).getTaxRate() * subtotal);
             return taxValue;
-        } else if (calculationType.equals("LNATAX")) {
+        } else  if (calculationType.equals("LNATAX")) {
             double baseTaxTotal = 0;
             //If it already calculated
             if (taxMap.get(taxId).isCalculated()) {
                 taxValue = taxMap.get(taxId).getTaxValue();
-            } else {
+           } else {
                 //GET the base total from tax based on its base tax id
                 baseTaxTotal = calculateTaxValue(taxMap, tax, tax.getTaxBaseId());
-                taxValue = (subtotal + baseTaxTotal) * tax.getRate();
-
-            }
+                 taxValue = (subtotal + baseTaxTotal) * tax.getRate();
+             }
             //put the final tax value into map
-            System.out.println("TAX VALUE : " + taxValue);
-            taxMap.put(taxId, new TaxStructureInfo(calculationType, tax.getRate(), taxValue, true));
+          taxMap.put(taxId, new TaxStructureInfo(calculationType, tax.getRate(), taxValue, true));
+
             return taxValue;
-        } //This is for calculationType=tax
+        }
+        
+        //This is for calculationType=tax
         else {
             double baseTaxTotal;
             //If it already calculated
-            if (taxMap.get(taxId).isCalculated()) {
+           if (taxMap.get(taxId).isCalculated()) {
                 taxValue = taxMap.get(tax.getTaxBaseId()).getTaxValue();
             } else {
                 baseTaxTotal = calculateTaxValue(taxMap, tax, tax.getTaxBaseId());
-                taxValue = (baseTaxTotal) * tax.getRate();
+                 taxValue = (baseTaxTotal) * tax.getRate();
             }
-            taxMap.put(taxId, new TaxStructureInfo(calculationType, tax.getRate(), taxValue, true));
+              taxMap.put(taxId, new TaxStructureInfo(calculationType, tax.getRate(), taxValue, true));
             return taxValue;
         }
-
+        
 
 
     }
@@ -161,11 +179,11 @@ public class TicketTaxInfo {
         subtotal = dValue;
         servicetaxbasetotal += dValue;
         taxtotal = (subtotal * tax.getRate());
-        System.out.println("subtotal " + subtotal + " ticket.getServiceChargeRate()" + ticket.getServiceChargeRate() + "  tax.getRate()" + tax.getRate());
+       // System.out.println("subtotal " + subtotal + " ticket.getServiceChargeRate()" + ticket.getServiceChargeRate() + "  tax.getRate()" + tax.getRate());
         //Calculating present item service tax total
         retailTaxTotal = ((subtotal + (subtotal * ticket.getServiceChargeRate())) * tax.getRate());
         //Calculating present item service tax total
-        System.out.println("retailServiceTaxTotal " + retailServiceTaxTotal + " retailTaxTotal " + retailTaxTotal);
+        //System.out.println("retailServiceTaxTotal " + retailServiceTaxTotal + " retailTaxTotal " + retailTaxTotal);
         retailServiceTaxTotal = retailServiceTaxTotal + retailTaxTotal;
     }
 
@@ -180,11 +198,9 @@ public class TicketTaxInfo {
     public double getRetailTax() {
         return retailTaxesLineTotal;
     }
-
-    public double getRetailEachTax() {
+public double getRetailEachTax() {
         return retailTaxTotal;
     }
-
     public double getRetailServiceTax() {
         return retailServiceTaxTotal;
     }

@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.data.model;
 
 /**
@@ -23,11 +24,11 @@ package com.openbravo.data.model;
  * @author adrian
  */
 public class PrimaryKey extends Column {
-
+    
     public PrimaryKey(String name) {
         super(name);
     }
-
+    
     public boolean isPK() {
         return true;
     }

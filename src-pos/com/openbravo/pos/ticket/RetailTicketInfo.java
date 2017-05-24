@@ -149,12 +149,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     private Map<String, NameTaxMapInfo> nametaxMap;
     private double billTotal;
     private boolean promoAction;
-    private Date objectUpdateDate;
-    private String takeaway;
+    public int k=0;
 
-    /**
-     * Creates new TicketModel
-     */
+    /** Creates new TicketModel */
     public RetailTicketInfo() {
         m_sId = UUID.randomUUID().toString();
         m_sId = m_sId.replaceAll("-", "");
@@ -195,13 +192,10 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         oldTableName = null;
         swachBharattaxes = null;
         taxMap = new HashMap();
-        nametaxMap = new HashMap();
+        nametaxMap= new HashMap();
         billTotal = 0;
-        promoAction = false;
-        leastValueDiscount = 0;
-        objectUpdateDate = null;
-         takeaway = "N";
-
+           promoAction=false;
+           leastValueDiscount=0;
     }
 
     public RetailTicketInfo(String rate) {
@@ -209,8 +203,8 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         m_sId = m_sId.replaceAll("-", "");
         tickettype = RECEIPT_NORMAL;
         m_iTicketId = 0; // incrementamos
-        m_dDate = new Date();
-        attributes = new Properties();
+       m_dDate=new Date();
+       attributes = new Properties();
         m_User = null;
         m_Customer = null;
         dAmt = 0;
@@ -240,13 +234,10 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         oldTableName = null;
         swachBharattaxes = null;
         taxMap = null;
-        nametaxMap = null;
+        nametaxMap= null;
         billTotal = 0;
-        promoAction = false;
-        leastValueDiscount = 0;
-        objectUpdateDate = null;
-         takeaway = "N";
-
+           promoAction=false;
+           leastValueDiscount=0;
     }
 
     //Print before billing,settlement,exiting table
@@ -295,12 +286,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         out.writeDouble(swachBharatTax);
         out.writeObject(taxMap);
         out.writeDouble(billTotal);
-        out.writeBoolean(promoAction);
-        out.writeDouble(leastValueDiscount);
-        out.writeObject(nametaxMap);
-        out.writeObject(objectUpdateDate);
-         out.writeObject(takeaway);
-
+     out.writeBoolean(promoAction);
+out.writeDouble(leastValueDiscount);
+out.writeObject(nametaxMap);
     }
 
     //entering table,reprint after billing
@@ -353,13 +341,10 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
             placeId = (String) in.readObject();
             swachBharatTax = in.readDouble();
             taxMap = (Map<Double, TaxMapInfo>) in.readObject();
-            billTotal = in.readDouble();
-            promoAction = in.readBoolean();
-            leastValueDiscount = in.readDouble();
-            nametaxMap = ((Map<String, NameTaxMapInfo>) in.readObject());
-            objectUpdateDate = (Date) in.readObject();
-             takeaway = ((String) in.readObject());
-
+           billTotal = in.readDouble();
+              promoAction=in.readBoolean();
+leastValueDiscount=in.readDouble();
+            nametaxMap=((Map<String, NameTaxMapInfo>) in.readObject());
         } catch (IOException e) {
         }
     }
@@ -428,12 +413,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.oldTableName = oldTableName;
         t.taxMap = taxMap;
         t.billTotal = billTotal;
-        t.promoAction = promoAction;
-        t.leastValueDiscount = leastValueDiscount;
-        t.nametaxMap = nametaxMap;
-        t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
-
+          t.promoAction=promoAction;
+          t.leastValueDiscount=leastValueDiscount;
+          t.nametaxMap=nametaxMap;
         return t;
     }
 
@@ -478,11 +460,8 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.oldTableName = oldTableName;
         //  t.taxMap=taxMap;
         t.billTotal = billTotal;
-        t.promoAction = promoAction;
-        t.leastValueDiscount = leastValueDiscount;
-        t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
-
+          t.promoAction=promoAction;
+          t.leastValueDiscount=leastValueDiscount;
         return t;
     }
 
@@ -520,11 +499,8 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.storeName = storeName;
         t.taxMap = taxMap;
         t.billTotal = billTotal;
-        t.promoAction = promoAction;
-        t.nametaxMap = nametaxMap;
-        t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
-
+          t.promoAction=promoAction;
+          t.nametaxMap=nametaxMap;
         return t;
     }
 
@@ -658,6 +634,7 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     }
 
     public void addLine(RetailTicketLineInfo oLine) {
+        System.out.println("From ReatilTicketInfo-----------"+oLine.getTbl_orderId());
         oLine.setTicket(m_sId, m_aLines.size());
         m_aLines.add(oLine);
     }
@@ -839,17 +816,30 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     }
 
     public double getRetailTax() {
+        
 
         double sum = 0.0;
         if (hasTaxesCalculated()) {
+            
             for (TicketTaxInfo tax : taxes) {
+               tax.getRetailTax();
                 sum += tax.getRetailTax(); // Taxes are already rounded...
+                //System.out.println("tax.getRetailTax() "+tax.getRetailTax());
             }
+           // System.out.println("tax.getRetailTax() --sum-----"+sum);
+            
+            //prevsum=sum-prevsum;
+            
+            
         } else {
             for (RetailTicketLineInfo line : m_aLines) {
+                
                 sum += line.getTaxWithServiceCharge();
+               // System.out.println("line.getTaxWithServiceCharge()"+line.getTaxWithServiceCharge());
             }
+            // System.out.println("line.getTaxWithServiceCharge()"+sum);
         }
+        //System.out.println("getRetailTax()"+sum);
         return sum;
     }
 
@@ -965,6 +955,7 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     }
 
     public double getLeastValueDiscount() {
+         System.out.println("getleatvaluediscount - "+leastValueDiscount);
         return leastValueDiscount;
     }
 
@@ -1124,6 +1115,10 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     }
 
     public String printTax() {
+        // System.out.print("RetailTicketInfo"+"SwatchBharatTax"+Formats.CURRENCY.formatValue(new Double(getSwatchBharatTax())));
+        // System.out.print("RetailTicketInfo"+"Service Tax"+Formats.CURRENCY.formatValue(new Double(getServiceTax())));
+         System.out.print("RetailTicketInfo"+"getTaxAfterDiscount"+Formats.CURRENCY.formatValue(new Double(getTaxAfterDiscount())));
+        System.out.print("RetailTicketInfo"+"PrintTax"+Formats.CURRENCY.formatValue(new Double(getTaxAfterDiscount() + getServiceTax() + getSwatchBharatTax())));
         return Formats.CURRENCY.formatValue(new Double(getTaxAfterDiscount() + getServiceTax() + getSwatchBharatTax()));
     }
 
@@ -1371,16 +1366,18 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     }
 
     public String printPromoDiscount() {
-        return Formats.CURRENCY.formatValue(new Double(getOfferDiscount() + getLeastValueDiscount()));
+        return Formats.CURRENCY.formatValue(new Double(getOfferDiscount()+getLeastValueDiscount()));
     }
 
     public double getOfferDiscount() {
         double discount = 0.0;
         for (RetailTicketLineInfo line : m_aLines) {
-            //    if(!(line.getPromoType().equals("SIBG")&& line.getIsCrossProduct().equals("N"))){
-            discount += line.getOfferDiscount();
+           //    if(!(line.getPromoType().equals("SIBG")&& line.getIsCrossProduct().equals("N"))){
+                discount += line.getOfferDiscount();
+                System.out.println("getofferdiscount -line value"+discount);
             // }
         }
+        System.out.println("getofferdiscount - sum discount"+discount);
         return discount;
     }
 
@@ -1456,6 +1453,7 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
 
         JRetailPanelTicket.m_jSubtotalEuros1.setText(printSubTotalValueBeforeDiscount());
         JRetailPanelTicket.m_jTaxesEuros1.setText(printTax());
+        //System.out.print(JRetailPanelTicket.m_jTaxesEuros1.setText(printTax()));
         JRetailPanelTicket.m_jTotalEuros.setText(printTotal());
         JRetailPanelTicket.m_jDiscount1.setText(printDiscount());
         JRetailPanelTicket.m_jPromoDiscount.setText(printPromoDiscount());
@@ -1551,9 +1549,10 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     }
 
     public double getTaxAfterDiscount() {
-
+        double prevamt;
         double taxAfterDiscount = 0;
         double totalTax = getRetailTax();//-getTaxValue();
+        System.out.println("---getTaxAfterDiscount--"+getRetailTax());
         taxAfterDiscount = totalTax;
 
         return taxAfterDiscount;
@@ -2331,8 +2330,7 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     public void setM_App(AppView m_App) {
         this.m_App = m_App;
     }
-
-    /**
+     /**
      * @return the promoAction
      */
     public boolean isPromoAction() {
@@ -2359,32 +2357,4 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     public void setNametaxMap(Map<String, NameTaxMapInfo> nametaxMap) {
         this.nametaxMap = nametaxMap;
     }
-
-    /**
-     * @return the objectUpdateDate
-     */
-    public Date getObjectUpdateDate() {
-        return objectUpdateDate;
     }
-
-    /**
-     * @param objectUpdateDate the objectUpdateDate to set
-     */
-    public void setObjectUpdateDate(Date objectUpdateDate) {
-        this.objectUpdateDate = objectUpdateDate;
-    }
-    
-        /**
-     * @return the takeaway
-     */
-    public String getTakeaway() {
-        return takeaway;
-    }
-
-    /**
-     * @param takeaway the takeaway to set
-     */
-    public void setTakeaway(String takeaway) {
-        this.takeaway = takeaway;
-    }
-}
