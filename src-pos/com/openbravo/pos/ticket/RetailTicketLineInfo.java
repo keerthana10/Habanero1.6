@@ -126,44 +126,36 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
     //added to differentiate least value and buyone-getone promotion 13/10/2016
     private String isPromoSku;
 
-
-    private Date servedTime;
-    private String servedBy;
-    private String station;
-    private String productCode;
-
-    /**
-     * Creates new TicketLineInfo
-     */
-    public RetailTicketLineInfo(String productid, double dMultiply, double dPrice, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties props, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea,String stations) {
-        init(productid, null, dMultiply, dPrice, null, null, null, null, null, tax, discountValue, pName, productType, productionAreaType, props, null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, false, null, false,stations);
+    /** Creates new TicketLineInfo */
+    public RetailTicketLineInfo(String productid, double dMultiply, double dPrice, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties props, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea) {
+        init(productid, null, dMultiply, dPrice, null, null, null, null, null, tax, discountValue, pName, productType, productionAreaType, props, null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, false, null,false);
     }
 
-    public RetailTicketLineInfo(String productid, double dMultiply, double dPrice, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea,String stations) {
-        init(productid, null, dMultiply, dPrice, null, null, null, null, null, tax, discountValue, pName, productType, productionAreaType, new Properties(), null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, false, null, false,stations);
+    public RetailTicketLineInfo(String productid, double dMultiply, double dPrice, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea) {
+        init(productid, null, dMultiply, dPrice, null, null, null, null, null, tax, discountValue, pName, productType, productionAreaType, new Properties(), null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, false, null,false);
     }
 
     //for buy one get one promotion
-    public RetailTicketLineInfo(String productid, String productname, String producttaxcategory, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, boolean buyone,String stations) {
+    public RetailTicketLineInfo(String productid, String productname, String producttaxcategory, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, boolean buyone) {
         Properties props = new Properties();
         props.setProperty("product.name", productname);
         props.setProperty("product.taxcategoryid", producttaxcategory);
         setvalues(promoRule, dlSales, m_oTicket, m_ticketlines, jRetailPanel);
-        init(productid, null, dMultiply, dPrice, promoRule, dlSales, m_ticketlines, m_oTicket, jRetailPanel, tax, discountValue, pName, productType, productionAreaType, props, null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, buyone, null, false,stations);
+        init(productid, null, dMultiply, dPrice, promoRule, dlSales, m_ticketlines, m_oTicket, jRetailPanel, tax, discountValue, pName, productType, productionAreaType, props, null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, buyone, null,false);
     }
 
-    public RetailTicketLineInfo(String productname, String producttaxcategory, double dMultiply, double dPrice, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea,String stations) {
+    public RetailTicketLineInfo(String productname, String producttaxcategory, double dMultiply, double dPrice, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea) {
         Properties props = new Properties();
         props.setProperty("product.name", productname);
         props.setProperty("product.taxcategoryid", producttaxcategory);
-        init(null, null, dMultiply, dPrice, null, null, null, null, null, tax, discountValue, pName, productType, productionAreaType, props, null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, false, null, false, stations);
+        init(null, null, dMultiply, dPrice, null, null, null, null, null, tax, discountValue, pName, productType, productionAreaType, props, null, 0, null, 0, null, null, null, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, 0, false, null,false);
     }
 
     public RetailTicketLineInfo() {
-        init(null, null, 0.0, 0.0, null, null, null, null, null, null, 0.0, null, null, null, new Properties(), null, 0, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, 0, false, null, false, station);
+        init(null, null, 0.0, 0.0, null, null, null, null, null, null, 0.0, null, null, null, new Properties(), null, 0, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, 0, false, null,false);
     }
 
-    public RetailTicketLineInfo(ProductInfoExt product, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, String sibgId, boolean promoAction, String stations) {
+    public RetailTicketLineInfo(ProductInfoExt product, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, String sibgId,boolean promoAction) {
         String pid;
         double priceDiscount = 0;
         this.productType = productType;
@@ -191,10 +183,10 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
             setvalues(promoRule, dlSales, m_oTicket, m_ticketlines, jRetailPanel);
 
         }
-        init(pid, null, dMultiply, dPrice, promoRule, dlSales, m_ticketlines, m_oTicket, jRetailPanel, tax, discountValue, pName, productType, productionAreaType, attributes, addonId, primaryAddon, instruction, kotid, kotdate, kottable, kotuser, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, comboAddon, false, sibgId, promoAction,stations);
+        init(pid, null, dMultiply, dPrice, promoRule, dlSales, m_ticketlines, m_oTicket, jRetailPanel, tax, discountValue, pName, productType, productionAreaType, attributes, addonId, primaryAddon, instruction, kotid, kotdate, kottable, kotuser, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, promoType, promoRuleList, productionArea, comboAddon, false, sibgId,promoAction);
     }
 
-    public RetailTicketLineInfo(ProductInfoExt product, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelTakeAway jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, int comboAddon, String sibgId, boolean promoAction) {
+    public RetailTicketLineInfo(ProductInfoExt product, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelTakeAway jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, int comboAddon, String sibgId,boolean promoAction) {
         String pid;
         double priceDiscount = 0;
         this.productType = productType;
@@ -220,7 +212,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
             setvalues(promoRule, dlSales, m_oTicket, m_ticketlines, jRetailPanel);
 
         }
-        initTakeAway(pid, null, dMultiply, dPrice, promoRule, dlSales, m_ticketlines, m_oTicket, jRetailPanel, tax, discountValue, pName, productType, productionAreaType, attributes, addonId, primaryAddon, instruction, kotid, kotdate, kottable, kotuser, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, comboAddon, sibgId, promoAction);
+        initTakeAway(pid, null, dMultiply, dPrice, promoRule, dlSales, m_ticketlines, m_oTicket, jRetailPanel, tax, discountValue, pName, productType, productionAreaType, attributes, addonId, primaryAddon, instruction, kotid, kotdate, kottable, kotuser, charge, servicetax, parentCat, preparationTime, sosorderLineid, sbTax, comboAddon, sibgId,promoAction);
     }
 
     public RetailTicketLineInfo(ProductInfoExt product, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, RetailTicketInfo m_oTicket, JRetailTicketLines m_ticketlines, JRetailPanelHomeTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, Properties attributes) {
@@ -306,11 +298,11 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
     }
 
     public RetailTicketLineInfo(RetailTicketLineInfo line) {
-        init(line.productid, line.attsetinstid, line.multiply, line.price, line.promoRuleIdList, line.dlSales, line.m_ticketlines, line.m_oTicket, line.jRetailPanel, line.tax, line.discountValue, line.pName, line.productType, line.productionAreaType, (Properties) line.attributes.clone(), line.getPreparationStatus(), line.getIsKot(), line.getTbl_orderId(), line.getAddonId(), line.getPrimaryAddon(), line.getInstruction(), line.getKotid(), line.getKotdate(), line.getKottable(), line.getKotuser(), line.charge, line.servicetax, line.parentCatId, line.getKdsPrepareStatus(), line.getPreparationTime(), line.getSosorderLineid(), line.sbtax, line.getPromoType(), line.getPromoRule(), line.getProductionArea(), line.getComboAddon(), line.getSibgId(), line.isBuyone(), line.getOfferDiscount(), line.isPromoAction(),line.getStation());
+        init(line.productid, line.attsetinstid, line.multiply, line.price, line.promoRuleIdList, line.dlSales, line.m_ticketlines, line.m_oTicket, line.jRetailPanel, line.tax, line.discountValue, line.pName, line.productType, line.productionAreaType, (Properties) line.attributes.clone(), line.getPreparationStatus(), line.getIsKot(), line.getTbl_orderId(), line.getAddonId(), line.getPrimaryAddon(), line.getInstruction(), line.getKotid(), line.getKotdate(), line.getKottable(), line.getKotuser(), line.charge, line.servicetax, line.parentCatId, line.getKdsPrepareStatus(), line.getPreparationTime(), line.getSosorderLineid(), line.sbtax, line.getPromoType(), line.getPromoRule(), line.getProductionArea(), line.getComboAddon(), line.getSibgId(), line.isBuyone(), line.getOfferDiscount(),line.isPromoAction());
     }
 
     //promo
-    private void init(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, boolean buyone, String sibgId, boolean promoAction,String stations) {
+    private void init(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, boolean buyone, String sibgId,boolean promoAction) {
         this.productid = productid;
         this.setProductionAreaType(productionAreaType);
         this.preparationTime = preparationTime;
@@ -355,64 +347,10 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
             actualPrice = 0;
         }
         this.sibgId = sibgId;
-        this.promoAction = promoAction;
-        this.station=stations;
-       
+        this.promoAction=promoAction;
     }
 
-    //NEWLY ADDED 
-    private void init(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, boolean buyone, String sibgId, boolean promoAction, Date servedTime, String servedBy, String stations) {
-        this.productid = productid;
-        this.setProductionAreaType(productionAreaType);
-        this.preparationTime = preparationTime;
-        this.sosorderLineid = sosorderLineid;
-        this.parentCatId = parentCat;
-        this.attsetinstid = attsetinstid;
-        multiply = dMultiply;
-        price = dPrice;
-        promoRuleIdList = promoRule;
-        this.dlSales = dlSales;
-        this.m_ticketlines = m_ticketlines;
-        this.m_oTicket = m_oTicket;
-        this.jRetailPanel = jRetailPanel;
-        this.tax = tax;
-        this.attributes = attributes;
-        if (m_oTicket != null) {
-            this.discountValue = Double.parseDouble(m_oTicket.getRate()) * 100;
-        } else {
-            this.discountValue = 0;
-        }
-        this.pName = pName;
-        this.productType = productType;
-        m_sTicket = null;
-        m_iLine = -1;
-        this.addonId = addonId;
-        this.primaryAddon = primaryAddon;
-        this.instruction = instruction;
-        this.kotid = kotid;
-        this.kotdate = kotdate;
-        this.kottable = kottable;
-        this.kotuser = kotuser;
-        this.charge = charge;
-        this.servicetax = servicetax;
-        this.sbtax = sbTax;
-        this.pdtpromoType = promoType;
-        this.promoRuleList = promoRuleList;
-        this.productionArea = productionArea;
-        this.comboAddon = comboAddon;
-        this.actualPrice = dPrice;
-        this.buyone = buyone;
-        if (buyone) {
-            actualPrice = 0;
-        }
-        this.sibgId = sibgId;
-        this.promoAction = promoAction;
-        this.servedTime = servedTime;
-        this.servedBy = servedBy;
-        this.station = stations;
-    }
-
-    private void initTakeAway(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTakeAway jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, int comboAddon, String sibgId, boolean promoAction) {
+    private void initTakeAway(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTakeAway jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String preparationTime, String sosorderLineid, TaxInfo sbTax, int comboAddon, String sibgId,boolean promoAction) {
         this.productid = productid;
         this.setProductionAreaType(productionAreaType);
         this.preparationTime = preparationTime;
@@ -450,10 +388,10 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         this.sbtax = sbTax;
         this.comboAddon = comboAddon;
         this.sibgId = sibgId;
-        this.promoAction = promoAction;
+        this.promoAction=promoAction;
     }
 
-    private void init(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, int prepStatus, int kot, String tbl_orderId, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String kdsPrepareStatus, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, String sibgId, Boolean buyone, double offerDiscount, boolean promoAction,String stations) {
+    private void init(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, String productType, String productionAreaType, Properties attributes, int prepStatus, int kot, String tbl_orderId, String addonId, int primaryAddon, String instruction, int kotid, Date kotdate, String kottable, String kotuser, ServiceChargeInfo charge, TaxInfo servicetax, String parentCat, String kdsPrepareStatus, String preparationTime, String sosorderLineid, TaxInfo sbTax, String promoType, java.util.ArrayList<PromoRuleInfo> promoRuleList, String productionArea, int comboAddon, String sibgId, Boolean buyone, double offerDiscount,boolean promoAction) {
         this.productid = productid;
         this.attsetinstid = attsetinstid;
         multiply = dMultiply;
@@ -499,8 +437,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         }
         this.sibgId = sibgId;
         this.offerDiscount = offerDiscount;
-        this.promoAction = promoAction;
-        this.station=stations;
+        this.promoAction=promoAction;
     }
 
     private void initHome(String productid, String attsetinstid, double dMultiply, double dPrice, java.util.ArrayList<PromoRuleIdInfo> promoRule, DataLogicSales dlSales, JRetailTicketLines m_ticketlines, RetailTicketInfo m_oTicket, JRetailPanelHomeTicket jRetailPanel, TaxInfo tax, double discountValue, String pName, Properties attributes) {
@@ -557,7 +494,6 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
 
     }
     //Method is used for returning the promotion type of the selected products
-
     public String setPromotionType(String id) {
         int productqty = 0;
         productqty = (int) getQty();
@@ -750,7 +686,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         } catch (BasicException ex) {
             Logger.getLogger(RetailTicketLineInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //If Buy quantity is equal to zero means get percentage off discount value based on quantity range
+         //If Buy quantity is equal to zero means get percentage off discount value based on quantity range
         if (promoRuleList.get(0).getBuyQty() == 0) {
             int discountPercentage = 0;
             try {
@@ -811,7 +747,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         } catch (BasicException ex) {
             Logger.getLogger(RetailTicketLineInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //Fetching the promotion rule details for the selected product
+         //Fetching the promotion rule details for the selected product
         try {
             promoRuleList = (ArrayList<PromoRuleInfo>) dlSales.getPromoRuleDetails(promoRuleId, isPrice, isPromoProduct, id);
         } catch (BasicException ex) {
@@ -849,7 +785,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
                 if (freeqty != 0) {
 
                     newLine = new RetailTicketLineInfo(
-                    getProductID(), getProductName(), getProductTaxCategoryID(), freeqty, getPrice(), promoRuleIdList, dlSales, m_oTicket, m_ticketlines, jRetailPanel, getTaxInfo(), 0.0, getProductName(), getProductType(), getProductionAreaType(), getChargeInfo(), getServiceTaxInfo(), getParentCatId(), getPreparationTime(), getSosorderLineid(), getSBTaxInfo(), getPromoType(), getPromoRule(), getProductionArea(), true,getStation());
+                            getProductID(), getProductName(), getProductTaxCategoryID(), freeqty, getPrice(), promoRuleIdList, dlSales, m_oTicket, m_ticketlines, jRetailPanel, getTaxInfo(), 0.0, getProductName(), getProductType(), getProductionAreaType(), getChargeInfo(), getServiceTaxInfo(), getParentCatId(), getPreparationTime(), getSosorderLineid(), getSBTaxInfo(), getPromoType(), getPromoRule(), getProductionArea(), true);
                     newLine.setPromoType(promoTypeName);
                     newLine.setPromoRule(promoRuleList);
                     newLine.setOfferDiscount(getPrice());
@@ -859,7 +795,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
 
                 }
             } else {/*If the free item is not same item, then the  below code will select the free item and add
-                 the free item automatically along with selected item in billing screen */
+             the free item automatically along with selected item in billing screen */
 
                 String promoPdtId;
                 try {
@@ -872,7 +808,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
                 if (freeqty != 0) {
                     if (crossproductList.size() == 1) {
                         newLine = new RetailTicketLineInfo(
-                                crossproductList.get(0).getProductId(), crossproductList.get(0).getProductName(), getProductTaxCategoryID(), freeqty, 0, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, jRetailPanel, getTaxInfo(), 0, getProductName(), getProductType(), getProductionAreaType(), getChargeInfo(), getServiceTaxInfo(), getParentCatId(), getPreparationTime(), getSosorderLineid(), getSBTaxInfo(), getPromoType(), getPromoRule(), getProductionArea(), false,getStation());
+                                crossproductList.get(0).getProductId(), crossproductList.get(0).getProductName(), getProductTaxCategoryID(), freeqty, 0, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, jRetailPanel, getTaxInfo(), 0, getProductName(), getProductType(), getProductionAreaType(), getChargeInfo(), getServiceTaxInfo(), getParentCatId(), getPreparationTime(), getSosorderLineid(), getSBTaxInfo(), getPromoType(), getPromoRule(), getProductionArea(), false);
                         newLine.setPromoType(promoTypeName);
                         newLine.setPromoRule(promoRuleList);
                         m_oTicket.addLine(newLine);
@@ -882,7 +818,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
                     } else {
                         for (int i = 0; i < crossproductList.size(); i++) {
                             newLine = new RetailTicketLineInfo(
-                                    crossproductList.get(i).getProductId(), crossproductList.get(i).getProductName(), getProductTaxCategoryID(), freeqty, 0, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, jRetailPanel, getTaxInfo(), 0, getProductName(), getProductType(), getProductionAreaType(), getChargeInfo(), getServiceTaxInfo(), getParentCatId(), getPreparationTime(), getSosorderLineid(), getSBTaxInfo(), getPromoType(), getPromoRule(), getProductionArea(), false,getStation());
+                                    crossproductList.get(i).getProductId(), crossproductList.get(i).getProductName(), getProductTaxCategoryID(), freeqty, 0, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, jRetailPanel, getTaxInfo(), 0, getProductName(), getProductType(), getProductionAreaType(), getChargeInfo(), getServiceTaxInfo(), getParentCatId(), getPreparationTime(), getSosorderLineid(), getSBTaxInfo(), getPromoType(), getPromoRule(), getProductionArea(), false);
                             newLine.setPromoType(promoTypeName);
                             newLine.setPromoRule(promoRuleList);
                         }
@@ -1143,10 +1079,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         l.actualPrice = actualPrice;
         l.buyone = buyone;
         l.sibgId = sibgId;
-        l.promoAction = promoAction;
-        l.servedTime = servedTime;
-        l.servedBy = servedBy;
-        l.station = station;
+        l.promoAction=promoAction;
         return l;
     }
 
@@ -1337,7 +1270,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
     }
 
     public double getSubValue() {
-       double value = 0;
+        double value = 0;
         if (m_oTicket.getRate().equals("0") || m_oTicket.getRate().equals("")) {
             value = (price * multiply) - getOfferDiscount();
         } else {
@@ -1415,7 +1348,6 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         } else {
             taxvalue = price * multiply * getTaxValue();
         }
-        System.out.println("taxvalue : TAX  "+taxvalue);
         return taxvalue;
     }
 
@@ -1471,15 +1403,15 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         return isCrossProduct == null ? "" : isCrossProduct;
     }
 
-    public String getIsPromoSku() {
-        try {
+      public String getIsPromoSku() {
+          try {
             isPromoSku = getPromoRule().get(0).getIsSku();
         } catch (NullPointerException ex) {
             isPromoSku = null;
         }
         return isPromoSku == null ? "" : isPromoSku;
-    }
-
+      }
+    
     public String printName() {
         String pdtName = StringUtils.encodeXML(attributes.getProperty("product.name"));
         if (pdtName == null) {
@@ -1524,11 +1456,8 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         double taxRateValue;
         if (ticketType == 0) {
             taxRateValue = getTaxRate();
-           
         } else {
             taxRateValue = getTaxValue();
-     
-
         }
         return Formats.PERCENT.formatValue(taxRateValue);
     }
@@ -1597,6 +1526,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
         this.tbl_orderId = tbl_orderId;
     }
     public static Comparator<RetailTicketLineInfo> productNameComparator = new Comparator<RetailTicketLineInfo>() {
+
         @Override
         public int compare(RetailTicketLineInfo l1, RetailTicketLineInfo l2) {
             String productName1 = l1.getProductName().toUpperCase();
@@ -1805,7 +1735,7 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
 //Calculation of discount respective to product category 
     public double getLineDiscountPriceOnProductCat() {
         double value = 0;
-        
+        System.out.println("getCampaignId()----" + getCampaignId());
         if (!this.getDiscountrate().equals("") && this.getDiscountrate() != null) {
             String promoDiscount = m_oTicket.getM_App().getProperties().getProperty("machine.promodiscount");
             if (promoDiscount.equals("true")) {
@@ -1998,59 +1928,5 @@ public class RetailTicketLineInfo implements SerializableWrite, SerializableRead
      */
     public void setPromoAction(boolean promoAction) {
         this.promoAction = promoAction;
-    }
-
-    /**
-     * @return the servedTime
-     */
-    public Date getServedTime() {
-        return servedTime;
-    }
-
-    /**
-     * @param servedTime the servedTime to set
-     */
-    public void setServedTime(Date servedTime) {
-        this.servedTime = servedTime;
-    }
-
-    /**
-     * @return the servedBy
-     */
-    public String getServedBy() {
-        return servedBy;
-    }
-
-    /**
-     * @param servedBy the servedBy to set
-     */
-    public void setServedBy(String servedBy) {
-        this.servedBy = servedBy;
-    }
-
-    /**
-     * @return the station
-     */
-    public String getStation() {
-        return station;
-    }
-
-    /**
-     * @param station the station to set
-     */
-    public void setStation(String station) {
-        this.station = station;
-      
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    /**
-     * @param productCode the productCode to set
-     */
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
     }
 }

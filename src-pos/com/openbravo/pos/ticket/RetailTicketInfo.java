@@ -150,7 +150,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     private double billTotal;
     private boolean promoAction;
     private Date objectUpdateDate;
-    private String takeaway;
 
     /**
      * Creates new TicketModel
@@ -200,7 +199,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         promoAction = false;
         leastValueDiscount = 0;
         objectUpdateDate = null;
-         takeaway = "N";
 
     }
 
@@ -245,7 +243,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         promoAction = false;
         leastValueDiscount = 0;
         objectUpdateDate = null;
-         takeaway = "N";
 
     }
 
@@ -299,7 +296,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         out.writeDouble(leastValueDiscount);
         out.writeObject(nametaxMap);
         out.writeObject(objectUpdateDate);
-         out.writeObject(takeaway);
 
     }
 
@@ -358,7 +354,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
             leastValueDiscount = in.readDouble();
             nametaxMap = ((Map<String, NameTaxMapInfo>) in.readObject());
             objectUpdateDate = (Date) in.readObject();
-             takeaway = ((String) in.readObject());
 
         } catch (IOException e) {
         }
@@ -432,7 +427,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.leastValueDiscount = leastValueDiscount;
         t.nametaxMap = nametaxMap;
         t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
 
         return t;
     }
@@ -481,7 +475,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.promoAction = promoAction;
         t.leastValueDiscount = leastValueDiscount;
         t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
 
         return t;
     }
@@ -523,7 +516,6 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.promoAction = promoAction;
         t.nametaxMap = nametaxMap;
         t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
 
         return t;
     }
@@ -2372,19 +2364,5 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
      */
     public void setObjectUpdateDate(Date objectUpdateDate) {
         this.objectUpdateDate = objectUpdateDate;
-    }
-    
-        /**
-     * @return the takeaway
-     */
-    public String getTakeaway() {
-        return takeaway;
-    }
-
-    /**
-     * @param takeaway the takeaway to set
-     */
-    public void setTakeaway(String takeaway) {
-        this.takeaway = takeaway;
     }
 }

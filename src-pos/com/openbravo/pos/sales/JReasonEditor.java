@@ -250,105 +250,22 @@ class JReasonEditor extends JDialog {
         } else {
 
             try {
-                System.out.println("tinfoLocal.getObjectUpdateDate() : " + tinfoLocal.getObjectUpdateDate());
-                if (tinfoLocal.getObjectUpdateDate() != null) {
-
-
-                    String currentUpdated = m_dateformat.format(tinfoLocal.getObjectUpdateDate()) + " " + m_dateformattime.format(tinfoLocal.getObjectUpdateDate());
-
-                    String dbUpdated = "";
-                    dbUpdated = localDlReceipts.getUpdatedTime(tinfoLocal.getPlaceId(), tinfoLocal.getSplitSharedId());
-                    Date currentUpdatedDate = DateFormats.StringToDateTime(currentUpdated);
-                    dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
-                    if (dbUpdated.equals(null) || dbUpdated.equals("")) {
-                        //  JOptionPane.showMessageDialog(null, "This Bill is no longer exist ");
-                        billUpdated = true;
-                        this.dispose();
-                    } else if (dbUpdatedDate.compareTo(currentUpdatedDate) > 0) {
-                        billUpdated = true;
-                        this.dispose();
-                    } else {
-                        Reasoninfo reasonInfo = new Reasoninfo();
-                        String reasonItem = m_jReason.getSelectedItem().toString();
-                        System.out.println("enrtrr " + reasonItem + "---" + reasonInfo.getStatus());
-                        String reasonId = null;
-                        try {
-                            System.out.println("enrtrr1 " + reasonItem);
-                            reasonId = localDlReceipts.getReasonId(reasonItem);
-                            System.out.println("get reasonid--" + reasonId);
-                        } catch (BasicException ex) {
-                            Logger.getLogger(JReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-// String kotTicketId = null;  
-                        int kotTicketId = 0;
-                        int kotTicket = 0;
-//               try {
-//                kotTicketId = (localDlReceipts.getkotTicketId("Y"));
-//
-//            } catch (BasicException ex) {
-//                Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
-//            if(kotTicketId==null){
-//                kotTicket=1;
-//            }else{
-//                   kotTicket=Integer.parseInt(kotTicketId);
-//                   kotTicket = kotTicket+1;
-//            }
-                        try {
-                            kotTicketId = localDlReceipts.getNextKotIndex();
-
-                        } catch (BasicException ex) {
-                            Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                        if (kotTicketId == 0) {
-                            kotTicket = 1;
-                        } else {
-                            kotTicket = kotTicketId;
-
-                        }
-
-                        if (deleteStatus.equals("lineDelete")) {
-                            qty = 1 * tinfoLocal.getLine(index).getMultiply();
-                            String addonId = tinfoLocal.getLine(index).getAddonId();
-                            localDlReceipts.insertCancelledKot(tinfoLocal.getId(), tinfoLocal.getDate(), tinfoLocal.getTicketId(), productName, "Y", qty, kotTicket, "Y", reason, reasonId, tinfoLocal.getPlaceId(), tinfoLocal.getUser().getId(), tinfoLocal.getAccountDate());
-                            if (addonId != null) {
-                                for (int i = 0; i < tinfoLocal.getLinesCount(); i++) {
-                                    if (i != index) {
-                                        if (tinfoLocal.getLine(i).getIsKot() == 1) {
-                                            if (addonId.equals(tinfoLocal.getLine(i).getAddonId()) && primaryAddon == 1) {
-                                                localDlReceipts.insertCancelledKot(tinfoLocal.getId(), tinfoLocal.getDate(), tinfoLocal.getTicketId(), tinfoLocal.getLine(i).getProductID(), "Y", 1 * tinfoLocal.getLine(i).getMultiply(), kotTicket, "Y", "Addon Item Cancelled KOT", reasonId, tinfoLocal.getPlaceId(), tinfoLocal.getUser().getId(), tinfoLocal.getAccountDate());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            qty = 1;
-                            localDlReceipts.insertCancelledKot(tinfoLocal.getId(), tinfoLocal.getDate(), tinfoLocal.getTicketId(), productName, "Y", qty, kotTicket, "Y", reason, reasonId, tinfoLocal.getPlaceId(), tinfoLocal.getUser().getId(), tinfoLocal.getAccountDate());
-                            String addonId = tinfoLocal.getLine(index).getAddonId();
-                            if (addonId != null) {
-                                for (int i = 0; i < tinfoLocal.getLinesCount(); i++) {
-                                    if (i != index) {
-                                        if (tinfoLocal.getLine(i).getIsKot() == 1) {
-                                            if (addonId.equals(tinfoLocal.getLine(i).getAddonId()) && primaryAddon == 1) {
-                                                localDlReceipts.insertCancelledKot(tinfoLocal.getId(), tinfoLocal.getDate(), tinfoLocal.getTicketId(), tinfoLocal.getLine(i).getProductID(), "Y", qty, kotTicket, "Y", "Addon Item Cancelled KOT", reasonId, tinfoLocal.getPlaceId(), tinfoLocal.getUser().getId(), tinfoLocal.getAccountDate());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-
-                        tinfoLocal.getLine(index).setCancelStatus("N");
-
-                        cancel = true;
-                        this.dispose();
-                    }
+                System.out.println("tinfoLocal.getObjectUpdateDate() : "+tinfoLocal.getObjectUpdateDate());
+                String currentUpdated = m_dateformat.format(tinfoLocal.getObjectUpdateDate()) + " " + m_dateformattime.format(tinfoLocal.getObjectUpdateDate());
+                String dbUpdated = "";
+                dbUpdated = localDlReceipts.getUpdatedTime(tinfoLocal.getPlaceId(), tinfoLocal.getSplitSharedId());
+                Date currentUpdatedDate = DateFormats.StringToDateTime(currentUpdated);
+                dbUpdatedDate = DateFormats.StringToDateTime(dbUpdated);
+                if (dbUpdated.equals(null) || dbUpdated.equals("")) {
+                    //  JOptionPane.showMessageDialog(null, "This Bill is no longer exist ");
+                    billUpdated = true;
+                    this.dispose();
+                } else if (dbUpdatedDate.compareTo(currentUpdatedDate) > 0) {
+                    billUpdated = true;
+                    this.dispose();
                 } else {
-                     Reasoninfo reasonInfo = new Reasoninfo();
+                    Reasoninfo reasonInfo = new Reasoninfo();
+
                     String reasonItem = m_jReason.getSelectedItem().toString();
                     System.out.println("enrtrr " + reasonItem + "---" + reasonInfo.getStatus());
                     String reasonId = null;
@@ -359,7 +276,7 @@ class JReasonEditor extends JDialog {
                     } catch (BasicException ex) {
                         Logger.getLogger(JReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-// String kotTicketId = null;  
+                    // String kotTicketId = null;  
                     int kotTicketId = 0;
                     int kotTicket = 0;
 //               try {
@@ -426,7 +343,6 @@ class JReasonEditor extends JDialog {
 
                     cancel = true;
                     this.dispose();
-
                 }
             } catch (BasicException ex) {
                 Logger.getLogger(JReasonEditor.class.getName()).log(Level.SEVERE, null, ex);

@@ -101,7 +101,7 @@ class JCancelReasonEditor extends JDialog {
         m_App = app;
         setFlag = false;
         //  index=tindex;
-        dbUpdatedDate = null;
+                   dbUpdatedDate=null;
 
         m_TTP = new TicketParser(m_App.getDeviceTicket(), dlSystem);
         return showMessage(parent, dlReceipts, 1);
@@ -320,7 +320,6 @@ class JCancelReasonEditor extends JDialog {
                     } catch (BasicException ex) {
                         Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
                     String kotTicketId = null;
                     Integer kotCount = 0;
                     int kotTicket = 0;
@@ -342,10 +341,6 @@ class JCancelReasonEditor extends JDialog {
 //            } catch (BasicException ex) {
 //                Logger.getLogger(JCancelReasonEditor.class.getName()).log(Level.SEVERE, null, ex);
 //            }
-
-                    //New KDS MARCH 16 ,2017
-                    System.out.println("OrderNum" + tinfoLocal.getPlaceId() + tinfoLocal.getOrderId());
-                    localDlReceipts.updateServedTransactionCancelKotBill(tinfoLocal, tinfoLocal.getPlaceId(), tinfoLocal.getOrderId());
                     for (int i = 0; i < tinfoLocal.getLinesCount(); i++) {
                         localDlReceipts.insertCancelledKot(tinfoLocal.getId(), tinfoLocal.getDate(), tinfoLocal.getTicketId(), panelLines.get(i).getProductID(), "Y", (1 * panelLines.get(i).getMultiply()), kotTicket, "Y", reason, reasonId, tinfoLocal.getPlaceId(), tinfoLocal.getUser().getId(), tinfoLocal.getAccountDate());
                     }

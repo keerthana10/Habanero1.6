@@ -1797,4 +1797,3 @@ CREATE TABLE OTHERPAYMENTTYPE (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --insert  into OTHERPAYMENTTYPE (ID,PAYMENTTYPE) values ('1','Food Panda'),('2','Delivery'),('3','Swiggy'),('4','Zomato');
-

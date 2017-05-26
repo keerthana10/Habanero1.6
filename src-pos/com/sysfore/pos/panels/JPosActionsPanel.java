@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.sysfore.pos.panels;
 
 import com.openbravo.pos.forms.JPanelView;
@@ -50,9 +51,6 @@ import com.openbravo.pos.scripting.ScriptFactory;
 import com.openbravo.pos.forms.DataLogicSystem;
 import com.openbravo.pos.inventory.PrAreaMapInfo;
 import com.openbravo.pos.inventory.ProductionAreaTypeInfo;
-import com.openbravo.pos.inventory.RoleUserInfo;
-import com.openbravo.pos.inventory.StationInfo;
-import com.openbravo.pos.inventory.StationMapInfo;
 import com.openbravo.pos.printer.TicketParser;
 import com.openbravo.pos.printer.TicketPrinterException;
 import com.openbravo.pos.sales.DiscountRateinfo;
@@ -63,15 +61,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -87,80 +82,75 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 /**
  *
  * @author adrianromero
  */
-public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryApp {
-
+public class JPosActionsPanel extends JPanel implements JPanelView,BeanFactoryApp{
     private AppView m_App;
     private DataLogicSystem m_dlSystem;
-    private DataLogicSales m_dlSales;
+     private DataLogicSales m_dlSales;
     String[] input;
-    ArrayList<String> chkClassName = new ArrayList<String>();
+   ArrayList<String> chkClassName = new ArrayList<String>();
     ArrayList<String> classValue = new ArrayList<String>();
+
     private TicketParser m_TTP;
-    static PurchaseOrderReceipts PurchaseOrder = null;
+
+     static PurchaseOrderReceipts PurchaseOrder = null;
     protected DataLogicCustomers dlCustomers;
     public javax.swing.JDialog dEdior = null;
     public DataLogicCustomers dlCustomers2 = null;
-    public DataLogicAdmin dlAdmin = null;
+      public DataLogicAdmin dlAdmin = null;
     public String[] strings = {""};
     public DefaultListModel model = null;
     public java.util.List<DiscountRateinfo> list = null;
     public boolean updateMode = false;
     java.util.List<RoleInfo> rolesList;
     java.util.List<PosActionsInfo> posActions;
-    java.util.List<ProductionAreaTypeInfo> totalProductionAreaTypeList;
-    JCheckBox[] checkBoxList = null;
-    private java.util.List<String> selectedList;
-    private java.util.List<String> prAreaIdlist = null;
-    private java.util.List<PrAreaMapInfo> prAreaMapList = null;
-    String roleId;
-    java.util.List<StationInfo> totalStationList;
-    private java.util.List<StationMapInfo> stationMapList = null;
-    private java.util.List<String> stationIdlist = null;
-    private List<RoleUserInfo> userList;
-    public DefaultListModel userModel = null;
+   java.util.List<ProductionAreaTypeInfo> totalProductionAreaTypeList;
+   JCheckBox[] checkBoxList=null;
+   private java.util.List<String> selectedList;
+   private java.util.List<String> prAreaIdlist = null;
+  private java.util.List<PrAreaMapInfo> prAreaMapList=null;;
+  String roleId;
 
-    // static int x = 400;
-    //  static int y = 200;
-    /**
-     * Creates new form JPanelCloseMoney
-     */
+   // static int x = 400;
+  //  static int y = 200;
+    /** Creates new form JPanelCloseMoney */
     public JPosActionsPanel() {
-
+        
         initComponents();
-
-
+        
+     
     }
-
-    public void init(AppView app) throws BeanFactoryException {
-
-        m_App = app;
-
-        PurchaseOrder = (PurchaseOrderReceipts) m_App.getBean("com.sysfore.pos.purchaseorder.PurchaseOrderReceipts");
+    
+    public void init(AppView app) throws BeanFactoryException{
+        
+        m_App = app;        
+        
+         PurchaseOrder = (PurchaseOrderReceipts) m_App.getBean("com.sysfore.pos.purchaseorder.PurchaseOrderReceipts");
         m_dlSystem = (DataLogicSystem) m_App.getBean("com.openbravo.pos.forms.DataLogicSystem");
         m_dlSales = (DataLogicSales) m_App.getBean("com.openbravo.pos.forms.DataLogicSales");
         dlAdmin = (DataLogicAdmin) m_App.getBean("com.openbravo.pos.admin.DataLogicAdmin");
         dlCustomers = (DataLogicCustomers) m_App.getBean("com.openbravo.pos.customers.DataLogicCustomers");
-        //   m_dlPurchase = (DataLogicSystem) m_App.getBean("com.openbravo.pos.forms.DataLogicSystem");
+     //   m_dlPurchase = (DataLogicSystem) m_App.getBean("com.openbravo.pos.forms.DataLogicSystem");
         m_TTP = new TicketParser(m_App.getDeviceTicket(), m_dlSystem);
-        // JOptionPane.showMessageDialog(this, "The user has to close all pending bills before doing the close shift", AppLocal.getIntString("message.header"), JOptionPane.INFORMATION_MESSAGE);
-        initComponents();
-
+   // JOptionPane.showMessageDialog(this, "The user has to close all pending bills before doing the close shift", AppLocal.getIntString("message.header"), JOptionPane.INFORMATION_MESSAGE);
+         initComponents();
+       
         //m_jDiscountPercentage.setText(dlCustomers.getMaxPercentage() + "%");
-
+      
         setVisible(true);
         //add(m_jDiscountList);
         File file = new File(System.getProperty("user.home") + "/openbravopos.properties");
         AppConfig ap = new AppConfig(file);
         ap.load();
     }
+    
+    
 
     public Object getBean() {
-        return this;
+         return this;
     }
 
     public JComponent getComponent() {
@@ -174,41 +164,40 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
     public void activate() throws BasicException {
         populateRoles();
         setCheckBoxValues();
-        populateRoles();
         m_jCboRoles.setSelectedIndex(-1);
-        System.out.println("roleID" + roleId);
+        System.out.println("roleID"+roleId);
         setPrArea();
-        populateUserList();
-        setStation();
-    }
+        }
 
     public boolean deactivate() {
         // se me debe permitir cancelar el deactivate
         return true;
     }
 
-    public void writeXml() {
-        try {
-            //    String[] input = {"John Doe,123-456-7890", "Bob Smith,123-555-1212"};
-            //  String[] line = new String[2];
+
+   
+public void writeXml(){
+         try {
+        //    String[] input = {"John Doe,123-456-7890", "Bob Smith,123-555-1212"};
+          //  String[] line = new String[2];
             DocumentBuilderFactory dFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder build = dFact.newDocumentBuilder();
             Document doc = build.newDocument();
             Element root = doc.createElement("permission");
             doc.appendChild(root);
-            //  Element memberList = doc.createElement("members");
-            //  root.appendChild(memberList);
+          //  Element memberList = doc.createElement("members");
+          //  root.appendChild(memberList);
             for (int i = 0; i < chkClassName.size(); i++) {
-                // line = input[i].split(",");
+               // line = input[i].split(",");
                 Element member = doc.createElement("class");
                 root.appendChild(member);
                 Attr attr = doc.createAttribute("name");
-                attr.setValue(chkClassName.get(i).toString());
-                Attr attr1 = doc.createAttribute("value");
-                attr1.setValue(classValue.get(i).toString());
-                member.setAttributeNode(attr);
+		attr.setValue(chkClassName.get(i).toString());
+                 Attr attr1 = doc.createAttribute("value");
+		attr1.setValue(classValue.get(i).toString());
+		member.setAttributeNode(attr);
                 member.setAttributeNode(attr1);
-
+               
             }
             TransformerFactory tFact = TransformerFactory.newInstance();
             Transformer trans = tFact.newTransformer();
@@ -217,21 +206,21 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
             StreamResult result = new StreamResult(writer);
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
-            System.out.println("writer.toString()--" + writer.toString());
+             System.out.println("writer.toString()--"+writer.toString());
             byte[] xmlData = null;
             try {
                 xmlData = (byte[]) Formats.BYTEA.parseValue(writer.toString());
             } catch (BasicException ex) {
                 Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("xml   " + xmlData.toString());
+             System.out.println("xml   "+xmlData.toString());
+             
+        //     m_dlSystem.updateRolesPermission(rolesList.get(m_jCboRoles.getSelectedIndex()).getID(), xmlData);
+    //      dlCustomers.updateRoles(rolesList.get(m_jCboRoles.getSelectedIndex()).getID(), xmlData);
 
-            //     m_dlSystem.updateRolesPermission(rolesList.get(m_jCboRoles.getSelectedIndex()).getID(), xmlData);
-            //      dlCustomers.updateRoles(rolesList.get(m_jCboRoles.getSelectedIndex()).getID(), xmlData);
-
-            Object[] values = new Object[]{roleId, xmlData};
-            System.out.println("xml data--" + xmlData);
-            Datas[] datas = new Datas[]{Datas.STRING, Datas.BYTES};
+        Object[] values = new Object[]{roleId,xmlData };
+             System.out.println("xml data--"+xmlData);
+        Datas[] datas = new Datas[]{Datas.STRING, Datas.BYTES};
             try {
                 new PreparedSentence(m_App.getSession(), "UPDATE ROLES SET PERMISSIONS=? WHERE ID = ?  ", new SerializerWriteBasicExt(datas, new int[]{1, 0})).exec(values);
             } catch (BasicException ex) {
@@ -244,11 +233,11 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
         } catch (ParserConfigurationException ex) {
             System.out.println("Error building document");
         }
+        
+}
 
-    }
-
-    public void readXml() {
-        System.out.println("test readxml");
+   public void readXml(){
+System.out.println("test readxml");
         String permissions = m_dlSystem.findRolePermissions(rolesList.get(m_jCboRoles.getSelectedIndex()).getID());
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -259,116 +248,113 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
             Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         Document document = null;
-        if (permissions != "") {
-            try {
-                document = builder.parse(new InputSource(new StringReader(permissions)));
-            } catch (SAXException ex) {
-                Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            classValue.clear();
-            Element rootElement = document.getDocumentElement();
-            NodeList nodeList = document.getElementsByTagName("class");
+        if(permissions!=""){
+        try {
+            document = builder.parse(new InputSource(new StringReader(permissions)));
+        } catch (SAXException ex) {
+            Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        classValue.clear();
+        Element rootElement = document.getDocumentElement();
+        NodeList nodeList = document.getElementsByTagName("class");
 
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
 
-                if (node.hasAttributes()) {
-                    Attr attr = (Attr) node.getAttributes().getNamedItem("value");
-                    if (attr != null) {
-                        String attribute = attr.getValue();
-                        classValue.add(attribute);
-                        //System.out.println("attribute: " + attribute);
-                    }
+            if (node.hasAttributes()) {
+                Attr attr = (Attr) node.getAttributes().getNamedItem("value");
+                if (attr != null) {
+                    String attribute= attr.getValue();
+                    classValue.add(attribute);
+                    //System.out.println("attribute: " + attribute);
                 }
             }
         }
+        }
 
-    }
+}
 
     private void setPrArea() {
         try {
-            jPanelPArea.setLayout(new GridLayout(20, 0, 0, 0));
-            jPanelPArea.removeAll();
-            //Adding logic to fetch production areas based on roles
-            totalProductionAreaTypeList = m_dlSales.getProductionAreaTypeList();
-            //Get Production Area role access details
-            prAreaMapList = m_dlSales.getProductionAreaRoadMapList(roleId);
-            //Add all the present Production Area role access ids tp arraylist
-            if (prAreaMapList != null) {
-                prAreaIdlist = new ArrayList();
-                for (PrAreaMapInfo pr : prAreaMapList) {
-                    System.out.println("test 1");
-                    prAreaIdlist.add(pr.getPrArea());
-                }
-            }
-            int prAreaCheckBox = totalProductionAreaTypeList.size();
+             jPanelPArea.setLayout(new GridLayout(20, 0, 0, 0));
+             jPanelPArea.removeAll();
+             //Adding logic to fetch production areas based on roles
+             totalProductionAreaTypeList=m_dlSales.getProductionAreaTypeList();
+             //Get Production Area role access details
+             prAreaMapList=m_dlSales.getProductionAreaRoadMapList(roleId);
+             //Add all the present Production Area role access ids tp arraylist
+             if(prAreaMapList!=null){
+             prAreaIdlist=new ArrayList();
+             for(PrAreaMapInfo pr:prAreaMapList){
+                 System.out.println("test 1");
+                prAreaIdlist.add(pr.getPrArea());
+              }
+             }
+             int prAreaCheckBox = totalProductionAreaTypeList.size();
             checkBoxList = new JCheckBox[prAreaCheckBox];
-            // int dimension=40;
-            //Dynamically adding checkboxes based on number of production Areas (By Shilpa)
-            for (int i = 0; i < prAreaCheckBox; i++) {
-                javax.swing.JCheckBox m_jChkPrName = new javax.swing.JCheckBox();
-                m_jChkPrName.setLabel(totalProductionAreaTypeList.get(i).getName());
-                //assigning each checkbox a unique Id(Role Id) 
-                m_jChkPrName.setActionCommand(totalProductionAreaTypeList.get(i).getId());
-                jPanelPArea.add(m_jChkPrName);//, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, dimension, -1, -1));
-                // dimension=dimension+40;  
-                if (prAreaIdlist != null) {
-                    if (prAreaIdlist.contains(totalProductionAreaTypeList.get(i).getId())) {
-                        m_jChkPrName.setSelected(true);
-                    }
+           // int dimension=40;
+             //Dynamically adding checkboxes based on number of production Areas (By Shilpa)
+           for (int i = 0; i < prAreaCheckBox; i++) {
+               javax.swing.JCheckBox  m_jChkPrName= new javax.swing.JCheckBox();    
+            m_jChkPrName.setLabel(totalProductionAreaTypeList.get(i).getName());
+            //assigning each checkbox a unique Id(Role Id) 
+            m_jChkPrName.setActionCommand(totalProductionAreaTypeList.get(i).getId());
+            jPanelPArea.add(m_jChkPrName);//, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, dimension, -1, -1));
+           // dimension=dimension+40;  
+            if(prAreaIdlist!=null){
+               if(prAreaIdlist.contains(totalProductionAreaTypeList.get(i).getId())){
+                m_jChkPrName.setSelected(true);
                 }
-            }
+              }
+           }
         } catch (BasicException ex) {
             Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
+        
+        
     }
 
     private void SavePrArea() {
-        selectedList = new ArrayList();
-        for (Component component : jPanelPArea.getComponents()) {
-            if (component instanceof JCheckBox) {
-                if (((JCheckBox) component).isSelected()) {
-                    javax.swing.JCheckBox m_jChkPrName = (JCheckBox) component;
+    selectedList=new ArrayList();
+     for(Component component : jPanelPArea.getComponents()) {
+         if(component instanceof JCheckBox){
+               if(((JCheckBox)component).isSelected()){
+                   javax.swing.JCheckBox  m_jChkPrName= (JCheckBox)component;
                     selectedList.add(m_jChkPrName.getActionCommand());
                 }
             }
         }
         try {
-            m_dlSales.updatePrAreaRoadMap(roleId, selectedList);
+            m_dlSales.updatePrAreaRoadMap(roleId,selectedList);
         } catch (BasicException ex) {
             Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Component component : jPanelPArea.getComponents()) {
-            if (component instanceof JCheckBox) {
-                javax.swing.JCheckBox m_jChkPrName = (JCheckBox) component;
-                m_jChkPrName.setSelected(false);
-            }
+        for(Component component : jPanelPArea.getComponents()) {
+         if(component instanceof JCheckBox){
+           javax.swing.JCheckBox  m_jChkPrName= (JCheckBox)component;
+           m_jChkPrName.setSelected(false);
+         }
         }
     }
-
+    
     private class FormatsPayment extends Formats {
-
         protected String formatValueInt(Object value) {
             return AppLocal.getIntString("transpayment." + (String) value);
-        }
-
+        }   
         protected Object parseValueInt(String value) throws ParseException {
             return value;
         }
-
         public int getAlignment() {
             return javax.swing.SwingConstants.LEFT;
-        }
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+        }         
+    }    
+   
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -444,14 +430,6 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
         jScrollPane3 = new javax.swing.JScrollPane();
         jPanelPArea = new javax.swing.JPanel();
         jPanelPrArea = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jPanelStations = new javax.swing.JPanel();
-        jLabelUsers = new javax.swing.JLabel();
-        jPanelStation = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        m_jUserList = new javax.swing.JList();
-        jLabel2 = new javax.swing.JLabel();
-        jComboStPrArea = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         m_jCboRoles = new javax.swing.JComboBox();
         jbtnSave = new javax.swing.JButton();
@@ -782,33 +760,6 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
 
         jTabbedPane.addTab("Production Area", jScrollPane3);
 
-        jPanelStations.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabelUsers.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabelUsers.setText("Users");
-        jPanelStations.add(jLabelUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 87, 20));
-
-        jPanelStation.setLayout(new java.awt.GridLayout(8, 0));
-        jPanelStations.add(jPanelStation, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 30, 270, 430));
-
-        jScrollPane5.setViewportView(m_jUserList);
-
-        jPanelStations.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 120, 260));
-
-        jLabel2.setText("Production Area");
-        jPanelStations.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 30, -1, -1));
-
-        jComboStPrArea.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboStPrAreaActionPerformed(evt);
-            }
-        });
-        jPanelStations.add(jComboStPrArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 130, -1));
-
-        jScrollPane4.setViewportView(jPanelStations);
-
-        jTabbedPane.addTab("Stations", jScrollPane4);
-
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Roles");
 
@@ -861,949 +812,796 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    public void populateRoles() {
-        m_jCboRoles.removeAllItems();
+  public void populateRoles(){
+          m_jCboRoles.removeAllItems();
         try {
             rolesList = (List<RoleInfo>) m_dlSales.getRoleList();
         } catch (BasicException ex) {
             Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+            for (RoleInfo dis : rolesList) {
+                m_jCboRoles.addItem(dis.getName());
 
-        for (RoleInfo dis : rolesList) {
-            m_jCboRoles.addItem(dis.getName());
-
-        }
-        m_jCboRoles.setSelectedIndex(-1);
-        roleId = null;
+            }
+            m_jCboRoles.setSelectedIndex(-1);
+            roleId=null;
     }
     private void jbtnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSaveActionPerformed
 
-        if (m_jCboRoles.getSelectedIndex() == -1) {
-            showMessage(this, "Please select the roles");
-        } else {
-            setCheckBox();
-            writeXml();
-            SavePrArea();
-            saveStation();
-            saveButtonActions();
-            setCheckBoxValues();
-            m_jCboRoles.setSelectedIndex(-1);
-        }
-
+   if(m_jCboRoles.getSelectedIndex()==-1){
+       showMessage(this, "Please select the roles");
+   }else{
+      setCheckBox();
+      writeXml();
+      SavePrArea();
+      saveButtonActions();
+      setCheckBoxValues();
+      m_jCboRoles.setSelectedIndex(-1);
+   }
+   
 
 }//GEN-LAST:event_jbtnSaveActionPerformed
-    public void saveButtonActions() {
-        String printBill = "N";
-        String settleBill = "N";
-        String cancelBill = "N";
-        String billDiscount = "N";
-        String splitBill = "N";
-        String kot = "N";
-        String moveTable = "N";
-        String billOnHold = "N";
-        int posActionsCount = 0;
-        if (m_jChkPrintBill.isSelected()) {
-            printBill = "Y";
-        } else {
-            printBill = "N";
-        }
-        if (m_jChkSettleBill.isSelected()) {
-            settleBill = "Y";
-        } else {
-            settleBill = "N";
-        }
-        if (m_jChkCancel.isSelected()) {
-            cancelBill = "Y";
-        } else {
-            cancelBill = "N";
-        }
-        if (m_jChkIBillDiscount.isSelected()) {
-            billDiscount = "Y";
-        } else {
-            billDiscount = "N";
-        }
-        if (m_jChkSplitBill.isSelected()) {
-            splitBill = "Y";
-        } else {
-            splitBill = "N";
-        }
-
-        if (m_jChkMoveTable.isSelected()) {
-            moveTable = "Y";
-        } else {
-            moveTable = "N";
-        }
-        if (m_jBtnBillOnHold.isSelected()) {
-            billOnHold = "Y";
-        } else {
-            billOnHold = "N";
-        }
-
-        try {
-            posActionsCount = m_dlSales.getPosActionsCount(roleId);
-        } catch (BasicException ex) {
-            Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-        if (posActionsCount == 0) {
-            m_dlSales.insertPosActionsAccess(roleId, printBill, settleBill, cancelBill, billDiscount, splitBill, moveTable, billOnHold);
-        } else {
-            m_dlSales.updatePosActionsAccess(roleId, printBill, settleBill, cancelBill, billDiscount, splitBill, moveTable, billOnHold);
-        }
+public void saveButtonActions(){
+    String printBill ="N";
+    String settleBill="N";
+    String cancelBill="N";
+    String billDiscount="N";
+    String splitBill="N";
+    String kot="N";
+    String moveTable="N";
+    String billOnHold="N";
+    int posActionsCount = 0;
+    if(m_jChkPrintBill.isSelected()){
+        printBill ="Y";
+    }else{
+        printBill ="N";
+    }
+    if(m_jChkSettleBill.isSelected()){
+        settleBill ="Y";
+    }else{
+        settleBill ="N";
+    }
+    if(m_jChkCancel.isSelected()){
+        cancelBill ="Y";
+    }else{
+        cancelBill ="N";
+    }
+    if(m_jChkIBillDiscount.isSelected()){
+        billDiscount ="Y";
+    }else{
+        billDiscount ="N";
+    }
+    if(m_jChkSplitBill.isSelected()){
+        splitBill ="Y";
+    }else{
+        splitBill ="N";
+    }
+  
+     if(m_jChkMoveTable.isSelected()){
+        moveTable ="Y";
+    }else{
+        moveTable ="N";
+    }
+    if(m_jBtnBillOnHold.isSelected()){
+        billOnHold ="Y";
+    }else{
+        billOnHold ="N";
     }
 
-    public void setCheckBox() {
-        chkClassName.clear();
-        classValue.clear();
-        if (m_jChkBilling.isSelected()) {
-            chkClassName.add("com.openbravo.pos.sales.JRetailPanelTicketSales");
-            classValue.add("Billing");
-        } else {
-            chkClassName.remove("com.openbravo.pos.sales.JRetailPanelTicketSales");
-        }
-        if (m_jChkReprint.isSelected()) {
-            chkClassName.add("com.openbravo.pos.sales.JRetailRePrintTicket"); // TODO add your handling code here:
-            classValue.add("Reprint");
-        } else {
-            chkClassName.remove("com.openbravo.pos.sales.JRetailRePrintTicket");
-        }
-        if (m_jChkItemMaster.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuItemManagement"); // TODO add your handling code here:
-            classValue.add("Itemmaster");
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuItemManagement");
-        }
-        if (m_jChkItem.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.ProductsPanel"); // TODO add your handling code here:
-            classValue.add("Item");
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.ProductsPanel");
-        } // TODO add your handling code here:
-        if (m_jChkItemCategories.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.CategoriesPanel"); // TODO add your handling code here:
-            classValue.add("ItemCategories");
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.CategoriesPanel");
-        }   // TODO add your handling code here:
-        if (m_jChkCustomerMenu.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuCustomerManagement"); // TODO add your handling code here:
-            classValue.add("CustomerMenu");
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuCustomerManagement");
-        }
-        if (m_jChkCustomers.isSelected()) {
-            chkClassName.add("com.openbravo.pos.customers.CustomersPanel"); // TODO add your handling code here:
-            classValue.add("Customers");
-        } else {
-            chkClassName.remove("com.openbravo.pos.customers.CustomersPanel");
-        }
-        if (m_jChkTaxation.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuTaxation"); // TODO add your handling code here:
-            classValue.add("Taxation");
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuTaxation"); // TODO add your handling code here:
-        }
-        if (m_jChkTaxCategories.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.TaxCategoriesPanel"); // TODO add your handling code here:
-            classValue.add("TaxCategories");
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.TaxCategoriesPanel"); // TODO add your handling code here:
-        }
-        if (m_jChkCusTax.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.TaxCustCategoriesPanel"); // TODO add your handling code here:
-            classValue.add("CusTax");
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.TaxCustCategoriesPanel"); // TODO add your handling code here:
-        }         // TODO add your handling code here:
-        if (m_jChkTaxRate.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.TaxPanel"); // TODO add your handling code here:
-            classValue.add("TaxRate");
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.TaxPanel"); // TODO add your handling code here:
-        }               // TODO add your handling code here:
-        if (m_jChkDiscountMenu.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuDiscount"); // TODO add your handling code here:
-            classValue.add("DiscountMenu");
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuDiscount"); // TODO add your handling code here:
-        }
-        if (m_jChkAddDiscounts.isSelected()) {
-            chkClassName.add("com.sysfore.pos.cashmanagement.JDiscountPanel");
-            classValue.add("AddDiscount");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.cashmanagement.JDiscountPanel"); // TODO add your handling code here:
-        }
-        if (m_jChkWarehouseMasters.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuWarehouseMasters");
-            classValue.add("WarehouseMasters");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuWarehouseMasters"); // TODO add your handling code here:
-        }       // TODO add your handling code here:
-        if (m_jChkWarehouse1.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.LocationsPanel");
-            classValue.add("Locations");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.LocationsPanel"); // TODO add your handling code here:
-        }      // TODO add your handling code here:
-        if (m_jChkStockMain.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.StockManagement");
-            classValue.add("StockManagement");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.StockManagement"); // TODO add your handling code here:
-        }
-        // TODO add your handling code here:
-        if (m_jChkCashManagement.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuCashManagement");
-            classValue.add("MenuCashManagement");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuCashManagement");
-        }
-        // TODO add your handling code here:
-        if (m_jChkFloatCash.isSelected()) {
-            chkClassName.add("com.sysfore.pos.cashmanagement.JFloatCashPanel");
-            classValue.add("FloatCash");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.cashmanagement.JFloatCashPanel");
-        }  // TODO add your handling code here:
-        if (m_jChkPettyCash.isSelected()) {
-            chkClassName.add("com.sysfore.pos.cashmanagement.JPettyCashPanel");
-            classValue.add("PettyCash");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.cashmanagement.JPettyCashPanel");
-        }    // TODO add your handling code here:
-        if (m_jChkIUserManagement.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuUsersRoles");
-            classValue.add("UsersRoles");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuUsersRoles");
-        }    // TODO add your handling code here:
-        if (m_jChkuser.isSelected()) {
-            chkClassName.add("com.openbravo.pos.admin.PeoplePanel");
-            classValue.add("Users");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.admin.PeoplePanel");
-        }    // TODO add your handling code here:
-        if (m_jChkRoles.isSelected()) {
-            chkClassName.add("com.openbravo.pos.admin.RolesPanel");
-            classValue.add("Roles");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.admin.RolesPanel");
-        }   // TODO add your handling code here:
-        if (m_jChkResources.isSelected()) {
-            chkClassName.add("com.openbravo.pos.admin.ResourcesPanel");
-            classValue.add("Resources");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.admin.ResourcesPanel");
-        }   // TODO add your handling code here:
-        if (m_jChkFloors.isSelected()) {
-            chkClassName.add("com.openbravo.pos.mant.JPanelFloors");
-            classValue.add("Floors");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.mant.JPanelFloors");
-        }     // TODO add your handling code here:
-        if (m_jChkTables.isSelected()) {
-            chkClassName.add("com.openbravo.pos.mant.JPanelPlaces");
-            classValue.add("Places");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.mant.JPanelPlaces");
-        }    // TODO add your handling code here:
-        if (m_jChkPosActions.isSelected()) {
-            chkClassName.add("com.sysfore.pos.panels.JPosActionsPanel");
-            classValue.add("PosActions");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.panels.JPosActionsPanel");
-        }    // TODO add your handling code here:
-        if (m_jChkServiceCharge.isSelected()) {
-            chkClassName.add("com.sysfore.pos.hotelmanagement.JServiceChargePanel");
-            classValue.add("ServiceCharge");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.hotelmanagement.JServiceChargePanel");
-        }     // TODO add your handling code here:
-        if (m_jChkBusinessType.isSelected()) {
-            chkClassName.add("com.sysfore.pos.hotelmanagement.JBusinessTypePanel");
-            classValue.add("BusinessType");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.hotelmanagement.JBusinessTypePanel");
-        }
-        if (m_jChkChargesMaster.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuChargesmaster");
-            classValue.add("ChargesMaster");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuChargesmaster");
-        }     // TODO add your handling code here:
-        if (m_jChkPurDiscountMaster.isSelected()) {
-            chkClassName.add("com.sysfore.pos.purchaseorder.JExtraChargePanel");
-            classValue.add("PurchaseCharges");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.purchaseorder.JExtraChargePanel");
-        }
-        if (m_jChkTaxMapping.isSelected()) {
-            chkClassName.add("com.sysfore.pos.hotelmanagement.JTaxMappingPanel");
-            classValue.add("TaxMapping");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.hotelmanagement.JTaxMappingPanel");
-        }
-        if (m_jChkPrinterConfig.isSelected()) {
-            chkClassName.add("com.sysfore.pos.hotelmanagement.JPrinterConfigEditor");
-            classValue.add("PrinterConfig");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.hotelmanagement.JPrinterConfigEditor");
-        }
-        if (m_jChkCloseDay.isSelected()) {
-            chkClassName.add("com.sysfore.pos.cashmanagement.JPanelCashReconciliation");
-            classValue.add("CloseDay");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.cashmanagement.JPanelCashReconciliation");
-        }
-        if (m_jChkPettyExpenses.isSelected()) {
-            chkClassName.add("com.sysfore.pos.cashmanagement.JPettyCashEditorPanel");
-            classValue.add("PettyExpenses");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.sysfore.pos.cashmanagement.JPettyCashEditorPanel");
-        }
-        if (m_jChkSalesReports.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuSalesReports");
-            classValue.add("SalesReports");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuSalesReports");
-        }
-        if (m_jSalesItemWise.isSelected()) {
-            chkClassName.add("/com/sysfore/SalesByPeriodItemwise.bs");
-            classValue.add("SalesItemWise");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/SalesByPeriodItemwise.bs");
-        }
-        if (m_jChkKotAnalysis.isSelected()) {
-            chkClassName.add("/com/sysfore/KotReport.bs");
-            classValue.add("KotAnalysis");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/KotReport.bs");
-        }
-        if (m_jChkDiscountRegister.isSelected()) {
-            chkClassName.add("/com/sysfore/DiscountReport.bs");
-            classValue.add("DiscountRegister");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/DiscountReport.bs");
-        }
-        if (m_jChkKotCancel.isSelected()) {
-            chkClassName.add("/com/sysfore/KotCancelReport.bs");
-            classValue.add("KotCancel");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/KotCancelReport.bs");
-        }
-        if (m_jChkCancelledBills.isSelected()) {
-            chkClassName.add("/com/sysfore/CancelledBill.bs");
-            classValue.add("CancelledBills");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/CancelledBill.bs");
-        }
-        if (m_jChkSalesBillWise.isSelected()) {
-            chkClassName.add("/com/sysfore/SalesDetailsReport.bs");
-            classValue.add("Salesbillwise");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/SalesDetailsReport.bs");
-        }
-        if (m_jChkSettlement.isSelected()) {
-            chkClassName.add("/com/sysfore/SettlementWithSectionReport.bs");
-            classValue.add("Settlement");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/SettlementWithSectionReport.bs");
-        }
-        if (m_jChkSectionWise.isSelected()) {
-            chkClassName.add("/com/sysfore/SettlementSectionReport.bs");
-            classValue.add("Sectionwise");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/SettlementSectionReport.bs");
-        }
-        if (m_jChkTaxSummary.isSelected()) {
-            chkClassName.add("/com/sysfore/TaxSummaryReport.bs");
-            classValue.add("TaxSummary");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/TaxSummaryReport.bs");
-        }
-        if (m_jChkCashReports.isSelected()) {
-            chkClassName.add("com.openbravo.pos.forms.MenuCashReports");
-            classValue.add("CashReports");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.forms.MenuCashReports");
-        }
-        if (m_jChkPettyExpenseReports.isSelected()) {
-            chkClassName.add("/com/openbravo/reports/pettyExpense.bs");
-            classValue.add("PettyReport");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/openbravo/reports/pettyExpense.bs");
-        }
-        if (m_jChkDailyCollection.isSelected()) {
-            chkClassName.add("/com/sysfore/DailyReport.bs");
-            classValue.add("DailyCollection");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/DailyReport.bs");
-        }
-        if (m_jChkConfiguration.isSelected()) {
-            chkClassName.add("com.openbravo.pos.config.JPanelConfiguration");
-            classValue.add("Configuration");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.config.JPanelConfiguration");
-        }
-        if (m_jchkBillPreview.isSelected()) {
-            chkClassName.add("com.openbravo.pos.sales.JRetailTicketPrintEdit");
-            classValue.add("BillPreview");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.sales.JRetailTicketPrintEdit");
-        }
-        if (m_jChkNcReports.isSelected()) {
-            chkClassName.add("/com/sysfore/NCReport.bs");
-            classValue.add("NCReport");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/NCReport.bs");
-        }
-        if (m_jChkUnlock.isSelected()) {
-            chkClassName.add("com.openbravo.pos.sales.restaurant.JRetailTicketUnlock");
-            classValue.add("UnlockTable");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.sales.restaurant.JRetailTicketUnlock");
-        }
-        if (m_jChkKodStatus.isSelected()) {
-            chkClassName.add("com.openbravo.pos.inventory.JPanelKodMaster");
-            classValue.add("KodStatusMaster");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.inventory.JPanelKodMaster");
-        }
-        if (m_jChkBillOnHold.isSelected()) {
-            chkClassName.add("com.openbravo.pos.sales.JRetailHoldBillEdit");
-            classValue.add("BillOnHold");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.sales.JRetailHoldBillEdit");
-        }
-        if (m_jChkTakeAway.isSelected()) {
-            chkClassName.add("com.openbravo.pos.sales.JRetailPanelTakeAwaySales");
-            classValue.add("TakeAway");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("com.openbravo.pos.sales.JRetailPanelTakeAwaySales");
-        }
-        if (m_jChkMoveTableReport.isSelected()) {
-            chkClassName.add("/com/sysfore/MoveTableLogReport.bs");
-            classValue.add("MoveTableReport");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/MoveTableLogReport.bs");
-        }
-        if (m_jChkSalesSummary.isSelected()) {
-            chkClassName.add("/com/sysfore/SalesSummaryReport.bs");
-            classValue.add("SalesSummaryReport");// TODO add your handling code here:
-        } else {
-            chkClassName.remove("/com/sysfore/SalesSummaryReport.bs");
-        }
+            try {
+                posActionsCount = m_dlSales.getPosActionsCount(roleId);
+            } catch (BasicException ex) {
+                Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+    
+    if(posActionsCount==0){
+       m_dlSales.insertPosActionsAccess(roleId, printBill, settleBill, cancelBill, billDiscount, splitBill, moveTable,billOnHold);
+    }else{
+       m_dlSales.updatePosActionsAccess(roleId, printBill, settleBill, cancelBill, billDiscount, splitBill, moveTable,billOnHold);
+    }
+}
+ public void setCheckBox(){
+    chkClassName.clear();
+    classValue.clear();
+    if(m_jChkBilling.isSelected()){
+        chkClassName.add("com.openbravo.pos.sales.JRetailPanelTicketSales");
+        classValue.add("Billing");
+    }else{
+     chkClassName.remove("com.openbravo.pos.sales.JRetailPanelTicketSales");
+    }
+    if(m_jChkReprint.isSelected()){
+        chkClassName.add("com.openbravo.pos.sales.JRetailRePrintTicket"); // TODO add your handling code here:
+        classValue.add("Reprint");
+    }else{
+        chkClassName.remove("com.openbravo.pos.sales.JRetailRePrintTicket");
+    }
+    if(m_jChkItemMaster.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuItemManagement"); // TODO add your handling code here:
+        classValue.add("Itemmaster");
+    }else{
+        chkClassName.remove("com.openbravo.pos.forms.MenuItemManagement");
+    }
+    if(m_jChkItem.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.ProductsPanel"); // TODO add your handling code here:
+        classValue.add("Item");
+    }else{
+         chkClassName.remove("com.openbravo.pos.inventory.ProductsPanel");
+       } // TODO add your handling code here:
+     if(m_jChkItemCategories.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.CategoriesPanel"); // TODO add your handling code here:
+        classValue.add("ItemCategories");
+     }else{
+        chkClassName.remove("com.openbravo.pos.inventory.CategoriesPanel");
+     }   // TODO add your handling code here:
+     if(m_jChkCustomerMenu.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuCustomerManagement"); // TODO add your handling code here:
+        classValue.add("CustomerMenu");
+     }else{
+        chkClassName.remove("com.openbravo.pos.forms.MenuCustomerManagement");
+      }
+     if(m_jChkCustomers.isSelected()){
+        chkClassName.add("com.openbravo.pos.customers.CustomersPanel"); // TODO add your handling code here:
+        classValue.add("Customers");
+     }else{
+        chkClassName.remove("com.openbravo.pos.customers.CustomersPanel");
+     }
+     if(m_jChkTaxation.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuTaxation"); // TODO add your handling code here:
+        classValue.add("Taxation");
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuTaxation"); // TODO add your handling code here:
+     }
+     if(m_jChkTaxCategories.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.TaxCategoriesPanel"); // TODO add your handling code here:
+        classValue.add("TaxCategories");
+     }else{
+	chkClassName.remove("com.openbravo.pos.inventory.TaxCategoriesPanel"); // TODO add your handling code here:
+     }
+     if(m_jChkCusTax.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.TaxCustCategoriesPanel"); // TODO add your handling code here:
+        classValue.add("CusTax");
+     }else{
+	chkClassName.remove("com.openbravo.pos.inventory.TaxCustCategoriesPanel"); // TODO add your handling code here:
+     }         // TODO add your handling code here:
+     if(m_jChkTaxRate.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.TaxPanel"); // TODO add your handling code here:
+        classValue.add("TaxRate");
+     }else{
+	chkClassName.remove("com.openbravo.pos.inventory.TaxPanel"); // TODO add your handling code here:
+     }               // TODO add your handling code here:
+     if(m_jChkDiscountMenu.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuDiscount"); // TODO add your handling code here:
+        classValue.add("DiscountMenu");
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuDiscount"); // TODO add your handling code here:
+     }
+     if(m_jChkAddDiscounts.isSelected()){
+        chkClassName.add("com.sysfore.pos.cashmanagement.JDiscountPanel");
+        classValue.add("AddDiscount");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.cashmanagement.JDiscountPanel"); // TODO add your handling code here:
+     }
+     if(m_jChkWarehouseMasters.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuWarehouseMasters");
+        classValue.add("WarehouseMasters");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuWarehouseMasters"); // TODO add your handling code here:
+     }       // TODO add your handling code here:
+     if(m_jChkWarehouse1.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.LocationsPanel");
+        classValue.add("Locations");// TODO add your handling code here:
+     } else{
+	chkClassName.remove("com.openbravo.pos.inventory.LocationsPanel"); // TODO add your handling code here:
+     }      // TODO add your handling code here:
+     if(m_jChkStockMain.isSelected()){
+        chkClassName.add("com.openbravo.pos.inventory.StockManagement");
+        classValue.add("StockManagement");// TODO add your handling code here:
+     }  else{
+	chkClassName.remove("com.openbravo.pos.inventory.StockManagement"); // TODO add your handling code here:
+     }
+         // TODO add your handling code here:
+     if(m_jChkCashManagement.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuCashManagement");
+        classValue.add("MenuCashManagement");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuCashManagement");
+     }
+   // TODO add your handling code here:
+     if(m_jChkFloatCash.isSelected()){
+        chkClassName.add("com.sysfore.pos.cashmanagement.JFloatCashPanel");
+        classValue.add("FloatCash");// TODO add your handling code here:
+     } else{
+	chkClassName.remove("com.sysfore.pos.cashmanagement.JFloatCashPanel");
+     }  // TODO add your handling code here:
+     if(m_jChkPettyCash.isSelected()){
+        chkClassName.add("com.sysfore.pos.cashmanagement.JPettyCashPanel");
+        classValue.add("PettyCash");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.cashmanagement.JPettyCashPanel");
+     }    // TODO add your handling code here:
+     if(m_jChkIUserManagement.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuUsersRoles");
+        classValue.add("UsersRoles");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuUsersRoles");
+     }    // TODO add your handling code here:
+     if(m_jChkuser.isSelected()){
+        chkClassName.add("com.openbravo.pos.admin.PeoplePanel");
+        classValue.add("Users");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.admin.PeoplePanel");
+     }    // TODO add your handling code here:
+     if(m_jChkRoles.isSelected()){
+        chkClassName.add("com.openbravo.pos.admin.RolesPanel");
+        classValue.add("Roles");// TODO add your handling code here:
+     } else{
+	chkClassName.remove("com.openbravo.pos.admin.RolesPanel");
+     }   // TODO add your handling code here:
+     if(m_jChkResources.isSelected()){
+        chkClassName.add("com.openbravo.pos.admin.ResourcesPanel");
+        classValue.add("Resources");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.admin.ResourcesPanel");
+     }   // TODO add your handling code here:
+     if(m_jChkFloors.isSelected()){
+        chkClassName.add("com.openbravo.pos.mant.JPanelFloors");
+        classValue.add("Floors");// TODO add your handling code here:
+     } else{
+	chkClassName.remove("com.openbravo.pos.mant.JPanelFloors");
+     }     // TODO add your handling code here:
+     if(m_jChkTables.isSelected()){
+        chkClassName.add("com.openbravo.pos.mant.JPanelPlaces");
+        classValue.add("Places");// TODO add your handling code here:
+     } else{
+	chkClassName.remove("com.openbravo.pos.mant.JPanelPlaces");
+     }    // TODO add your handling code here:
+     if(m_jChkPosActions.isSelected()){
+        chkClassName.add("com.sysfore.pos.panels.JPosActionsPanel");
+        classValue.add("PosActions");// TODO add your handling code here:
+     } else{
+	chkClassName.remove("com.sysfore.pos.panels.JPosActionsPanel");
+     }    // TODO add your handling code here:
+     if(m_jChkServiceCharge.isSelected()){
+        chkClassName.add("com.sysfore.pos.hotelmanagement.JServiceChargePanel");
+        classValue.add("ServiceCharge");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.hotelmanagement.JServiceChargePanel");
+     }     // TODO add your handling code here:
+     if(m_jChkBusinessType.isSelected()){
+        chkClassName.add("com.sysfore.pos.hotelmanagement.JBusinessTypePanel");
+        classValue.add("BusinessType");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.hotelmanagement.JBusinessTypePanel");
+     }
+     if(m_jChkChargesMaster.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuChargesmaster");
+        classValue.add("ChargesMaster");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuChargesmaster");
+     }     // TODO add your handling code here:
+     if(m_jChkPurDiscountMaster.isSelected()){
+        chkClassName.add("com.sysfore.pos.purchaseorder.JExtraChargePanel");
+        classValue.add("PurchaseCharges");// TODO add your handling code here:
+     }else{
+        chkClassName.remove("com.sysfore.pos.purchaseorder.JExtraChargePanel");
+     }
+     if(m_jChkTaxMapping.isSelected()){
+        chkClassName.add("com.sysfore.pos.hotelmanagement.JTaxMappingPanel");
+        classValue.add("TaxMapping");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.hotelmanagement.JTaxMappingPanel");
+     }
+     if(m_jChkPrinterConfig.isSelected()){
+        chkClassName.add("com.sysfore.pos.hotelmanagement.JPrinterConfigEditor");
+        classValue.add("PrinterConfig");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.hotelmanagement.JPrinterConfigEditor");
+     }
+     if(m_jChkCloseDay.isSelected()){
+        chkClassName.add("com.sysfore.pos.cashmanagement.JPanelCashReconciliation");
+        classValue.add("CloseDay");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.cashmanagement.JPanelCashReconciliation");
+     }
+     if(m_jChkPettyExpenses.isSelected()){
+        chkClassName.add("com.sysfore.pos.cashmanagement.JPettyCashEditorPanel");
+        classValue.add("PettyExpenses");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.sysfore.pos.cashmanagement.JPettyCashEditorPanel");
+     }
+     if(m_jChkSalesReports.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuSalesReports");
+        classValue.add("SalesReports");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuSalesReports");
+     }
+     if(m_jSalesItemWise.isSelected()){
+        chkClassName.add("/com/sysfore/SalesByPeriodItemwise.bs");
+        classValue.add("SalesItemWise");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/SalesByPeriodItemwise.bs");
+     }
+     if(m_jChkKotAnalysis.isSelected()){
+        chkClassName.add("/com/sysfore/KotReport.bs");
+        classValue.add("KotAnalysis");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/KotReport.bs");
+     }
+     if(m_jChkDiscountRegister.isSelected()){
+        chkClassName.add("/com/sysfore/DiscountReport.bs");
+        classValue.add("DiscountRegister");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/DiscountReport.bs");
+     }
+     if(m_jChkKotCancel.isSelected()){
+        chkClassName.add("/com/sysfore/KotCancelReport.bs");
+        classValue.add("KotCancel");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/KotCancelReport.bs");
+     }
+     if(m_jChkCancelledBills.isSelected()){
+        chkClassName.add("/com/sysfore/CancelledBill.bs");
+        classValue.add("CancelledBills");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/CancelledBill.bs");
+     }
+     if(m_jChkSalesBillWise.isSelected()){
+        chkClassName.add("/com/sysfore/SalesDetailsReport.bs");
+        classValue.add("Salesbillwise");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/SalesDetailsReport.bs");
+     }
+     if(m_jChkSettlement.isSelected()){
+        chkClassName.add("/com/sysfore/SettlementWithSectionReport.bs");
+        classValue.add("Settlement");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/SettlementWithSectionReport.bs");
+     }
+     if(m_jChkSectionWise.isSelected()){
+        chkClassName.add("/com/sysfore/SettlementSectionReport.bs");
+        classValue.add("Sectionwise");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/SettlementSectionReport.bs");
+     }
+     if(m_jChkTaxSummary.isSelected()){
+        chkClassName.add("/com/sysfore/TaxSummaryReport.bs");
+        classValue.add("TaxSummary");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("/com/sysfore/TaxSummaryReport.bs");
+     }
+     if(m_jChkCashReports.isSelected()){
+        chkClassName.add("com.openbravo.pos.forms.MenuCashReports");
+        classValue.add("CashReports");// TODO add your handling code here:
+     }else{
+	chkClassName.remove("com.openbravo.pos.forms.MenuCashReports");
+     }
+     if(m_jChkPettyExpenseReports.isSelected()){
+         chkClassName.add("/com/openbravo/reports/pettyExpense.bs");
+         classValue.add("PettyReport");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("/com/openbravo/reports/pettyExpense.bs");
+     }
+     if(m_jChkDailyCollection.isSelected()){
+         chkClassName.add("/com/sysfore/DailyReport.bs");
+         classValue.add("DailyCollection");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("/com/sysfore/DailyReport.bs");
+     }
+     if(m_jChkConfiguration.isSelected()){
+         chkClassName.add("com.openbravo.pos.config.JPanelConfiguration");
+         classValue.add("Configuration");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("com.openbravo.pos.config.JPanelConfiguration");
+     }
+     if(m_jchkBillPreview.isSelected()){
+         chkClassName.add("com.openbravo.pos.sales.JRetailTicketPrintEdit");
+         classValue.add("BillPreview");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("com.openbravo.pos.sales.JRetailTicketPrintEdit");
+     }
+    if(m_jChkNcReports.isSelected()){
+         chkClassName.add("/com/sysfore/NCReport.bs");
+         classValue.add("NCReport");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("/com/sysfore/NCReport.bs");
+     }
+    if(m_jChkUnlock.isSelected()){
+         chkClassName.add("com.openbravo.pos.sales.restaurant.JRetailTicketUnlock");
+         classValue.add("UnlockTable");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("com.openbravo.pos.sales.restaurant.JRetailTicketUnlock");
+     }
+     if(m_jChkKodStatus.isSelected()){
+         chkClassName.add("com.openbravo.pos.inventory.JPanelKodMaster");
+         classValue.add("KodStatusMaster");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("com.openbravo.pos.inventory.JPanelKodMaster");
+     }
+      if(m_jChkBillOnHold.isSelected()){
+         chkClassName.add("com.openbravo.pos.sales.JRetailHoldBillEdit");
+         classValue.add("BillOnHold");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("com.openbravo.pos.sales.JRetailHoldBillEdit");
+     }
+     if(m_jChkTakeAway.isSelected()){
+         chkClassName.add("com.openbravo.pos.sales.JRetailPanelTakeAwaySales");
+         classValue.add("TakeAway");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("com.openbravo.pos.sales.JRetailPanelTakeAwaySales");
+     }
+       if(m_jChkMoveTableReport.isSelected()){
+         chkClassName.add("/com/sysfore/MoveTableLogReport.bs");
+         classValue.add("MoveTableReport");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("/com/sysfore/MoveTableLogReport.bs");
+     }
+             if(m_jChkSalesSummary.isSelected()){
+         chkClassName.add("/com/sysfore/SalesSummaryReport.bs");
+         classValue.add("SalesSummaryReport");// TODO add your handling code here:
+     }else{
+	 chkClassName.remove("/com/sysfore/SalesSummaryReport.bs");
+     }
 
 
     }
-
     private void showMessage(JPosActionsPanel aThis, String msg) {
         JOptionPane.showMessageDialog(aThis, getLabelPanel(msg), "Message",
-                JOptionPane.INFORMATION_MESSAGE);
+                                        JOptionPane.INFORMATION_MESSAGE);
 
     }
+private JPanel getLabelPanel(String msg) {
+    JPanel panel = new JPanel();
+    Font font = new Font("Verdana", Font.BOLD, 12);
+    panel.setFont(font);
+    panel.setOpaque(true);
+   // panel.setBackground(Color.BLUE);
+    JLabel label = new JLabel(msg, JLabel.LEFT);
+    label.setForeground(Color.RED);
+    label.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    panel.add(label);
 
-    private JPanel getLabelPanel(String msg) {
-        JPanel panel = new JPanel();
-        Font font = new Font("Verdana", Font.BOLD, 12);
-        panel.setFont(font);
-        panel.setOpaque(true);
-        // panel.setBackground(Color.BLUE);
-        JLabel label = new JLabel(msg, JLabel.LEFT);
-        label.setForeground(Color.RED);
-        label.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        panel.add(label);
-
-        return panel;
-    }
+    return panel;
+}
 
     private void m_jChkPrintBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jChkPrintBillActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_m_jChkPrintBillActionPerformed
 
     private void m_jCboRolesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_m_jCboRolesItemStateChanged
-        if (m_jCboRoles.getSelectedIndex() != -1) {
-            roleId = rolesList.get(m_jCboRoles.getSelectedIndex()).getID();
-            readXml();
-            setPrArea();
-
-            try {
-                populateUserList();
-            } catch (BasicException ex) {
-                Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            setStation();
-            System.out.println(classValue.size());
-            if (classValue.size() == 0) {
-                System.out.println("enetr size--" + classValue.size());
-                setCheckBoxValues();
-            } else {
-                for (int i = 0; i < classValue.size(); i++) {
-                    String checkBoxName = classValue.get(i).toString();
-                    if (checkBoxName.equals("Billing")) {
-                        m_jChkBilling.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Reprint")) {
-                        m_jChkReprint.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Itemmaster")) {
-                        m_jChkItemMaster.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Item")) {
-                        m_jChkItem.setSelected(true);
-                    }
-                    if (checkBoxName.equals("ItemCategories")) {
-                        m_jChkItemCategories.setSelected(true);
-                    }
-                    if (checkBoxName.equals("CustomerMenu")) {
-                        m_jChkCustomerMenu.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Customers")) {
-                        m_jChkCustomers.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Taxation")) {
-                        m_jChkTaxation.setSelected(true);
-                    }
-                    if (checkBoxName.equals("TaxCategories")) {
-                        m_jChkTaxCategories.setSelected(true);
-                    }
-                    if (checkBoxName.equals("CusTax")) {
-                        m_jChkCusTax.setSelected(true);
-                    }
-                    if (checkBoxName.equals("TaxRate")) {
-                        m_jChkTaxRate.setSelected(true);
-                    }
-                    if (checkBoxName.equals("DiscountMenu")) {
-                        m_jChkDiscountMenu.setSelected(true);
-                    }
-                    if (checkBoxName.equals("AddDiscount")) {
-                        m_jChkAddDiscounts.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PosActions")) {
-                        m_jChkPosActions.setSelected(true);
-                    }
-                    if (checkBoxName.equals("WarehouseMasters")) {
-                        m_jChkWarehouseMasters.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Locations")) {
-                        m_jChkWarehouse1.setSelected(true);
-                    }
-                    if (checkBoxName.equals("StockManagement")) {
-                        m_jChkStockMain.setSelected(true);
-                    }
-                    if (checkBoxName.equals("MenuCashManagement")) {
-                        m_jChkCashManagement.setSelected(true);
-                    }
-                    if (checkBoxName.equals("FloatCash")) {
-                        m_jChkFloatCash.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PettyCash")) {
-                        m_jChkPettyCash.setSelected(true);
-                    }
-                    if (checkBoxName.equals("UsersRoles")) {
-                        m_jChkIUserManagement.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Users")) {
-                        m_jChkuser.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Roles")) {
-                        m_jChkRoles.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Resources")) {
-                        m_jChkResources.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Floors")) {
-                        m_jChkFloors.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Places")) {
-                        m_jChkTables.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PosActions")) {
-                        m_jChkBusinessType.setSelected(true);
-                    }
-                    if (checkBoxName.equals("ServiceCharge")) {
-                        m_jChkServiceCharge.setSelected(true);
-                    }
-                    if (checkBoxName.equals("BusinessType")) {
-                        m_jChkBusinessType.setSelected(true);
-                    }
-                    if (checkBoxName.equals("ChargesMaster")) {
-                        m_jChkPrinterConfig.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PurchaseCharges")) {
-                        m_jChkPurDiscountMaster.setSelected(true);
-                    }
-                    if (checkBoxName.equals("TaxMapping")) {
-                        m_jChkTaxMapping.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PrinterConfig")) {
-                        m_jChkPrinterConfig.setSelected(true);
-                    }
-                    if (checkBoxName.equals("CloseDay")) {
-                        m_jChkPettyExpenses.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PettyExpenses")) {
-                        m_jChkPettyExpenses.setSelected(true);
-                    }
-                    if (checkBoxName.equals("SalesReports")) {
-                        m_jChkSalesReports.setSelected(true);
-                    }
-                    if (checkBoxName.equals("SalesItemWise")) {
-                        m_jSalesItemWise.setSelected(true);
-                    }
-                    if (checkBoxName.equals("KotAnalysis")) {
-                        m_jChkKotAnalysis.setSelected(true);
-                    }
-                    if (checkBoxName.equals("DiscountRegister")) {
-                        m_jChkDiscountRegister.setSelected(true);
-                    }
-                    if (checkBoxName.equals("KotCancel")) {
-                        m_jChkKotCancel.setSelected(true);
-                    }
-                    if (checkBoxName.equals("CancelledBills")) {
-                        m_jChkCancelledBills.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Salesbillwise")) {
-                        m_jChkSalesBillWise.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Settlement")) {
-                        m_jChkSettlement.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Sectionwise")) {
-                        m_jChkSectionWise.setSelected(true);
-                    }
-                    if (checkBoxName.equals("TaxSummary")) {
-                        m_jChkTaxSummary.setSelected(true);
-                    }
-                    if (checkBoxName.equals("CashReports")) {
-                        m_jChkCashReports.setSelected(true);
-                    }
-                    if (checkBoxName.equals("PettyReport")) {
-                        m_jChkPettyExpenseReports.setSelected(true);
-                    }
-                    if (checkBoxName.equals("DailyCollection")) {
-                        m_jChkDailyCollection.setSelected(true);
-                    }
-                    if (checkBoxName.equals("Configuration")) {
-                        m_jChkConfiguration.setSelected(true);
-                    }
-                    if (checkBoxName.equals("ChargesMaster")) {
-                        m_jChkChargesMaster.setSelected(true);
-                    }
-                    if (checkBoxName.equals("CloseDay")) {
-                        m_jChkCloseDay.setSelected(true);
-                    }
-                    if (checkBoxName.equals("BillPreview")) {
-                        m_jchkBillPreview.setSelected(true);
-                    }
-                    if (checkBoxName.equals("NCReport")) {
-                        m_jChkNcReports.setSelected(true);
-                    }
-                    if (checkBoxName.equals("UnlockTable")) {
-                        m_jChkUnlock.setSelected(true);
-                    }
-                    if (checkBoxName.equals("KodStatusMaster")) {
-                        m_jChkKodStatus.setSelected(true);
-                    }
-                    if (checkBoxName.equals("BillOnHold")) {
-                        m_jChkBillOnHold.setSelected(true);
-                    }
-                    if (checkBoxName.equals("TakeAway")) {
-                        m_jChkTakeAway.setSelected(true);
-                    }
-                    if (checkBoxName.equals("MoveTableReport")) {
-                        m_jChkMoveTableReport.setSelected(true);
-                    }
-                    if (checkBoxName.equals("SalesSummaryReport")) {
-                        m_jChkSalesSummary.setSelected(true);
-                    }
+      if(m_jCboRoles.getSelectedIndex()!=-1){
+         roleId = rolesList.get(m_jCboRoles.getSelectedIndex()).getID();
+         readXml();
+         setPrArea();
+         System.out.println(classValue.size());
+         if(classValue.size()==0){
+             System.out.println("enetr size--"+classValue.size());
+            setCheckBoxValues();
+         }else{
+            for (int i = 0; i < classValue.size(); i++) {
+                String checkBoxName = classValue.get(i).toString();
+               if(checkBoxName.equals("Billing")){
+                   m_jChkBilling.setSelected(true);
+               }
+               if(checkBoxName.equals("Reprint")){
+                   m_jChkReprint.setSelected(true);
+               }
+               if(checkBoxName.equals("Itemmaster")){
+                   m_jChkItemMaster.setSelected(true);
+               }
+                 if(checkBoxName.equals("Item")){
+                   m_jChkItem.setSelected(true);
+               }
+                 if(checkBoxName.equals("ItemCategories")){
+                   m_jChkItemCategories.setSelected(true);
+               }
+                 if(checkBoxName.equals("CustomerMenu")){
+                   m_jChkCustomerMenu.setSelected(true);
+               }
+                 if(checkBoxName.equals("Customers")){
+                   m_jChkCustomers.setSelected(true);
+               }
+                 if(checkBoxName.equals("Taxation")){
+                   m_jChkTaxation.setSelected(true);
+               }
+                 if(checkBoxName.equals("TaxCategories")){
+                   m_jChkTaxCategories.setSelected(true);
+               }
+                 if(checkBoxName.equals("CusTax")){
+                   m_jChkCusTax.setSelected(true);
+               }
+                 if(checkBoxName.equals("TaxRate")){
+                   m_jChkTaxRate.setSelected(true);
+               }
+                 if(checkBoxName.equals("DiscountMenu")){
+                   m_jChkDiscountMenu.setSelected(true);
+               }
+                 if(checkBoxName.equals("AddDiscount")){
+                   m_jChkAddDiscounts.setSelected(true);
+               }
+                if(checkBoxName.equals("PosActions")){
+                    m_jChkPosActions.setSelected(true);
+                }
+                 if(checkBoxName.equals("WarehouseMasters")){
+                   m_jChkWarehouseMasters.setSelected(true);
+               }
+                 if(checkBoxName.equals("Locations")){
+                   m_jChkWarehouse1.setSelected(true);
+               }
+                 if(checkBoxName.equals("StockManagement")){
+                   m_jChkStockMain.setSelected(true);
+               }
+                if(checkBoxName.equals("MenuCashManagement")){
+                   m_jChkCashManagement.setSelected(true);
+               }
+                 if(checkBoxName.equals("FloatCash")){
+                   m_jChkFloatCash.setSelected(true);
+               }
+                 if(checkBoxName.equals("PettyCash")){
+                   m_jChkPettyCash.setSelected(true);
+               }
+                 if(checkBoxName.equals("UsersRoles")){
+                   m_jChkIUserManagement.setSelected(true);
+               }
+                 if(checkBoxName.equals("Users")){
+                   m_jChkuser.setSelected(true);
+               }
+                 if(checkBoxName.equals("Roles")){
+                   m_jChkRoles.setSelected(true);
+               }
+                 if(checkBoxName.equals("Resources")){
+                   m_jChkResources.setSelected(true);
+               }
+                 if(checkBoxName.equals("Floors")){
+                   m_jChkFloors.setSelected(true);
+               }
+                 if(checkBoxName.equals("Places")){
+                   m_jChkTables.setSelected(true);
+               }
+                 if(checkBoxName.equals("PosActions")){
+                   m_jChkBusinessType.setSelected(true);
+               }
+                 if(checkBoxName.equals("ServiceCharge")){
+                   m_jChkServiceCharge.setSelected(true);
+               }
+                if(checkBoxName.equals("BusinessType")){
+                   m_jChkBusinessType.setSelected(true);
+               }
+                if(checkBoxName.equals("ChargesMaster")){
+                   m_jChkPrinterConfig.setSelected(true);
+               }
+                 if(checkBoxName.equals("PurchaseCharges")){
+                   m_jChkPurDiscountMaster.setSelected(true);
+               }
+                if(checkBoxName.equals("TaxMapping")){
+                   m_jChkTaxMapping.setSelected(true);
+               }
+                if(checkBoxName.equals("PrinterConfig")){
+                   m_jChkPrinterConfig.setSelected(true);
+               }
+                if(checkBoxName.equals("CloseDay")){
+                    m_jChkPettyExpenses.setSelected(true);
+                }
+                if(checkBoxName.equals("PettyExpenses")){
+                    m_jChkPettyExpenses.setSelected(true);
+                }
+                if(checkBoxName.equals("SalesReports")){
+                    m_jChkSalesReports.setSelected(true);
+                }
+                if(checkBoxName.equals("SalesItemWise")){
+                    m_jSalesItemWise.setSelected(true);
+                }
+                 if(checkBoxName.equals("KotAnalysis")){
+                    m_jChkKotAnalysis.setSelected(true);
+                }
+                if(checkBoxName.equals("DiscountRegister")){
+                    m_jChkDiscountRegister.setSelected(true);
+                }
+                if(checkBoxName.equals("KotCancel")){
+                    m_jChkKotCancel.setSelected(true);
+                }
+                if(checkBoxName.equals("CancelledBills")){
+                    m_jChkCancelledBills.setSelected(true);
+                }
+                 if(checkBoxName.equals("Salesbillwise")){
+                    m_jChkSalesBillWise.setSelected(true);
+                }
+                if(checkBoxName.equals("Settlement")){
+                    m_jChkSettlement.setSelected(true);
+                }
+                if(checkBoxName.equals("Sectionwise")){
+                    m_jChkSectionWise.setSelected(true);
+                }
+                 if(checkBoxName.equals("TaxSummary")){
+                    m_jChkTaxSummary.setSelected(true);
+                }
+                if(checkBoxName.equals("CashReports")){
+                    m_jChkCashReports.setSelected(true);
+                }
+                if(checkBoxName.equals("PettyReport")){
+                    m_jChkPettyExpenseReports.setSelected(true);
+                }
+                if(checkBoxName.equals("DailyCollection")){
+                    m_jChkDailyCollection.setSelected(true);
+                }
+                if(checkBoxName.equals("Configuration")){
+                    m_jChkConfiguration.setSelected(true);
+                }
+                if(checkBoxName.equals("ChargesMaster")){
+                    m_jChkChargesMaster.setSelected(true);
+                }
+                if(checkBoxName.equals("CloseDay")){
+                    m_jChkCloseDay.setSelected(true);
+                }
+                if(checkBoxName.equals("BillPreview")){
+                    m_jchkBillPreview.setSelected(true);
+                }
+                if(checkBoxName.equals("NCReport")){
+                    m_jChkNcReports.setSelected(true);
+                }
+                if(checkBoxName.equals("UnlockTable")){
+                    m_jChkUnlock.setSelected(true);
+                }
+                 if(checkBoxName.equals("KodStatusMaster")){
+                    m_jChkKodStatus.setSelected(true);
+                }
+                if(checkBoxName.equals("BillOnHold")){
+                    m_jChkBillOnHold.setSelected(true);
+                }
+                if(checkBoxName.equals("TakeAway")){
+                    m_jChkTakeAway.setSelected(true);
+                }
+                if(checkBoxName.equals("MoveTableReport")){
+                    m_jChkMoveTableReport.setSelected(true);
+                }
+                if(checkBoxName.equals("SalesSummaryReport")){
+                    m_jChkSalesSummary.setSelected(true);
                 }
             }
-            try {
-                posActions = (List<PosActionsInfo>) m_dlSales.getPosActions(roleId);
-            } catch (BasicException ex) {
-                Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (posActions.size() != 0) {
-                if (posActions.get(0).getPrintAccess().equals("Y")) {
-                    m_jChkPrintBill.setSelected(true);
-                } else {
-                    m_jChkPrintBill.setSelected(false);
-                }
-                if (posActions.get(0).getSettleAccess().equals("Y")) {
-                    m_jChkSettleBill.setSelected(true);
-                } else {
-                    m_jChkSettleBill.setSelected(false);
-                }
-                if (posActions.get(0).getCancelAccess().equals("Y")) {
-                    m_jChkCancel.setSelected(true);
-                } else {
-                    m_jChkCancel.setSelected(false);
-                }
-                if (posActions.get(0).getDiscountAccess().equals("Y")) {
-                    m_jChkIBillDiscount.setSelected(true);
-                } else {
-                    m_jChkIBillDiscount.setSelected(false);
-                }
-                if (posActions.get(0).getSplitAccess().equals("Y")) {
-                    m_jChkSplitBill.setSelected(true);
-                } else {
-                    m_jChkSplitBill.setSelected(false);
-                }
-                if (posActions.get(0).getMoveTableAccess().equals("Y")) {
-                    m_jChkMoveTable.setSelected(true);
-                } else {
-                    m_jChkMoveTable.setSelected(false);
-                }
-                if (posActions.get(0).getBillOnHoldAccess().equals("Y")) {
-                    m_jBtnBillOnHold.setSelected(true);
-                } else {
-                    m_jBtnBillOnHold.setSelected(false);
-                }
-
-            }
-
-            //   if(int i=0;
-            //  String permissions = m_dlSystem.findRolePermissions(rolesList.get(m_jCboRoles.getSelectedIndex()).getID());
-            // System.out.println("permissions---"+permissions);// TODO add your handling code here:
-            // TODO add your handling code here:
+          try {
+            posActions = (List<PosActionsInfo>) m_dlSales.getPosActions(roleId);
+        } catch (BasicException ex) {
+            Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
+         if(posActions.size()!=0){
+         if(posActions.get(0).getPrintAccess().equals("Y")){
+             m_jChkPrintBill.setSelected(true);
+         }else{
+             m_jChkPrintBill.setSelected(false);
+         }
+          if(posActions.get(0).getSettleAccess().equals("Y")){
+             m_jChkSettleBill.setSelected(true);
+         }else{
+             m_jChkSettleBill.setSelected(false);
+         }
+          if(posActions.get(0).getCancelAccess().equals("Y")){
+             m_jChkCancel.setSelected(true);
+         }else{
+             m_jChkCancel.setSelected(false);
+         }
+          if(posActions.get(0).getDiscountAccess().equals("Y")){
+             m_jChkIBillDiscount.setSelected(true);
+         }else{
+             m_jChkIBillDiscount.setSelected(false);
+         }
+          if(posActions.get(0).getSplitAccess().equals("Y")){
+             m_jChkSplitBill.setSelected(true);
+         }else{
+             m_jChkSplitBill.setSelected(false);
+         }
+          if(posActions.get(0).getMoveTableAccess().equals("Y")){
+             m_jChkMoveTable.setSelected(true);
+         }else{
+             m_jChkMoveTable.setSelected(false);
+         }
+         if(posActions.get(0).getBillOnHoldAccess().equals("Y")){
+             m_jBtnBillOnHold.setSelected(true);
+         }else{
+             m_jBtnBillOnHold.setSelected(false);
+         }
+
+         }
+        
+      //   if(int i=0;
+      //  String permissions = m_dlSystem.findRolePermissions(rolesList.get(m_jCboRoles.getSelectedIndex()).getID());
+       // System.out.println("permissions---"+permissions);// TODO add your handling code here:
+        // TODO add your handling code here:
+    }    
     }//GEN-LAST:event_m_jCboRolesItemStateChanged
-
-    private void jComboStPrAreaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboStPrAreaActionPerformed
-        //        System.out.println("populatePrArea"+populatePrArea);
-        //        if(!populatePrArea){
-        //             setStation();
-        //         }
-    }//GEN-LAST:event_jComboStPrAreaActionPerformed
-    public void setCheckBoxValues() {
-        m_jChkBilling.setSelected(false);
-        m_jChkReprint.setSelected(false);
-        m_jChkItemMaster.setSelected(false);
-        m_jChkItem.setSelected(false);
-        m_jChkItemCategories.setSelected(false);
-        m_jChkCustomerMenu.setSelected(false);
-        m_jChkCustomers.setSelected(false);
-        m_jChkTaxation.setSelected(false);
-        m_jChkTaxCategories.setSelected(false);
-        m_jChkCusTax.setSelected(false);
-        m_jChkTaxRate.setSelected(false);
-        m_jChkDiscountMenu.setSelected(false);
-        m_jChkAddDiscounts.setSelected(false);
-        m_jChkWarehouseMasters.setSelected(false);
-        m_jChkWarehouse1.setSelected(false);
-        m_jChkStockMain.setSelected(false);
-        m_jChkPettyExpenses.setSelected(false);
-        m_jChkFloatCash.setSelected(false);
-        m_jChkPettyCash.setSelected(false);
-        m_jChkIUserManagement.setSelected(false);
-        m_jChkuser.setSelected(false);
-        m_jChkRoles.setSelected(false);
-        m_jChkResources.setSelected(false);
-        m_jChkFloors.setSelected(false);
-        m_jChkTables.setSelected(false);
-        m_jChkBusinessType.setSelected(false);
-        m_jChkServiceCharge.setSelected(false);
-        m_jChkMoveTable.setSelected(false);
-        m_jChkCashManagement.setSelected(false);
-        m_jChkPosActions.setSelected(false);
-        m_jChkSplitBill.setSelected(false);
-        m_jChkIBillDiscount.setSelected(false);
-        m_jChkCancel.setSelected(false);
-        m_jChkSettleBill.setSelected(false);
-        m_jChkPrintBill.setSelected(false);
-        m_jChkBusinessType.setSelected(false);
-        m_jChkTaxMapping.setSelected(false);
-        m_jChkPrinterConfig.setSelected(false);
-        m_jChkChargesMaster.setSelected(false);
-        m_jChkPurDiscountMaster.setSelected(false);
-        m_jChkPettyExpenses.setSelected(false);
-        m_jChkPettyExpenses.setSelected(false);
-        m_jChkSalesReports.setSelected(false);
-        m_jSalesItemWise.setSelected(false);
-        m_jChkKotAnalysis.setSelected(false);
-        m_jChkDiscountRegister.setSelected(false);
-        m_jChkKotCancel.setSelected(false);
-        m_jChkCancelledBills.setSelected(false);
-        m_jChkSalesBillWise.setSelected(false);
-        m_jChkSettlement.setSelected(false);
-        m_jChkSectionWise.setSelected(false);
-        m_jChkTaxSummary.setSelected(false);
-        m_jChkCashReports.setSelected(false);
-        m_jChkPettyExpenseReports.setSelected(false);
-        m_jChkDailyCollection.setSelected(false);
-        m_jChkConfiguration.setSelected(false);
-        m_jChkCloseDay.setSelected(false);
-        m_jchkBillPreview.setSelected(false);
-        m_jChkNcReports.setSelected(false);
-        m_jChkUnlock.setSelected(false);
-        m_jChkKodStatus.setSelected(false);
-        m_jChkBillOnHold.setSelected(false);
-        m_jBtnBillOnHold.setSelected(false);
-        m_jChkTakeAway.setSelected(false);
-        m_jChkMoveTableReport.setSelected(false);
-        m_jChkSalesSummary.setSelected(false);
-        classValue.clear();
-        chkClassName.clear();
-        //   prAreaIdlist.clear();
-    }
-
-    //  }
-    private boolean checkDiscountNameAvl(String percentage) throws BasicException {
+    public void setCheckBoxValues(){
+           m_jChkBilling.setSelected(false);
+           m_jChkReprint.setSelected(false);
+           m_jChkItemMaster.setSelected(false);
+           m_jChkItem.setSelected(false);
+           m_jChkItemCategories.setSelected(false);
+           m_jChkCustomerMenu.setSelected(false);
+           m_jChkCustomers.setSelected(false);
+           m_jChkTaxation.setSelected(false);
+           m_jChkTaxCategories.setSelected(false);
+           m_jChkCusTax.setSelected(false);
+           m_jChkTaxRate.setSelected(false);
+           m_jChkDiscountMenu.setSelected(false);
+           m_jChkAddDiscounts.setSelected(false);
+           m_jChkWarehouseMasters.setSelected(false);
+           m_jChkWarehouse1.setSelected(false);
+           m_jChkStockMain.setSelected(false);
+           m_jChkPettyExpenses.setSelected(false);
+           m_jChkFloatCash.setSelected(false);
+           m_jChkPettyCash.setSelected(false);
+           m_jChkIUserManagement.setSelected(false);
+           m_jChkuser.setSelected(false);
+           m_jChkRoles.setSelected(false);
+           m_jChkResources.setSelected(false);
+           m_jChkFloors.setSelected(false);
+           m_jChkTables.setSelected(false);
+           m_jChkBusinessType.setSelected(false);
+           m_jChkServiceCharge.setSelected(false);
+           m_jChkMoveTable.setSelected(false);
+           m_jChkCashManagement.setSelected(false);
+           m_jChkPosActions.setSelected(false);
+           m_jChkSplitBill.setSelected(false);
+           m_jChkIBillDiscount.setSelected(false);
+           m_jChkCancel.setSelected(false);
+           m_jChkSettleBill.setSelected(false);
+           m_jChkPrintBill.setSelected(false);
+            m_jChkBusinessType.setSelected(false);
+            m_jChkTaxMapping.setSelected(false);
+            m_jChkPrinterConfig.setSelected(false);
+            m_jChkChargesMaster.setSelected(false);
+            m_jChkPurDiscountMaster.setSelected(false);
+            m_jChkPettyExpenses.setSelected(false);
+            m_jChkPettyExpenses.setSelected(false);
+            m_jChkSalesReports.setSelected(false);
+            m_jSalesItemWise.setSelected(false);
+            m_jChkKotAnalysis.setSelected(false);
+            m_jChkDiscountRegister.setSelected(false);
+            m_jChkKotCancel.setSelected(false);
+            m_jChkCancelledBills.setSelected(false);
+            m_jChkSalesBillWise.setSelected(false);
+            m_jChkSettlement.setSelected(false);
+            m_jChkSectionWise.setSelected(false);
+            m_jChkTaxSummary.setSelected(false);
+            m_jChkCashReports.setSelected(false);
+            m_jChkPettyExpenseReports.setSelected(false);
+            m_jChkDailyCollection.setSelected(false);
+            m_jChkConfiguration.setSelected(false);
+            m_jChkCloseDay.setSelected(false);
+            m_jchkBillPreview.setSelected(false);
+            m_jChkNcReports.setSelected(false);
+            m_jChkUnlock.setSelected(false);
+            m_jChkKodStatus.setSelected(false);
+            m_jChkBillOnHold.setSelected(false);
+            m_jBtnBillOnHold.setSelected(false);
+            m_jChkTakeAway.setSelected(false);
+            m_jChkMoveTableReport.setSelected(false);
+              m_jChkSalesSummary.setSelected(false);
+            classValue.clear();
+            chkClassName.clear();
+         //   prAreaIdlist.clear();
+}
+    
+    
+  //  }
+    
+   private boolean checkDiscountNameAvl(String percentage) throws BasicException {
         String name = dlCustomers.getDiscountName(percentage);
         if ("NONAME".equalsIgnoreCase(name)) {
             return false;
         } else {
             return true;
         }
-    }
-
-    private void setStation() {
-        try {
-            System.out.println(" Setstation");
-            jPanelStation.removeAll();
-            //Adding logic to fetch production areas based on roles
-            totalStationList = m_dlSales.getStationList();
-            //Get Production Area role access details
-            stationMapList = m_dlSales.getStationMapList(roleId);
-            System.out.println("setStation" + stationMapList.size());
-            //Add all the present Production Area role access ids tp arraylist
-            if (stationMapList != null) {
-                stationIdlist = new ArrayList();
-                for (StationMapInfo pr : stationMapList) {
-                    System.out.println("test 1");
-                    stationIdlist.add(pr.getStation());
-                }
-            }
-            int stationCheckBox = totalStationList.size();
-            // checkBoxList = new JCheckBox[stationCheckBox];
-            // int dimension=40;
-            //Dynamically adding checkboxes based on number of production Areas (By Shilpa)
-            for (int i = 0; i < stationCheckBox; i++) {
-                final javax.swing.JCheckBox m_jChkStationName = new javax.swing.JCheckBox();
-                m_jChkStationName.setLabel(totalStationList.get(i).getName());
-                //assigning each checkbox a unique Id(Role Id)
-                m_jChkStationName.setActionCommand(totalStationList.get(i).getId());
-                m_jChkStationName.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // System.out.println("m_jUserList.getSelectedIndices().length"+m_jUserList.getSelectedIndices().length);
-                        if (m_jUserList.getSelectedIndices().length <= 0) {
-                            m_jChkStationName.setSelected(false);
-                        }
-                    }
-                });
-                jPanelStation.add(m_jChkStationName);//, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, dimension, -1, -1));
-
-            }
-        } catch (BasicException ex) {
-            Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-    }
-
-    private void saveStation() {
-        selectedList = new ArrayList();
-        java.util.List userSelectedList = new ArrayList();
-        for (Component component : jPanelStation.getComponents()) {
-            if (component instanceof JCheckBox) {
-                if (((JCheckBox) component).isSelected()) {
-                    javax.swing.JCheckBox m_jChkStationName = (JCheckBox) component;
-                    selectedList.add(m_jChkStationName.getActionCommand());
-                }
-            }
-        }
-        int userIndex[] = m_jUserList.getSelectedIndices();
-        for (int i = 0; i < m_jUserList.getSelectedIndices().length; i++) {
-            userSelectedList.add(userList.get(userIndex[i]).getId());
-
-        }
-
-        try {
-            m_dlSales.updateStationUserMap(roleId, roleId, selectedList, userSelectedList);
-        } catch (BasicException ex) {
-            Logger.getLogger(JPosActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        for (Component component : jPanelStation.getComponents()) {
-            if (component instanceof JCheckBox) {
-                javax.swing.JCheckBox m_jChkStationName = (JCheckBox) component;
-                m_jChkStationName.setSelected(false);
-            }
-        }
-        userModel.removeAllElements();
-    }
-
-    public void populateUserList() throws BasicException {
-
-        userModel = new DefaultListModel();
-        m_jUserList.setModel(userModel);
-        m_jUserList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        userList = m_dlSales.getUserList(roleId);
-        //  String[] dListId = null;
-
-        for (int i = 0; i < userList.size(); i++) {
-            String listid = userList.get(i).getName();
-            userModel.add(i, listid);
-        }
-
-
-        m_jUserList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                m_jUserListValueChanged(evt);
-            }
-        });
-    }
-
-    private void m_jUserListValueChanged(ListSelectionEvent evt) {
-        if (evt.getValueIsAdjusting()) {
-            resetStations();
-            int userIndex = m_jUserList.getSelectedIndex();
-            String user = userList.get(userIndex).getId();
-            if (stationMapList != null && userList != null) {
-
-                for (int i = 0; i < stationMapList.size(); i++) {
-
-                    if (user.equals(stationMapList.get(i).getUserId())) {
-
-                        for (Component component : jPanelStation.getComponents()) {
-
-                            if (((JCheckBox) component).getActionCommand().equals(stationMapList.get(i).getStation())) {
-
-                                ((JCheckBox) component).setSelected(true);
-                            }
-
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-    public void resetStations() {
-        for (Component component : jPanelStation.getComponents()) {
-            ((JCheckBox) component).setSelected(false);
-        }
-    }
+    } 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboStPrArea;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabelUsers;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanelPArea;
     private javax.swing.JPanel jPanelPrArea;
-    private javax.swing.JPanel jPanelStation;
-    private javax.swing.JPanel jPanelStations;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JButton jbtnSave;
     private javax.swing.JCheckBox m_jBtnBillOnHold;
@@ -1869,7 +1667,8 @@ public class JPosActionsPanel extends JPanel implements JPanelView, BeanFactoryA
     private javax.swing.JCheckBox m_jChkWarehouseMasters;
     private javax.swing.JCheckBox m_jChkuser;
     private javax.swing.JCheckBox m_jSalesItemWise;
-    private javax.swing.JList m_jUserList;
     private javax.swing.JCheckBox m_jchkBillPreview;
     // End of variables declaration//GEN-END:variables
+    
+    
 }
