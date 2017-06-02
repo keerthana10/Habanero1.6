@@ -919,6 +919,8 @@ public class JRetailTicketsBagRestaurantMap extends JRetailTicketsBag {
     //Method is called on click on table action method
 
     private void setActivePlace(Place place, RetailTicketInfo ticket) {
+        
+        System.out.println("Check  entry for move/Move After split");
 
         this.retailTicket = ticket;
         m_PlaceCurrent = place;
@@ -937,8 +939,12 @@ public class JRetailTicketsBagRestaurantMap extends JRetailTicketsBag {
                 m_panelticket.setRetailActiveTicket(ticket, m_PlaceCurrent.getName());
                 ticket.setPlaceid(getNewTableId());
                 setTable(getNewTableName());
+                
+                //Get New Place Id and Order Number - New KDS
                 movetableId = ticket.getPlaceId();
-                System.out.println("MOveTable- Hab" + movetableId);
+                int ordernum =ticket.getOrderId();
+                System.out.println("MOveTable- Hab" + movetableId + "OrdeNum"+ticket.getOrderId());
+                
                 //Saving the details of move table action into the actionlog table
                 dlSales.insertActionsLog("Move Table", ticket.getUser().getId(), m_App.getProperties().getPosNo(), ticket.getTicketId(), new Date(), getOldTableId(), getNewTableId(), null);
                 m_restaurantmap.setTableName(getNewTableId(), ticket.getSplitSharedId());
@@ -949,14 +955,28 @@ public class JRetailTicketsBagRestaurantMap extends JRetailTicketsBag {
                     } catch (BasicException ex) {
                         Logger.getLogger(JRetailTicketsBagRestaurantMap.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    
+                   //Added for New KDS 
+                    
+                    
+                      try {
+                        oldtableId = getOldTableId();
+                       
+                        dlReceipts.updateServedTransactionMoveAsModify(ticket, movetableId, oldtableId, "MODIFY",ordernum);
+                        
+                    } catch (BasicException e) {
+                        logger.info("actionPerformed in map class exception 10 " + e.getMessage());
+                        new MessageInf(e).show(JRetailTicketsBagRestaurantMap.this); // Glup. But It was empty.
+                    }
                     movedSplitTable = false;
                 } else {
+                   
                     dlReceipts.updateTableName(getOldTableId(), getNewTableId(), ticket.getSplitSharedId());
+                    //Added For New KDS
                     try {
-                        oldtableId = getOldTableId();
-                        System.out.println("OldTable- Hab" + oldtableId);
-                        dlReceipts.updateServedTransactionMoveAsModify(ticket, movetableId, oldtableId, "MODIFY");
-                        //dlReceipts.updateServedTransactionMoveAsModify(oldTableID, "MODIFY");
+                       
+                        dlReceipts.updateServedTransactionMoveAsModify(ticket, movetableId, oldtableId, "MODIFY",ordernum);
+                        
                     } catch (BasicException e) {
                         logger.info("actionPerformed in map class exception 10 " + e.getMessage());
                         new MessageInf(e).show(JRetailTicketsBagRestaurantMap.this); // Glup. But It was empty.
@@ -1308,16 +1328,8 @@ public class JRetailTicketsBagRestaurantMap extends JRetailTicketsBag {
                             m_PlaceClipboard = null;
                             customer = null;
                             printState();
-
-                            // movetableId = ticketclip.getPlaceId();
-                            // System.out.println("Hab-Movtabid"+movetableId);
-//                            try {
-//                                dlReceipts.updateServedTransactionMoveAsModify(ticketclip, movetableId, oldtableId, "MODIFY");
-//                                //dlReceipts.updateServedTransactionMoveAsModify(oldTableID, "MODIFY");
-//                            } catch (BasicException e) {
-//                                logger.info("actionPerformed in map class exception 10 " + e.getMessage());
-//                                new MessageInf(e).show(JRetailTicketsBagRestaurantMap.this); // Glup. But It was empty.
-//                            }
+                            
+                         
 
                             // No hace falta preguntar si estaba bloqueado porque ya lo estaba antes
                             // activamos el ticket seleccionado

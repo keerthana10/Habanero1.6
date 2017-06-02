@@ -2717,7 +2717,10 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
         System.out.println("charge value in addticket" + oProduct.getServiceChargeID() + m_oTicket.getCustomer());
         TaxInfo sertax = staxeslogic.getTaxInfo(oProduct.getServiceTaxID(), m_oTicket.getCustomer());
         TaxInfo sbTax = sbtaxeslogic.getTaxInfo(oProduct.getSwachBharatTaxId(), m_oTicket.getCustomer());
-        addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 0, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, 0, null, false));
+        System.out.println("Station Name from addTicketLine"+oProduct.getStation());
+       // addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 0, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, 0, null, false));
+        addTicketLine(new RetailTicketLineInfo(oProduct, dMul, dPrice, promoRuleIdList, dlSales, m_oTicket, m_ticketlines, this, tax, 0, oProduct.getName(), oProduct.getProductType(), oProduct.getProductionAreaType(), (java.util.Properties) (oProduct.getProperties().clone()), addonId, 0, null, 0, null, null, null, charge, sertax, oProduct.getParentCatId(), oProduct.getPreparationTime(), null, sbTax, 0, null, false,oProduct.getStation()));
+        
         // System.out.println("status values"+m_oTicket.getLine(0).getKdsPrepareStatus());
         addonId = null;
     }
@@ -2735,14 +2738,14 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
                     i++;
                 }
 
-                // me salto todos los productos auxiliares...
+                //I jump all the auxiliary products ...
                 while (i >= 0 && i < m_oTicket.getLinesCount() && m_oTicket.getLine(i).isProductCom()) {
                     i++;
                 }
 
                 if (i >= 0) {
                     m_oTicket.insertLine(i, oLine);
-                    m_ticketlines.insertTicketLine(i, oLine); // Pintamos la linea en la vista...                 
+                    m_ticketlines.insertTicketLine(i, oLine); // We paint the line in the view ...           
                 } else {
                     Toolkit.getDefaultToolkit().beep();
                 }
@@ -2750,7 +2753,9 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
                 // Producto normal, entonces al finalnewline.getMultiply() 
 
                 m_oTicket.addLine(oLine);
-                m_ticketlines.addTicketLine(oLine); // Pintamos la linea en la vista...
+                m_ticketlines.addTicketLine(oLine); // We painted the line in sight ...
+
+
 
             }
             // m_oTicket.setRate("0");
@@ -2776,11 +2781,11 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
         if (executeEventAndRefresh("ticket.removeline", new ScriptArg("index", i)) == null) {
 
             if (m_oTicket.getLine(i).isProductCom()) {
-                // Es un producto auxiliar, lo borro y santas pascuas.
+                // It is an auxiliary product, I delete it and holy pascuas.
                 m_oTicket.removeLine(i);
                 m_ticketlines.removeTicketLine(i);
             } else {
-                // Es un producto normal, lo borro.
+                // It is a normal product, I delete it.
                 if (m_oTicket.getLine(i).getPromoType().equals("BuyGet") && m_oTicket.getLine(i).getIsCrossProduct().equals("Y") && m_oTicket.getLine(i).getPrice() != 0) {
                     String crossProduct = null;
                     if (m_oTicket.getLine(i).getPromoRule().get(0).getIsSku().equals("Y")) {
@@ -2807,16 +2812,16 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
                     m_ticketlines.removeTicketLine(i);
                 }
 
-                // Y todos lo auxiliaries que hubiera debajo.
+                // And all the auxiliaries underneath.
                 while (i < m_oTicket.getLinesCount() && m_oTicket.getLine(i).isProductCom()) {
                     m_oTicket.removeLine(i);
                     m_ticketlines.removeTicketLine(i);
                 }
             }
 
-            visorTicketLine(null); // borro el visor 
-            printPartialTotals(); // pinto los totales parciales...                           
-            stateToZero(); // Pongo a cero    
+            visorTicketLine(null); // I remove the viewfinder
+            printPartialTotals(); // I paint partial totals ...                 
+            stateToZero(); // I set to zero    
 
             // event receipt
             executeEventAndRefresh("ticket.change");
@@ -6201,6 +6206,15 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
                         newline.setMultiply(newline.getMultiply() - 1.0);
                         dlReceipts.updateServedTransactionMinus(m_oTicket, newline.getTbl_orderId(), newline.getMultiply());
 
+                        if (m_oTicket.getLine(i).getPrimaryAddon() == 0 && m_oTicket.getLine(i).getAddonId() != null) {
+                            dlReceipts.updateServedTransactionMinusAddOnModify(m_oTicket, newline.getAddonId(), newline.getMultiply(), newline.getTbl_orderId());
+
+                        } else {
+                            if (m_oTicket.getLine(i).getAddonId() != null) {
+                                dlReceipts.updateServedTransactionMinusAddOn(m_oTicket, m_oTicket.getLine(i).getAddonId(), m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getTbl_orderId());
+                            }
+                        }
+
                         if (addonVal != null && primaryAddon == 1) {
                             int j = 0;
                             while (j < m_oTicket.getLinesCount()) {
@@ -6220,8 +6234,15 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
                 newline.setMultiply(newline.getMultiply() - 1.0);
                 dlReceipts.updateServedTransactionMinus(m_oTicket, newline.getTbl_orderId(), newline.getMultiply());
 
+                if (m_oTicket.getLine(i).getPrimaryAddon() == 0 && m_oTicket.getLine(i).getAddonId() != null) {
+                    dlReceipts.updateServedTransactionMinusAddOnModify(m_oTicket, newline.getAddonId(), newline.getMultiply(), newline.getTbl_orderId());
 
-                if (addonVal != null && primaryAddon == 1) {
+                } else {
+                    if (m_oTicket.getLine(i).getAddonId() != null) {
+                        dlReceipts.updateServedTransactionMinusAddOn(m_oTicket, m_oTicket.getLine(i).getAddonId(), m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getTbl_orderId());
+                    }
+                }
+               if (addonVal != null && primaryAddon == 1) {
                     int j = 0;
                     while (j < m_oTicket.getLinesCount()) {
                         if (addonVal.equals(m_oTicket.getLine(j).getAddonId()) && m_oTicket.getLine(j).getPrimaryAddon() == 0) {
@@ -6576,6 +6597,8 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
                         //New KDS Added on 7-03-17
                         String txstatus = "ADD";
                         String tableid_unique = uniqueProductionAreas.get(i).getTbl_orderId();
+                        
+                        System.out.println("STATION: "+uniqueProductionAreas.get(i).getStation());
                         dlReceipts.insertServedTransaction(m_oTicket, txstatus, tableid_unique);
 
                     }
@@ -6917,8 +6940,6 @@ public abstract class JRetailPanelTakeAway extends JPanel implements JPanelView,
         } catch (ParseException ex) {
             Logger.getLogger(JRetailPanelTakeAway.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
 
         if (closeDate.compareTo(activeDayDate) >= 0) {
             m_RootApp.closeDay();
