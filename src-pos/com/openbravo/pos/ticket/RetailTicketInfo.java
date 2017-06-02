@@ -41,6 +41,7 @@ import com.openbravo.pos.forms.CustomerListInfo;
 import com.openbravo.pos.forms.DataLogicSales;
 import com.openbravo.pos.forms.PromoRuleIdInfo;
 import com.openbravo.pos.payment.PaymentInfoMagcard;
+import com.openbravo.pos.sales.AccessInfo;
 import com.openbravo.pos.sales.DiscountInfo;
 import com.openbravo.pos.sales.JPanelTicket;
 import com.openbravo.pos.sales.JRetailPanelEditTicket;
@@ -151,6 +152,8 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     private boolean promoAction;
     private Date objectUpdateDate;
     private String takeaway;
+    private ArrayList<AccessInfo> accessInfo;
+    private boolean taxExempt = false;
 
     /**
      * Creates new TicketModel
@@ -200,7 +203,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         promoAction = false;
         leastValueDiscount = 0;
         objectUpdateDate = null;
-         takeaway = "N";
+        takeaway = "N";
+        accessInfo = new ArrayList<AccessInfo>();
+        taxExempt = false;
 
     }
 
@@ -245,7 +250,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         promoAction = false;
         leastValueDiscount = 0;
         objectUpdateDate = null;
-         takeaway = "N";
+        takeaway = "N";
+        accessInfo = new ArrayList<AccessInfo>();
+        taxExempt = false;
 
     }
 
@@ -299,7 +306,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         out.writeDouble(leastValueDiscount);
         out.writeObject(nametaxMap);
         out.writeObject(objectUpdateDate);
-         out.writeObject(takeaway);
+        out.writeObject(takeaway);
+        out.writeObject(getAccessInfo());
+        out.writeBoolean(taxExempt);
 
     }
 
@@ -358,7 +367,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
             leastValueDiscount = in.readDouble();
             nametaxMap = ((Map<String, NameTaxMapInfo>) in.readObject());
             objectUpdateDate = (Date) in.readObject();
-             takeaway = ((String) in.readObject());
+            takeaway = ((String) in.readObject());
+            setAccessInfo((ArrayList<AccessInfo>) in.readObject());
+            taxExempt = in.readBoolean();
 
         } catch (IOException e) {
         }
@@ -432,7 +443,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.leastValueDiscount = leastValueDiscount;
         t.nametaxMap = nametaxMap;
         t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
+        t.takeaway = takeaway;
+        t.setAccessInfo(getAccessInfo());
+        t.taxExempt = taxExempt;
 
         return t;
     }
@@ -481,8 +494,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.promoAction = promoAction;
         t.leastValueDiscount = leastValueDiscount;
         t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
-
+        t.takeaway = takeaway;
+        t.setAccessInfo(getAccessInfo());
+        t.taxExempt = taxExempt;
         return t;
     }
 
@@ -523,7 +537,9 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
         t.promoAction = promoAction;
         t.nametaxMap = nametaxMap;
         t.objectUpdateDate = objectUpdateDate;
-         t.takeaway = takeaway;
+        t.takeaway = takeaway;
+        t.setAccessInfo(getAccessInfo());
+        t.taxExempt = taxExempt;
 
         return t;
     }
@@ -2373,8 +2389,8 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
     public void setObjectUpdateDate(Date objectUpdateDate) {
         this.objectUpdateDate = objectUpdateDate;
     }
-    
-        /**
+
+    /**
      * @return the takeaway
      */
     public String getTakeaway() {
@@ -2386,5 +2402,33 @@ public class RetailTicketInfo implements SerializableRead, Externalizable {
      */
     public void setTakeaway(String takeaway) {
         this.takeaway = takeaway;
+    }
+
+    /**
+     * @return the accessInfo
+     */
+    public ArrayList<AccessInfo> getAccessInfo() {
+        return accessInfo;
+    }
+
+    /**
+     * @param accessInfo the accessInfo to set
+     */
+    public void setAccessInfo(ArrayList<AccessInfo> accessInfo) {
+        this.accessInfo = accessInfo;
+    }
+
+    /**
+     * @return the taxExempt
+     */
+    public boolean isTaxExempt() {
+        return taxExempt;
+    }
+
+    /**
+     * @param taxExempt the taxExempt to set
+     */
+    public void setTaxExempt(boolean taxExempt) {
+        this.taxExempt = taxExempt;
     }
 }

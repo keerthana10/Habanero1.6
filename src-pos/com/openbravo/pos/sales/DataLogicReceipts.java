@@ -773,14 +773,11 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
                 } catch (BasicException ex) {
                     Logger.getLogger(DataLogicReceipts.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
         }
-
     }
 
     public List<RoleUserInfo> getUsers() throws BasicException {
-
         return (List<RoleUserInfo>) new StaticSentence(s, "SELECT ID, NAME FROM PEOPLE ", null, new SerializerReadClass(RoleUserInfo.class)).list();
     }
 
@@ -833,13 +830,12 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
         }
     }
 
-    public final void updateServedTransactionMoveAsModify(RetailTicketInfo ticketclip, final String moveid, final String oldid, final String mod) throws BasicException {
+    public final void updateServedTransactionMoveAsModify(RetailTicketInfo ticketclip, final String moveid, final String oldid, final String mod,int orderno) throws BasicException {
         System.out.println("update in MoveServed Transaction--tableId is " + oldid + "moveid" + moveid);
+      
+      //New KDS-Habanero Fetch order No. from JretailTicket Bag RestMap
 
-        int ordernum = getOrderNumberForMove(oldid);
-        System.out.println("ordernumber" + ordernum);
-        updateServedTransactionMoveOrderId(ordernum, moveid);
-
+        updateServedTransactionMoveOrderId(orderno, moveid);
 
 
         Object[] values = new Object[]{moveid, mod};
@@ -941,6 +937,34 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
         Datas[] datas = new Datas[]{Datas.STRING};
         try {
             new PreparedSentence(s, "UPDATE SERVEDTRANSACTION SET TXSTATUS = 'CANCEL',UPDATED=NOW() WHERE ADDONID=? AND PRIMARYADDON=0   ", new SerializerWriteBasicExt(datas, new int[]{0})).exec(values);
+        } catch (BasicException ex) {
+            Logger.getLogger(DataLogicReceipts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void updateServedTransactionMinusAddOnModify(RetailTicketInfo m_oTicket, final String id, double qty, final String lineId) {
+
+        System.out.println("INSIDE MINUS ADDON" + id + " QTY : " + qty + " LINE ID : " + lineId);
+        Object[] values = new Object[]{qty, id, lineId};
+        Datas[] datas = new Datas[]{Datas.DOUBLE, Datas.STRING, Datas.STRING};
+
+        try {
+            new PreparedSentence(s, "UPDATE SERVEDTRANSACTION SET MULTIPLY = ?,TXSTATUS = 'MODIFY', UPDATED=NOW() WHERE ADDONID=?  AND PRIMARYADDON=0 AND ORDERITEM_ID=?", new SerializerWriteBasicExt(datas, new int[]{0, 1, 2})).exec(values);
+        } catch (BasicException ex) {
+            Logger.getLogger(DataLogicReceipts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void updateServedTransactionMinusAddOn(RetailTicketInfo m_oTicket, final String id, double qty, final String lineId) {
+
+        System.out.println("INSIDE MINUS ADDON" + id + " QTY : " + qty + " LINE ID : " + lineId);
+        Object[] values = new Object[]{qty, id, lineId};
+        Datas[] datas = new Datas[]{Datas.DOUBLE, Datas.STRING, Datas.STRING};
+
+        try {
+            new PreparedSentence(s, "UPDATE SERVEDTRANSACTION SET MULTIPLY = ?,TXSTATUS = 'CANCEL', UPDATED=NOW() WHERE ADDONID=?  AND PRIMARYADDON=0 ", new SerializerWriteBasicExt(datas, new int[]{0, 1})).exec(values);
         } catch (BasicException ex) {
             Logger.getLogger(DataLogicReceipts.class.getName()).log(Level.SEVERE, null, ex);
         }

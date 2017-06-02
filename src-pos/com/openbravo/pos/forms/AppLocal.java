@@ -29,7 +29,7 @@ public class AppLocal {
     
     public static final String APP_NAME = "Openbravo POS";
     public static final String APP_ID = "openbravopos";
-    public static final String APP_VERSION = "1.6";
+    public static final String APP_VERSION = "1.7";
   
     // private static List<ResourceBundle> m_messages;
     private static LocaleResources m_resources;
