@@ -3893,7 +3893,7 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
 
     private void populateDeliveryBoy() {
 //        try {
-//            deliveryBoyLines = dlCustomers.getDeliveryBoyList();
+       //     deliveryBoyLines = dlCustomers.getDeliveryBoyList();
 //            m_jDeliveryBoy.addItem("");
 //            for (int i = 0; i < deliveryBoyLines.size(); i++) {
 //                m_jDeliveryBoy.addItem(deliveryBoyLines.get(i).getName());
@@ -5026,8 +5026,13 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                                 if (m_oTicket.getLine(i).getActualPrice() != 0) {
                                     newline.setMultiply(newline.getMultiply() - 1.0);
                                     dlReceipts.updateServedTransactionMinus(m_oTicket, newline.getTbl_orderId(), newline.getMultiply());
-                                    if (m_oTicket.getLine(i).getAddonId() != null) {
-                                        dlReceipts.updateServedTransactionMinusAddOn(m_oTicket, newline.getAddonId(), newline.getMultiply());
+                                    if (m_oTicket.getLine(i).getPrimaryAddon() == 0 && m_oTicket.getLine(i).getAddonId() != null) {
+                                        dlReceipts.updateServedTransactionMinusAddOnModify(m_oTicket, newline.getAddonId(), newline.getMultiply(), newline.getTbl_orderId());
+
+                                    } else {
+                                        if (m_oTicket.getLine(i).getAddonId() != null) {
+                                            dlReceipts.updateServedTransactionMinusAddOn(m_oTicket, m_oTicket.getLine(i).getAddonId(), m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getTbl_orderId());
+                                        }
                                     }
                                     int index = i + 1;
                                     m_oTicket.getLine(index).setMultiply(m_oTicket.getLine(index).getMultiply() - 1);
@@ -5037,6 +5042,14 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
                                 newline.setMultiply(newline.getMultiply() - 1.0);
                                 dlReceipts.updateServedTransactionMinus(m_oTicket, newline.getTbl_orderId(), newline.getMultiply());
 
+                                if (m_oTicket.getLine(i).getPrimaryAddon() == 0 && m_oTicket.getLine(i).getAddonId() != null) {
+                                    dlReceipts.updateServedTransactionMinusAddOnModify(m_oTicket, newline.getAddonId(), newline.getMultiply(), newline.getTbl_orderId());
+
+                                } else {
+                                    if (m_oTicket.getLine(i).getAddonId() != null) {
+                                        dlReceipts.updateServedTransactionMinusAddOn(m_oTicket, m_oTicket.getLine(i).getAddonId(), m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getTbl_orderId());
+                                    }
+                                }
                             }
                             if (addonVal != null && primaryAddon == 1) {
                                 int j = 0;
@@ -6281,14 +6294,21 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             logger.info("Order NO." + m_oTicket.getOrderId() + "exception in setKotAndServedOnSplit" + ex.getMessage());
             Logger.getLogger(JRetailPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+         //NewKds to be added to change orderid on split bill
+        System.out.println("OldOrderNum/Id"+ m_oTicket.getOrderId()+"TableName"+splitTicket.getTableName()+"TableId"+splitTicket.getPlaceId()+"Old orderId"+orderId);
+       
         oldordernum = m_oTicket.getOrderId();
         newordernum = orderId;
         splitTicket.setOrderId(orderId);
-
+ System.out.println("New OrderNum /ID "+ m_oTicket.getOrderId()+"TableName"+splitTicket.getTableName()+"TableId"+splitTicket.getPlaceId()+"New orderId"+orderId);
         int numlines = splitTicket.getLinesCount();
         int servedStatus = 0;
+         
         for (int i = 0; i < numlines; i++) {
             splitTicket.getLine(i).setIsKot(1);
+            
+             
             String tbl_orderitemId = UUID.randomUUID().toString();
             tbl_orderitemId = tbl_orderitemId.replaceAll("-", "");
             if (splitTicket.getLine(i).getPreparationStatus() != 3) {
@@ -6298,8 +6318,8 @@ public abstract class JRetailPanelTicket extends JPanel implements JPanelView, B
             }
             //NewKds  added to change orderitemid on split bill
             String oldtableorderitemid = splitTicket.getLine(i).getTbl_orderId();
-            //  System.out.println("old OrderItem Id"+oldtableorderitemid+"i"+i+splitTicket.getLine(i).getTbl_orderId()+"New orderItemId"+tbl_orderitemId);
-            // System.out.println("kot id "+splitTicket.getLine(i).getKotid());
+              System.out.println("Habanero -old OrderItem Id"+oldtableorderitemid+"i"+i+splitTicket.getLine(i).getTbl_orderId()+"New orderItemId"+tbl_orderitemId);
+             System.out.println("Habanero -kot id "+splitTicket.getLine(i).getKotid());
             dlReceipts.updateServedTransactionSplit(m_oTicket, m_oTicket.getPlaceId(), splitTicket.getLine(i).getTbl_orderId(), tbl_orderitemId, oldordernum, newordernum);
             splitTicket.getLine(i).setTbl_orderId(tbl_orderitemId);
         }

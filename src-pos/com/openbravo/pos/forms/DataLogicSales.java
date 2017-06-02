@@ -1319,6 +1319,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     //  System.out.println("transactionDate"+transactionDate);
                 }
                 ticket.setDate(transactionDate);
+                settlelogger.info("RECEIPTS INSERTION");
                 new PreparedSentence(s, "INSERT INTO RECEIPTS (ID, MONEY, DATENEW, POSNO, ATTRIBUTES, MONEYDAY,UPDATED,ISCREDITSALE,ISCREDITINVOICED,ACCOUNTDATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                     public void writeValues() throws BasicException {
                         setString(1, ticket.getId());
@@ -1345,6 +1346,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 //   System.out.println("emnnr---"+ticketDocument);
                 // new ticket
                 final double billDiscount = ticket.getLeastValueDiscount() + ticket.getBillDiscount();
+                settlelogger.info("TICKETS INSERTION");
                 new PreparedSentence(s, "INSERT INTO TICKETS (ID, ORDERNUM, TICKETTYPE, DOCUMENTNO, TICKETID, PERSON, CUSTOMER,BILLDISCOUNT,LEASTVALUEDISCOUNT,CUSTOMERDISCOUNT,DISCOUNTRATE,ISHOMEDELIVERY,DELIVERYBOY,ADVANCEISSUED,ISCOD,COMPLETED,BILLAMOUNT,CREDITAMOUNT,ISCREDITSALE,ISPAIDSTATUS,TIPS,TABLEID,SERVICETAXID,SERVICETAXAMT,SERVICECHARGEID,SERVICECHARGEAMT,ISTAKEAWAY,ISNONCHARGABLE,NOOFCOVERS,ROUNDOFFVALUE,PARENTBILLNO,DISCOUNTREASONID,CONTENT,DISCOUNTREASON,SOSORDERID,SWACHBHARATTAXAMT,NCCOMMENTS) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                     public void writeValues() throws BasicException {
                         setString(1, ticket.getId());
@@ -1428,17 +1430,27 @@ public class DataLogicSales extends BeanFactoryDataSingle {
 //                        }
 //                    }
 //
-
+                    settlelogger.info("TICKETLINES INSERTION");
                     new PreparedSentence(s, "INSERT INTO TICKETLINES (TICKET, LINE, PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS,DISCOUNT, PRICE, DISCOUNTPRICE, TAXID, ATTRIBUTES, PROMOTIONCAMPAIGNID,KOTID,TABLEID,INSTRUCTION,PERSON,KOTDATE,SERVICECHARGEID,SERVICETAXID,SOSORDERLINEID,SWACHBHARATTAXID,PRODUCTIONAREA,PRODUCTIONAREATYPE,PRIMARYADDON,ADDONID,SALEPRICE,PROMODISCOUNT,PROMODISCOUNTPRICE,LINEID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                         @SuppressWarnings("element-type-mismatch")
-                        public void writeValues() throws BasicException {
+                        public void writeValues() throws BasicException, NumberFormatException {
                             setString(1, ticket.getId());
                             setInt(2, line);
                             setString(3, l.getProductID());
                             setString(4, l.getProductAttSetInstId());
                             setDouble(5, l.getMultiply());
                             if (ticket.iscategoryDiscount() && l.getCampaignId().equals("")) {
-                                setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+
+                                try {
+                                    if (l.getDiscountrate() == null || l.getDiscountrate().isEmpty()) {
+                                        setDouble(6, 0.0);
+                                    } else {
+                                        setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+                                    }
+                                } catch (NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                }
+                                // setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
                             } else {
                                 if (l.getPromodiscountPercent() == 100.00) {
                                     setDouble(6, 0.00);
@@ -1617,7 +1629,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     }
                     //}
                 }
-
+                settlelogger.info("TAXLINES INSERTION");
                 SentenceExec taxlinesinsert = new PreparedSentence(s, "INSERT INTO TAXLINES (ID, RECEIPT, TAXID, BASE, AMOUNT,ISSERVICETAX,ISSWACHBHARATTAX)  VALUES (?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE);
                 if (ticket.getTaxes() != null) {
                     for (final TicketTaxInfo tickettax : ticket.getTaxes()) {
@@ -1637,7 +1649,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         }
                     }
                 }
-
+                settlelogger.info("SERVICHARGELINES INSERTION");
                 SentenceExec chargelinesinsert = new PreparedSentence(s, "INSERT INTO SERVICECHARGELINES (ID, RECEIPT, SERVICECHARGEID, BASE, AMOUNT)  VALUES (?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE);
                 if (ticket.getTaxes() != null) {
                     for (final TicketTaxInfo tickettax : ticket.getTaxes()) {
@@ -1775,6 +1787,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     //  System.out.println("transactionDate"+transactionDate);
                 }
                 ticket.setDate(transactionDate);
+                settlelogger.info("TAKEAWAY RECEIPTS INSERTION");
                 new PreparedSentence(s, "INSERT INTO RECEIPTS (ID, MONEY, DATENEW, POSNO, ATTRIBUTES, MONEYDAY,UPDATED,ISCREDITSALE,ISCREDITINVOICED,ACCOUNTDATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                     public void writeValues() throws BasicException {
                         setString(1, ticket.getId());
@@ -1801,6 +1814,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 //   System.out.println("emnnr---"+ticketDocument);
                 // new ticket
                 final double billDiscount = ticket.getLeastValueDiscount() + ticket.getBillDiscount();
+                settlelogger.info("TAKEAWAY TICKETS INSERTION");
                 new PreparedSentence(s, "INSERT INTO TICKETS (ID, ORDERNUM, TICKETTYPE, DOCUMENTNO, TICKETID, PERSON, CUSTOMER,BILLDISCOUNT,LEASTVALUEDISCOUNT,CUSTOMERDISCOUNT,DISCOUNTRATE,ISHOMEDELIVERY,DELIVERYBOY,ADVANCEISSUED,ISCOD,COMPLETED,BILLAMOUNT,CREDITAMOUNT,ISCREDITSALE,ISPAIDSTATUS,TIPS,TABLEID,SERVICETAXID,SERVICETAXAMT,SERVICECHARGEID,SERVICECHARGEAMT,ISTAKEAWAY,ISNONCHARGABLE,NOOFCOVERS,ROUNDOFFVALUE,PARENTBILLNO,DISCOUNTREASONID,CONTENT,DISCOUNTREASON,SOSORDERID,SWACHBHARATTAXAMT,NCCOMMENTS) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                     public void writeValues() throws BasicException {
                         setString(1, ticket.getId());
@@ -1885,17 +1899,27 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         }
                     }
 //
-
+                    settlelogger.info("TAKEAWAY TICKETLINES INSERTION");
                     new PreparedSentence(s, "INSERT INTO TICKETLINES (TICKET, LINE, PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS,DISCOUNT, PRICE, DISCOUNTPRICE, TAXID, ATTRIBUTES, PROMOTIONCAMPAIGNID,KOTID,TABLEID,INSTRUCTION,PERSON,KOTDATE,SERVICECHARGEID,SERVICETAXID,SOSORDERLINEID,SWACHBHARATTAXID,PRODUCTIONAREA,PRODUCTIONAREATYPE,PRIMARYADDON,ADDONID,SALEPRICE,PROMODISCOUNT,PROMODISCOUNTPRICE,LINEID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                         @SuppressWarnings("element-type-mismatch")
-                        public void writeValues() throws BasicException {
+                        public void writeValues() throws BasicException, NumberFormatException {
                             setString(1, ticket.getId());
                             setInt(2, line);
                             setString(3, l.getProductID());
                             setString(4, l.getProductAttSetInstId());
                             setDouble(5, l.getMultiply());
                             if (ticket.iscategoryDiscount() && l.getCampaignId().equals("")) {
-                                setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+
+                                try {
+                                    if (l.getDiscountrate() == null || l.getDiscountrate().isEmpty()) {
+                                        setDouble(6, 0.0);
+                                    } else {
+                                        setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+                                    }
+                                } catch (NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                }
+                                //setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
                             } else {
                                 if (l.getPromodiscountPercent() == 100.00) {
                                     setDouble(6, 0.00);
@@ -2027,6 +2051,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     });
                 }
 //
+                settlelogger.info("TAKEAWAY PAYMENTS INSERTION");
                 SentenceExec paymentinsert = new PreparedSentence(s, "INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, TOTAL, TRANSID, RETURNMSG, CHEQUENOS,PAYMENTTYPE,DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE);
 
                 SentenceExec paymentsplits = new PreparedSentence(s, "INSERT INTO PAYMENTSPLITS (ID, PAYMENTS_ID, IDENTIFIER , AMOUNT) VALUES (?, ?, ?, ?)", SerializerWriteParams.INSTANCE);
@@ -2075,7 +2100,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     }
                     //}
                 }
-
+                settlelogger.info("TAKEAWAY TAXLINES INSERTION");
                 SentenceExec taxlinesinsert = new PreparedSentence(s, "INSERT INTO TAXLINES (ID, RECEIPT, TAXID, BASE, AMOUNT,ISSERVICETAX,ISSWACHBHARATTAX)  VALUES (?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE);
                 if (ticket.getTaxes() != null) {
                     for (final TicketTaxInfo tickettax : ticket.getTaxes()) {
@@ -2095,6 +2120,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         }
                     }
                 }
+                settlelogger.info("TAKEAWAY SERVICECHARGELINES INSERTION");
                 SentenceExec chargelinesinsert = new PreparedSentence(s, "INSERT INTO SERVICECHARGELINES (ID, RECEIPT, SERVICECHARGEID, BASE, AMOUNT)  VALUES (?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE);
                 if (ticket.getTaxes() != null) {
                     for (final TicketTaxInfo tickettax : ticket.getTaxes()) {
@@ -2298,6 +2324,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     //  System.out.println("transactionDate"+transactionDate);
                 }
                 ticket.setDate(transactionDate);
+                settlelogger.info("CANCEL RECEIPTS INSERTION");
                 new PreparedSentence(s, "INSERT INTO RECEIPTS (ID, MONEY, DATENEW, POSNO, ATTRIBUTES, MONEYDAY,UPDATED,ISCREDITSALE,ISCREDITINVOICED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                     public void writeValues() throws BasicException {
                         setString(1, ticket.getId());
@@ -2323,6 +2350,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 //   System.out.println("emnnr---"+ticketDocument);
                 // new ticket
                 final double billDiscount = ticket.getLeastValueDiscount() + ticket.getBillDiscount();
+                settlelogger.info("CANCEL TICKETS INSERTION");
                 new PreparedSentence(s, "INSERT INTO TICKETS (ID, ORDERNUM, TICKETTYPE, DOCUMENTNO, TICKETID, PERSON, CUSTOMER,BILLDISCOUNT,LEASTVALUEDISCOUNT,CUSTOMERDISCOUNT,DISCOUNTRATE,ISHOMEDELIVERY,DELIVERYBOY,ADVANCEISSUED,ISCOD,COMPLETED,BILLAMOUNT,CREDITAMOUNT,ISCREDITSALE,ISPAIDSTATUS,TIPS,TABLEID,SERVICETAXID,SERVICETAXAMT,SERVICECHARGEID,SERVICECHARGEAMT,ISTAKEAWAY,ISNONCHARGABLE,NOOFCOVERS,ROUNDOFFVALUE,ISCANCELTICKET,CANCELREASONID,CANCELCOMMENTS,PARENTBILLNO,DISCOUNTREASONID,DISCOUNTREASON,SOSORDERID) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                     public void writeValues() throws BasicException {
                         setString(1, ticket.getId());
@@ -2370,7 +2398,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
 
 
 
-
+                    settlelogger.info("CANCEL TICKETLINES INSERTION");
                     new PreparedSentence(s, "INSERT INTO TICKETLINES (TICKET, LINE, PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS,DISCOUNT, PRICE, DISCOUNTPRICE, TAXID, ATTRIBUTES, PROMOTIONCAMPAIGNID,KOTID,TABLEID,INSTRUCTION,PERSON,KOTDATE,SERVICECHARGEID,SERVICETAXID,SOSORDERLINEID,SWACHBHARATTAXID,PRODUCTIONAREA,PRODUCTIONAREATYPE,PRIMARYADDON,ADDONID,SALEPRICE,PROMODISCOUNT,PROMODISCOUNTPRICE,LINEID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                         @SuppressWarnings("element-type-mismatch")
                         public void writeValues() throws BasicException {
@@ -2381,7 +2409,17 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                             setDouble(5, l.getMultiply());
                             //setDouble(6, l.getDiscount());
                             if (ticket.iscategoryDiscount() && l.getCampaignId().equals("")) {
-                                setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+
+                                try {
+                                    if (l.getDiscountrate() == null || l.getDiscountrate().isEmpty()) {
+                                        setDouble(6, 0.0);
+                                    } else {
+                                        setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+                                    }
+                                } catch (NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                }
+                                //  setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
                             } else {
                                 if (l.getPromodiscountPercent() == 100.00) {
                                     setDouble(6, 0.00);
@@ -4148,14 +4186,20 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                             + " UNITS,DISCOUNT, PRICE, DISCOUNTPRICE, TAXID, ATTRIBUTES, PROMOTIONCAMPAIGNID,KOTID,TABLEID,INSTRUCTION,PERSON,KOTDATE,SERVICECHARGEID,SERVICETAXID,SWACHBHARATTAXID) "
                             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                         @SuppressWarnings("element-type-mismatch")
-                        public void writeValues() throws BasicException {
+                        public void writeValues() throws BasicException, NumberFormatException {
                             setString(1, ticket.getId());
                             setInt(2, line);
                             setString(3, l.getProductID());
                             setString(4, l.getProductAttSetInstId());
                             setDouble(5, l.getMultiply());
                             if (ticket.iscategoryDiscount() && l.getCampaignId().equals("")) {
-                                setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+                                try {
+                                    setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+                                } catch (NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                }
+
+                                // setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
                             } else {
                                 setDouble(6, l.getDiscount());
                             }
@@ -4454,7 +4498,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
     public final ProductInfoExt getMenuProductInfoAddon(String id, String menuId) throws BasicException {
         System.out.println("products selection 25");
         return (ProductInfoExt) new PreparedSentence(s, "SELECT P.ID, P.REFERENCE, P.CODE, P.NAME, P.ISCOM, P.ISSCALE, M.PRICEBUY, M.PRICESELL, P.TAXCAT, P.CATEGORY, P.ATTRIBUTESET_ID, P.IMAGE, P.ATTRIBUTES, P.ITEMCODE, M.MRP,U.NAME,P.PRODUCTTYPE,P.PRODUCTIONAREATYPE ,P.SERVICECHARGE,P.SERVICETAX,C.PARENTID,P.PREPARATIONTIME,P.SWACHBHARATTAX,P.ISCOMBOPRODUCT ,P.STATION "
-                 + "FROM PRODUCTS P,UOM U,MENUPRICELIST M,CATEGORIES C  WHERE U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.id = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND M.MENUID='" + menuId + "' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
+                + "FROM PRODUCTS P,UOM U,MENUPRICELIST M,CATEGORIES C  WHERE U.ID=P.UOM AND M.PRODUCTID=P.ID AND P.CATEGORY=C.ID AND P.id = ? AND P.ISACTIVE='Y' AND P.ISSALESITEM='Y' AND M.MENUID='" + menuId + "' ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(id);
     }
 
     public ProductInfoExt CountMenuAddonProduct(String product, String menuId) throws BasicException {
@@ -4703,14 +4747,24 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     double price = 0.0;
                     new PreparedSentence(s, "INSERT INTO TICKETLINES (TICKET, LINE, PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS,DISCOUNT, PRICE, DISCOUNTPRICE, TAXID, ATTRIBUTES, PROMOTIONCAMPAIGNID,KOTID,TABLEID,INSTRUCTION,PERSON,KOTDATE,SERVICECHARGEID,SERVICETAXID,SOSORDERLINEID,SWACHBHARATTAXID,PRODUCTIONAREA,PRODUCTIONAREATYPE,PRIMARYADDON,ADDONID,SALEPRICE,PROMODISCOUNT,PROMODISCOUNTPRICE,LINEID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
                         @SuppressWarnings("element-type-mismatch")
-                        public void writeValues() throws BasicException {
+                        public void writeValues() throws BasicException, NumberFormatException {
                             setString(1, ticket.getId());
                             setInt(2, line);
                             setString(3, l.getProductID());
                             setString(4, l.getProductAttSetInstId());
                             setDouble(5, l.getMultiply());
                             if (ticket.iscategoryDiscount() && l.getCampaignId().equals("")) {
-                                setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+
+                                try {
+                                    if (l.getDiscountrate() == null || l.getDiscountrate().isEmpty()) {
+                                        setDouble(6, 0.0);
+                                    } else {
+                                        setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
+                                    }
+                                } catch (NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                }
+                                //setDouble(6, Double.parseDouble(l.getDiscountrate()) * 100);
                             } else {
                                 if (l.getPromodiscountPercent() == 100.00) {
                                     setDouble(6, 0.00);
@@ -5251,8 +5305,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
 
         return (List<StationMapInfo>) new StaticSentence(s, "SELECT ID,ROLEID,USERID,STATION FROM STATIONUSERMAP WHERE ROLEID ='" + roIeId + "'", null, new SerializerReadClass(StationMapInfo.class)).list();
     }
-    
-        public final synchronized void updateStationUserMap(final String roleId, final String userId, final java.util.List<String> selectedList, final java.util.List<String> userList)
+
+    public final synchronized void updateStationUserMap(final String roleId, final String userId, final java.util.List<String> selectedList, final java.util.List<String> userList)
             throws BasicException {
 
         Transaction t = new Transaction(s) {
@@ -5281,9 +5335,9 @@ public class DataLogicSales extends BeanFactoryDataSingle {
         };
         t.execute();
     }
-            public List<RoleUserInfo> getUserList(String roleId) throws BasicException {
+
+    public List<RoleUserInfo> getUserList(String roleId) throws BasicException {
 
         return (List<RoleUserInfo>) new StaticSentence(s, "SELECT ID, NAME FROM PEOPLE WHERE ROLE='" + roleId + "' ", null, new SerializerReadClass(RoleUserInfo.class)).list();
     }
-    
 }

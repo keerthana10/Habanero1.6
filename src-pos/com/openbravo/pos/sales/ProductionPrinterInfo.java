@@ -68,6 +68,7 @@ public class ProductionPrinterInfo implements SerializableRead, SerializableWrit
     private String productionArea;
     private String path;
     private String name;
+ //    private String iskot;
     //private List<kotInfo> productname;
 
 
@@ -84,6 +85,7 @@ public class ProductionPrinterInfo implements SerializableRead, SerializableWrit
         out.writeObject(productionArea);
         out.writeObject(path);
         out.writeObject(getName());
+     //      out.writeObject(iskot);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -92,6 +94,7 @@ public class ProductionPrinterInfo implements SerializableRead, SerializableWrit
         productionArea = (String) in.readObject();
         path = null;
         setName((String) in.readObject());;
+     //     iskot=((String) in.readObject());
 
     }
 
@@ -130,6 +133,7 @@ public class ProductionPrinterInfo implements SerializableRead, SerializableWrit
         productionArea = dr.getString(2);
         path = dr.getString(3);
         setName(dr.getString(4));
+      //      iskot=(dr.getString(5));
 
     }
 
@@ -139,6 +143,7 @@ public class ProductionPrinterInfo implements SerializableRead, SerializableWrit
         dp.setString(2, productionArea);
         dp.setString(3, path);
         dp.setString(4, getName());
+       //   dp.setString(5, iskot);
 
     }
  public String getName() {
@@ -151,5 +156,20 @@ public class ProductionPrinterInfo implements SerializableRead, SerializableWrit
     public void setName(String name) {
         this.name = name;
     }
+    
+    
+//    /**
+//     * @return the iskot
+//     */
+//    public String getIskot() {
+//        return iskot;
+//    }
+//
+//    /**
+//     * @param iskot the iskot to set
+//     */
+//    public void setIskot(String iskot) {
+//        this.iskot = iskot;
+//    }
 
 }
